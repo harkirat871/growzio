@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Product;
 use Database\Seeders\ProductSeeder;
+use Database\Seeders\CategorySeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,15 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
 
-        // Quick sample products
-        Product::factory()->count(0); // ensure factory exists if used later
         Product::query()->firstOrCreate([
             'name' => 'Sample Phone',
         ], [
@@ -49,6 +46,6 @@ class DatabaseSeeder extends Seeder
             'image_path' => null,
         ]);
 
-        $this->call([ProductSeeder::class]);
+        $this->call([CategorySeeder::class, ProductSeeder::class]);
     }
 }

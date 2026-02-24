@@ -1,59 +1,684 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Your Cart') }}
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Premium Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0A0A0A;
+            --secondary: #1A1A1A;
+            --accent: #2563EB;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .custom-navbar {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1050;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .navbar-brand i {
+            color: var(--accent);
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary) !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 73px;
+            min-height: calc(100vh - 73px);
+            padding: 3rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Guest Notice */
+        .guest-notice {
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+        }
+
+        .guest-notice i {
+            color: var(--accent);
+            font-size: 1.25rem;
+            margin-top: 0.125rem;
+        }
+
+        .guest-notice-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .guest-notice-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .guest-notice-content a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .guest-notice-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Cart Card */
+        .cart-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cart-content {
+            padding: 2rem;
+        }
+
+        /* Cart Item */
+        .cart-item {
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .cart-item-image {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .cart-item-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-item-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .cart-item-price {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-input {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            width: 70px;
+            min-height: 44px;
+            text-align: center;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-update {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            min-height: 44px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-update:hover {
+            background: #1d4ed8;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+
+        .cart-item-subtotal {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            min-height: 44px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-remove:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-clear {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            min-height: 44px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-clear:hover {
+            background: var(--secondary);
+            border-color: var(--text-secondary);
+        }
+
+        .btn-checkout {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            min-height: 44px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-checkout:hover {
+            background: #1d4ed8;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-cart i {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-cart h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-cart p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Dropdown */
+        .dropdown-menu {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .dropdown-divider {
+            border-color: var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cart-content {
+                padding: 1.5rem;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item-actions {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .cart-summary {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cart-actions {
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Sticky bottom bar: mobile only, fixed to viewport like header */
+        .cart-sticky-bottom {
+            display: none !important;
+        }
+        @media (max-width: 768px) {
+            .cart-sticky-bottom {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                background: var(--secondary);
+                border-top: 1px solid var(--border);
+                padding: 0.75rem 1rem;
+                padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+                z-index: 1050;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            .cart-sticky-bottom .sticky-view-cart {
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--text-primary);
+                padding: 0.5rem 0.75rem;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+            }
+            .cart-sticky-bottom .sticky-view-cart:hover {
+                background: var(--primary);
+                border-color: var(--text-secondary);
+            }
+            .cart-sticky-bottom .sticky-total {
+                font-size: 1.125rem;
+                font-weight: 700;
+            }
+            .cart-sticky-bottom .sticky-checkout {
+                min-height: 44px;
+                padding: 0 1.5rem;
+                background: var(--accent);
+                color: white;
+                border-radius: 8px;
+                font-weight: 600;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .cart-sticky-bottom .sticky-checkout:hover {
+                background: #1d4ed8;
+                color: white;
+            }
+            body.cart-has-sticky { padding-bottom: 70px; }
+        }
+    </style>
+</head>
+<body class="@if($items->count()) cart-has-sticky @endif">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-gem me-2"></i>Premium Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('home')}}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('home') }}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('cart.view') }}">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                        </a>
+                    </li>
+                    @auth
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>{{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                                @if(Auth::user()->is_admin)
+                                    <li><a class="dropdown-item" href="{{ route('admin.products.index') }}">Admin Panel</a></li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('Are you sure you want to log out?');">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Log Out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container" style="max-width: 900px;">
+            <div class="page-header">
+                <h1 class="page-title">Your Cart</h1>
+            </div>
+
+            <!-- Guest Notice -->
+            @guest
+                <div class="guest-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="guest-notice-content">
+                        <h3>Guest User</h3>
+                        <p>You're viewing your cart as a guest. 
+                            <a href="{{ route('login') }}">Login</a> or 
+                            <a href="{{ route('register') }}">register</a> 
+                            to save your cart and proceed to checkout.</p>
+                    </div>
+                </div>
+            @endguest
+
+            <div class="cart-card" id="cart-content">
+                <div class="cart-content">
                     @if ($items->count())
-                        <div class="space-y-4">
-                            @foreach ($items as $item)
-                                <div class="flex items-center justify-between border rounded-md p-4">
-                                    <div>
-                                        <div class="font-semibold">{{ $item['product']->name }}</div>
-                                        <div class="text-sm text-gray-600">
-                                            <form method="POST" action="{{ route('cart.update', $item['product']) }}" class="flex items-center gap-2">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" class="w-20 border rounded-md p-1">
-                                                <button class="text-xs bg-gray-800 text-white px-2 py-1 rounded">Update</button>
-                                            </form>
+                        <!-- Cart Items -->
+                        @foreach ($items as $item)
+                            <div class="cart-item">
+                                <div class="cart-item-image">
+                                    @if ($item['product']->image_path)
+                                        <img src="{{ asset($item['product']->image_path) }}" alt="{{ $item['product']->name }}">
+                                    @else
+                                        <div class="cart-item-image-placeholder">
+                                            <i class="fas fa-image"></i>
                                         </div>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <div class="font-semibold">$ {{ number_format($item['subtotal'], 2) }}</div>
-                                        <form method="POST" action="{{ route('cart.remove', $item['product']) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="text-red-600 hover:underline">Remove</button>
-                                        </form>
-                                    </div>
+                                    @endif
                                 </div>
-                            @endforeach
-                        </div>
+                                
+                                <div class="cart-item-details">
+                                    <div class="cart-item-name">{{ $item['product']->name }}</div>
+                                    <div class="cart-item-price">₹{{ number_format($item['product']->price, 2) }} each</div>
+                                    <form method="POST" action="{{ route('cart.update', $item['product']) }}" class="cart-item-quantity">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" class="quantity-input">
+                                        <button type="submit" class="btn-update">Update</button>
+                                    </form>
+                                </div>
+                                
+                                <div class="cart-item-actions">
+                                    <div class="cart-item-subtotal">₹{{ number_format($item['subtotal'], 2) }}</div>
+                                    <form method="POST" action="{{ route('cart.remove', $item['product']) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-remove">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
 
-                        <div class="mt-6 flex items-center justify-between">
-                            <div class="text-xl font-bold">Total: $ {{ number_format($total, 2) }}</div>
-                            <div class="flex items-center gap-2">
+                        <!-- Loyalty points (cart only, authenticated users) -->
+                        @auth
+                        @if($loyaltyPointsAvailable > 0)
+                        <div class="cart-loyalty border rounded p-4 mb-4" style="background: var(--secondary); border-color: var(--border) !important;">
+                            <h4 class="mb-2" style="font-size: 1rem; font-weight: 600;">Use loyalty points</h4>
+                            <p class="text-small mb-3" style="font-size: 0.8rem; color: var(--text-secondary);">10 points = ₹1 discount. You have <strong>{{ $loyaltyPointsAvailable }}</strong> points.</p>
+                            <form method="POST" action="{{ route('cart.loyalty') }}" class="d-flex flex-wrap align-items-end gap-2 mb-3">
+                                @csrf
+                                <div>
+                                    <label class="form-label mb-0" style="font-size: 0.8rem;">Points to use</label>
+                                    <input type="number" name="loyalty_points_to_use" class="quantity-input" value="{{ $loyaltyPointsToUse }}" min="0" max="{{ $loyaltyPointsAvailable }}" step="10" style="width: 100px;">
+                                </div>
+                                <button type="submit" class="btn-update">Apply</button>
+                            </form>
+                            @if($loyaltyPointsToUse > 0)
+                                <p class="mb-0 small" style="color: var(--text-secondary);">Discount: ₹{{ number_format($loyaltyDiscountAmount, 2) }} · Remaining points after checkout: <strong>{{ $remainingPoints }}</strong></p>
+                            @endif
+                        </div>
+                        @endif
+                        @endauth
+
+                        <!-- Cart Summary -->
+                        <div class="cart-summary">
+                            <div class="d-flex flex-column gap-1 w-100">
+                                <div class="d-flex justify-content-between" style="color: var(--text-secondary); font-size: 0.9rem;">
+                                    <span>Subtotal</span>
+                                    <span>₹{{ number_format($subtotal, 2) }}</span>
+                                </div>
+                                @auth
+                                @if($loyaltyDiscountAmount > 0)
+                                <div class="d-flex justify-content-between" style="color: var(--text-secondary); font-size: 0.9rem;">
+                                    <span>Loyalty discount</span>
+                                    <span>-₹{{ number_format($loyaltyDiscountAmount, 2) }}</span>
+                                </div>
+                                @endif
+                                @endauth
+                                <div class="cart-total">Total: ₹{{ number_format($total, 2) }}</div>
+                            </div>
+                            <div class="cart-actions">
                                 <form method="POST" action="{{ route('cart.clear') }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded-md">Clear Cart</button>
+                                    <button type="submit" class="btn-clear">Clear Cart</button>
                                 </form>
-                                <a href="{{ route('checkout.form') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md">Checkout</a>
+                                @auth
+                                    <a href="{{ route('checkout.form') }}" class="btn-checkout">Checkout</a>
+                                @else
+                                    <a href="{{ route('checkout.login-required') }}" class="btn-checkout">Proceed to Checkout</a>
+                                @endauth
                             </div>
                         </div>
                     @else
-                        <p>Your cart is empty.</p>
+                        <!-- Empty Cart -->
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Looks like you haven't added any products to your cart yet.</p>
+                            <a href="{{ route('home') }}" class="btn-checkout">Continue Shopping</a>
+                        </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
 
+    @if ($items->count())
+    <!-- Sticky bottom bar: mobile only, fixed to bottom of screen like header -->
+    <div class="cart-sticky-bottom">
+        <button type="button" class="sticky-view-cart" onclick="document.getElementById('cart-content').scrollIntoView({ behavior: 'smooth', block: 'start' })" aria-label="View cart">
+            <i class="fas fa-shopping-cart me-1"></i> View cart
+        </button>
+        <span class="sticky-total">₹{{ number_format($total, 2) }}</span>
+        @auth
+            <a href="{{ route('checkout.form') }}" class="sticky-checkout">Checkout</a>
+        @else
+            <a href="{{ route('checkout.login-required') }}" class="sticky-checkout">Proceed to Checkout</a>
+        @endauth
+    </div>
+    @endif
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

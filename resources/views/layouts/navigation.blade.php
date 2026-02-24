@@ -15,6 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('products.*')">
+                        {{ __('Products') }}
+                    </x-nav-link>
+                    @if(Auth::check() && Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin Panel') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -37,6 +45,24 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        
+                        @if(Auth::check() && Auth::user()->isAdmin())
+                        <x-dropdown-link :href="route('admin.dashboard')">
+                            {{ __('Admin Dashboard') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.categories.index')">
+                            {{ __('Manage Categories') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.products.index')">
+                            {{ __('Manage Products') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.products.bulk-upload')">
+                            {{ __('Bulk Upload') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.orders.index')">
+                            {{ __('Manage Orders') }}
+                        </x-dropdown-link>
+                    @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -70,6 +96,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('products.*')">
+                {{ __('Products') }}
+            </x-responsive-nav-link>
+            @if(Auth::check() && Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin Panel') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

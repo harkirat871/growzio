@@ -1,0 +1,10 @@
+in admin terminal then these in project
+.\meilisearch.exe --master-key="KCU2Jz5vzVYTwaTKwBX5dtzC4v8WobDZy_c1QJ7Ywe8"
+
+
+npm run build
+php artisan optimize:clear
+php artisan serve
+
+
+ngrok http 8000

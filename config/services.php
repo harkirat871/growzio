@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'google' => [
+        'credentials_path' => env('GOOGLE_CREDENTIALS_PATH'),
+        'sheet_id' => env('GOOGLE_SHEET_ID'),
+    ],
+
 ];

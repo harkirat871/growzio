@@ -5,66 +5,107 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    @if ($items->count())
-                        <form method="POST" action="{{ route('checkout.store') }}" class="space-y-6">
-                            @csrf
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Name</label>
-                                    <input type="text" name="guest_name" class="mt-1 block w-full border rounded-md p-2" value="{{ old('guest_name') }}" required>
-                                    @error('guest_name')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" name="guest_email" class="mt-1 block w-full border rounded-md p-2" value="{{ old('guest_email') }}" required>
-                                    @error('guest_email')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Phone</label>
-                                    <input type="text" name="guest_phone" class="mt-1 block w-full border rounded-md p-2" value="{{ old('guest_phone') }}">
-                                    @error('guest_phone')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Address</label>
-                                    <textarea name="guest_address" class="mt-1 block w-full border rounded-md p-2" rows="3" required>{{ old('guest_address') }}</textarea>
-                                    @error('guest_address')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Delivery Location</label>
-                                    <input type="text" name="delivery_location" class="mt-1 block w-full border rounded-md p-2" value="{{ old('delivery_location') }}">
-                                    @error('delivery_location')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                            </div>
+    <style>
+        /* Sticky bottom bar: mobile only, fixed to bottom of screen like header */
+        .checkout-sticky-bottom {
+            display: none !important;
+        }
+        @media (max-width: 768px) {
+            .checkout-sticky-bottom {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                z-index: 1050 !important;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 0.75rem 1rem;
+                padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+                background: #fff;
+                border-top: 1px solid #e5e7eb;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            .checkout-sticky-spacer { padding-bottom: 5.5rem !important; }
+        }
+    </style>
 
-                            <div class="border-t pt-4">
-                                <h3 class="font-semibold mb-2">Order Summary</h3>
-                                <div class="space-y-2">
+    <div class="py-12 checkout-sticky-spacer">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
+                <div class="p-6 sm:p-8 text-gray-900">
+                    @if ($items->count())
+                        @if($loyaltyDiscountAmount > 0)
+                        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                            <p class="text-sm font-medium text-emerald-800">Loyalty discount applied: ₹{{ number_format($loyaltyDiscountAmount, 2) }}</p>
+                            <p class="text-xs text-emerald-700 mt-1">To change loyalty points, go back to <a href="{{ route('cart.view') }}" class="underline font-medium">your cart</a>.</p>
+                        </div>
+                        @endif
+
+                        <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}">
+                            @csrf
+                            <div class="border-t border-gray-100 pt-6">
+                                <h3 class="font-semibold text-gray-900 mb-4">Order summary</h3>
+                                <div class="space-y-3">
                                     @foreach ($items as $item)
-                                        <div class="flex items-center justify-between">
-                                            <div>{{ $item['product']->name }} (x{{ $item['quantity'] }})</div>
-                                            <div>$ {{ number_format($item['subtotal'], 2) }}</div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-600">{{ $item['product']->name ?? 'Item' }} × {{ $item['quantity'] }}</span>
+                                            <span>₹{{ number_format($item['subtotal'], 2) }}</span>
                                         </div>
                                     @endforeach
-                                    <div class="flex items-center justify-between font-bold border-t pt-2">
-                                        <div>Total</div>
-                                        <div>$ {{ number_format($total, 2) }}</div>
+                                    @if($loyaltyDiscountAmount > 0)
+                                    <div class="flex justify-between text-sm text-emerald-600">
+                                        <span>Loyalty discount</span>
+                                        <span>-₹{{ number_format($loyaltyDiscountAmount, 2) }}</span>
+                                    </div>
+                                    @endif
+                                    <div class="flex justify-between font-semibold text-base pt-3 border-t border-gray-100">
+                                        <span>Total</span>
+                                        <span>₹{{ number_format($total, 2) }}</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Place Order</button>
+                            <div class="mt-8">
+                                <button type="submit" id="place-order-btn" class="w-full sm:w-auto min-h-[48px] px-8 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition disabled:opacity-70">
+                                    Place order
+                                </button>
+                            </div>
                         </form>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var form = document.getElementById('checkout-form');
+                                var btn = document.getElementById('place-order-btn');
+                                var stickyBtn = document.getElementById('sticky-place-order');
+                                if (form && btn) {
+                                    form.addEventListener('submit', function() {
+                                        btn.disabled = true;
+                                        if (btn.textContent) btn.textContent = 'Placing order...';
+                                        if (stickyBtn) { stickyBtn.disabled = true; stickyBtn.textContent = 'Placing order...'; }
+                                    });
+                                }
+                                if (stickyBtn && form) {
+                                    stickyBtn.addEventListener('click', function() { if (!stickyBtn.disabled) form.requestSubmit(); });
+                                }
+                            });
+                        </script>
                     @else
-                        <p>Your cart is empty.</p>
+                        <p class="text-gray-600">Your cart is empty. <a href="{{ route('home') }}" class="text-indigo-600 font-medium hover:underline">Continue shopping</a></p>
                     @endif
                 </div>
             </div>
         </div>
     </div>
+
+    @if ($items->count())
+    {{-- Sticky bottom: mobile only, fixed to bottom of screen like header --}}
+    <div class="checkout-sticky-bottom">
+        <a href="{{ route('cart.view') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">View cart</a>
+        <span class="font-semibold text-gray-900">₹{{ number_format($total, 2) }}</span>
+        <button type="button" class="min-h-[44px] px-6 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-70 border-0" id="sticky-place-order">Place order</button>
+    </div>
+    @endif
 </x-app-layout>
-
-

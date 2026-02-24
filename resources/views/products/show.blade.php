@@ -4,693 +4,519 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $product->name }} - Premium Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-            --card-gradient: linear-gradient(145deg, #1e1e1e 0%, #2d2d2d 100%);
+            --unity-bg: #FFFFFF;
+            --unity-bg-secondary: #F7F7F7;
+            --unity-text: #121212;
+            --unity-text-secondary: #707070;
+            --unity-border: #E8E8E8;
+            --unity-ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: var(--dark-gradient);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #ffffff;
-            overflow-x: hidden;
+            background: var(--unity-bg);
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--unity-text);
         }
 
-        /* Custom Navbar */
-        .custom-navbar {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
+        /* ----- Animations: GPU-friendly, respect reduced motion ----- */
+        @media (prefers-reduced-motion: no-preference) {
+            .unity-ani-fade-in {
+                animation: unityFadeIn 0.5s var(--unity-ease) forwards;
+            }
+            .unity-ani-delay-1 { animation-delay: 0.06s; }
+            .unity-ani-delay-2 { animation-delay: 0.12s; }
+            .unity-ani-delay-3 { animation-delay: 0.18s; }
+            .unity-ani-delay-4 { animation-delay: 0.24s; }
+            .unity-ani-delay-5 { animation-delay: 0.3s; }
+            .unity-ani-delay-6 { animation-delay: 0.36s; }
+            .unity-ani-hover-lift:hover { transform: translateY(-2px); }
+            .unity-ani-hover-scale:hover { transform: scale(1.02); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .unity-ani-fade-in { animation: none; opacity: 1; }
+            .unity-ani-hover-lift:hover, .unity-ani-hover-scale:hover { transform: none; }
+        }
+        @keyframes unityFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ----- Header ----- */
+        .unity-header {
+            position: sticky;
             top: 0;
             z-index: 1050;
+            background: var(--unity-bg);
+            border-bottom: 1px solid var(--unity-border);
+            padding: 0 1rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: box-shadow 0.3s var(--unity-ease);
         }
-
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .unity-header.scrolled { box-shadow: 0 1px 0 var(--unity-border); }
+        .unity-logo { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text); text-decoration: none; }
+        .unity-nav-desktop { display: none; }
+        @media (min-width: 768px) {
+            .unity-nav-desktop { display: flex; align-items: center; gap: 0.25rem; }
+            .unity-nav-desktop a { padding: 0.5rem 0.75rem; font-size: 14px; color: var(--unity-text-secondary); text-decoration: none; transition: color 0.2s var(--unity-ease); }
+            .unity-nav-desktop a:hover { color: var(--unity-text); }
         }
-
-        .nav-link {
-            color: #ffffff !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
+        .unity-header-right { display: flex; align-items: center; gap: 0.5rem; }
+        .unity-icon-btn {
+            width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+            color: var(--unity-text); border: none; background: transparent; cursor: pointer;
+            transition: background 0.2s var(--unity-ease), color 0.2s var(--unity-ease);
         }
-
-        .nav-link:hover {
-            color: #667eea !important;
+        .unity-icon-btn:hover { background: var(--unity-bg-secondary); }
+        .unity-btn {
+            display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem;
+            font-size: 14px; font-family: inherit; font-weight: 500; border-radius: 0; cursor: pointer;
+            transition: transform 0.2s var(--unity-ease), background 0.2s var(--unity-ease), border-color 0.2s var(--unity-ease);
+            text-decoration: none; border: 1px solid var(--unity-border); background: var(--unity-bg); color: var(--unity-text);
         }
+        .unity-btn-primary { background: var(--unity-text); color: var(--unity-bg); border-color: var(--unity-text); }
+        .unity-btn-primary:hover { opacity: 0.92; }
+        .dropdown-menu { background: var(--unity-bg); border: 1px solid var(--unity-border); border-radius: 0; padding: 0.5rem; }
+        .dropdown-item { color: var(--unity-text); padding: 0.5rem 1rem; font-size: 14px; }
+        .dropdown-item:hover { background: var(--unity-bg-secondary); }
 
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            background: var(--primary-gradient);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
+        /* ----- Main ----- */
+        .unity-main { padding: 1.5rem 1rem 3rem; max-width: 1280px; margin: 0 auto; }
+        @media (min-width: 992px) { .unity-main { padding: 2rem 2rem 4rem; } }
+
+        .unity-back {
+            font-size: 14px; color: var(--unity-text-secondary); text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;
+            transition: color 0.2s var(--unity-ease);
         }
+        .unity-back:hover { color: var(--unity-text); }
 
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-top: 76px;
-            min-height: calc(100vh - 76px);
-            padding: 60px 0;
-        }
-
-        /* Breadcrumb */
-        .custom-breadcrumb {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .breadcrumb-item a {
-            color: #667eea;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .breadcrumb-item a:hover {
-            color: #8b94ff;
-        }
-
-        .breadcrumb-item.active {
-            color: #ffffff;
-        }
-
-        /* Product Detail Card */
-        .product-detail-card {
-            background: var(--card-gradient);
-            border-radius: 25px;
+        /* Product layout */
+        .unity-pdp {
+            background: var(--unity-bg);
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
+            margin-bottom: 2rem;
         }
-
-        .product-detail-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--primary-gradient);
-            opacity: 0.03;
-            z-index: 1;
-        }
-
-        .product-content {
-            position: relative;
-            z-index: 2;
-            padding: 40px;
-        }
-
-        /* Product Image */
-        .product-image-container {
-            height: 500px;
-            background: linear-gradient(45deg, #2d2d2d, #404040);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        .product-image-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--primary-gradient);
-            opacity: 0.1;
-            z-index: 1;
-        }
-
-        .product-image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: relative;
-            z-index: 2;
-            transition: transform 0.4s ease;
-        }
-
-        .product-image-container:hover img {
-            transform: scale(1.05);
-        }
-
-        .no-image-placeholder {
-            height: 100%;
+        .unity-pdp-image-wrap {
+            background: var(--unity-bg-secondary);
+            min-height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            color: #666;
-            position: relative;
-            z-index: 2;
+            padding: 1.5rem;
         }
-
-        /* Product Info */
-        .product-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            line-height: 1.2;
+        @media (min-width: 992px) { .unity-pdp-image-wrap { min-height: 420px; border-right: 1px solid var(--unity-border); } }
+        .unity-pdp-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.4s var(--unity-ease);
         }
+        .unity-pdp-image.loaded { opacity: 1; }
+        .unity-pdp-no-image { color: var(--unity-text-secondary); text-align: center; padding: 2rem; }
+        .unity-pdp-info { padding: 1.5rem; }
+        @media (min-width: 992px) { .unity-pdp-info { padding: 2rem; } }
 
-        .product-description {
-            font-size: 1.1rem;
-            color: #b0b0b0;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .unity-pdp-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .unity-pdp-badge {
+            font-size: 12px; padding: 0.35rem 0.65rem;
+            background: var(--unity-bg-secondary); border: 1px solid var(--unity-border);
+            color: var(--unity-text-secondary);
         }
-
-        .product-price {
-            background: var(--secondary-gradient);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 2rem;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
-            position: relative;
+        .unity-pdp-title {
+            font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text);
+            margin-bottom: 0.5rem; line-height: 1.3;
         }
+        @media (min-width: 768px) { .unity-pdp-title { font-size: 1.75rem; } }
+        .unity-pdp-subtitle { font-size: 14px; color: var(--unity-text-secondary); margin-bottom: 1.25rem; }
 
-        .product-price::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: var(--secondary-gradient);
-            border-radius: 50px;
-            z-index: -1;
-            filter: blur(8px);
-            opacity: 0.7;
+        .unity-pdp-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+        .unity-pdp-detail {
+            background: var(--unity-bg-secondary);
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
+            padding: 1rem;
         }
+        .unity-pdp-detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); margin-bottom: 0.35rem; }
+        .unity-pdp-detail-value { font-size: 14px; font-weight: 500; color: var(--unity-text); }
 
-        /* Stock Badge */
-        .stock-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
+        .unity-pdp-price {
+            background: var(--unity-bg-secondary);
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
+            padding: 0.5rem 0.75rem;
+            width: fit-content;
+            margin-bottom: 1.5rem;
         }
+        .unity-pdp-price-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); }
+        .unity-pdp-price-value { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text); }
 
-        .stock-badge {
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .unity-pdp-cart {
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
         }
-
-        .stock-badge.in-stock {
-            background: var(--success-gradient);
-            color: white;
+        .unity-pdp-qty { margin-bottom: 1rem; }
+        .unity-pdp-qty label { font-size: 14px; color: var(--unity-text-secondary); margin-right: 0.5rem; }
+        .unity-pdp-qty input {
+            width: 72px; padding: 0.5rem; font-size: 14px; font-family: inherit;
+            border: 1px solid var(--unity-border); border-radius: 0; background: var(--unity-bg);
         }
-
-        .stock-badge.low-stock {
-            background: var(--warning-gradient);
-            color: white;
-        }
-
-        .stock-badge.out-of-stock {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
-        }
-
-        /* Add to Cart Form */
-        .cart-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .quantity-selector {
-            margin-bottom: 25px;
-        }
-
-        .quantity-selector label {
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .quantity-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 15px;
-            padding: 12px 20px;
-            font-size: 1.1rem;
-            width: 100px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .quantity-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #667eea;
-            outline: none;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-add-cart {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .unity-pdp-add {
             width: 100%;
-            position: relative;
+            padding: 0.875rem 1.5rem;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 0;
+            border: none;
+            background: var(--unity-text);
+            color: var(--unity-bg);
+            cursor: pointer;
+            transition: transform 0.2s var(--unity-ease), opacity 0.2s var(--unity-ease);
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .unity-pdp-add:hover { transform: scale(1.02); opacity: 0.95; }
+        }
+        .unity-pdp-add:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .unity-pdp-desc {
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        .unity-pdp-desc-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); margin-bottom: 0.75rem; }
+        .unity-pdp-desc-text { font-size: 14px; color: var(--unity-text); line-height: 1.6; white-space: pre-wrap; }
+        .unity-pdp-desc-toggle {
+            font-size: 13px; color: var(--unity-text-secondary); background: none; border: none; padding: 0.5rem 0; margin-top: 0.5rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.25rem;
+        }
+        .unity-pdp-desc-toggle:hover { color: var(--unity-text); }
+        @media (min-width: 768px) { .unity-pdp-desc-text.is-clamped { max-height: none; } }
+        @media (max-width: 767px) {
+            .unity-pdp-desc-text.is-clamped { max-height: 96px; overflow: hidden; }
+        }
+
+        /* You may also like */
+        .unity-related {
+            padding: 2rem 0;
+            border-top: 1px solid var(--unity-border);
+        }
+        .unity-related-title {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--unity-text-secondary);
+            text-align: center; margin-bottom: 1.5rem; font-weight: 600;
+        }
+        .unity-related-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.5rem 0;
+        }
+        .unity-related-track::-webkit-scrollbar { display: none; }
+        .unity-related-card {
+            flex: 0 0 260px;
+            scroll-snap-align: start;
+            background: var(--unity-bg);
+            border: 1px solid var(--unity-border);
+            border-radius: 0;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s var(--unity-ease), transform 0.2s var(--unity-ease);
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .unity-related-card:hover { border-color: var(--unity-text-secondary); transform: translateY(-2px); }
+        }
+        .unity-related-card-image {
+            aspect-ratio: 4/5;
+            background: var(--unity-bg-secondary);
             overflow: hidden;
         }
-
-        .btn-add-cart::before {
-            content: '';
+        .unity-related-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--unity-ease); }
+        .unity-related-card:hover .unity-related-card-image img { transform: scale(1.05); }
+        .unity-related-card-body { padding: 1rem; }
+        .unity-related-card-title { font-size: 14px; font-weight: 500; color: var(--unity-text); margin-bottom: 0.35rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .unity-related-card-price { font-size: 14px; color: var(--unity-text-secondary); }
+        .unity-related-wrap { position: relative; padding: 0 48px; }
+        .unity-related-btn {
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-add-cart:hover::before {
-            left: 100%;
-        }
-
-        .btn-add-cart:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-add-cart:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        /* Features List */
-        .features-section {
-            margin-top: 40px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .features-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        .feature-item {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--unity-border);
+            background: var(--unity-bg);
+            color: var(--unity-text);
             display: flex;
             align-items: center;
-            padding: 12px 0;
-            color: #b0b0b0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1;
+            transition: background 0.2s var(--unity-ease), color 0.2s var(--unity-ease);
         }
+        .unity-related-btn:hover { background: var(--unity-bg-secondary); }
+        .unity-related-btn.prev { left: 0; }
+        .unity-related-btn.next { right: 0; }
 
-        .feature-item:last-child {
-            border-bottom: none;
+        /* Toast */
+        .cart-toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+            padding: 0.75rem 1.25rem; background: var(--unity-text); color: var(--unity-bg);
+            font-size: 14px; font-weight: 500; border-radius: 0;
+            display: flex; align-items: center; gap: 0.5rem;
+            animation: unityToastIn 0.3s var(--unity-ease);
         }
-
-        .feature-item i {
-            color: #667eea;
-            margin-right: 15px;
-            font-size: 1.2rem;
+        @keyframes unityToastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Description Section */
-        .description-section {
-            margin-top: 60px;
-            background: var(--card-gradient);
-            border-radius: 25px;
-            padding: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .description-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .description-text {
-            font-size: 1.1rem;
-            color: #b0b0b0;
-            line-height: 1.8;
-        }
-
-        /* Out of Stock Alert */
-        .out-of-stock-alert {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(238, 90, 36, 0.1));
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            color: #ff6b6b;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .product-title {
-                font-size: 2rem;
-            }
-            
-            .product-price {
-                font-size: 1.5rem;
-                padding: 12px 25px;
-            }
-            
-            .product-content {
-                padding: 20px;
-            }
-            
-            .cart-form {
-                padding: 20px;
-            }
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .product-detail-card {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .description-section {
-            animation: fadeInUp 0.8s ease forwards;
-        }
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; border-radius: 0; }
     </style>
 </head>
 <body>
-    <!-- Custom Navbar -->
-    <nav class="navbar navbar-expand-lg custom-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('products.index') }}">
-                <i class="fas fa-gem me-2"></i>Premium Store
+    <header class="unity-header" id="unityHeader">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ route('home') }}" class="unity-logo">Make Your Order</a>
+            <nav class="unity-nav-desktop">
+                <a href="{{ route('home') }}">Home</a>
+                <a href="{{ route('home') }}">Products</a>
+            </nav>
+        </div>
+        <div class="unity-header-right">
+            <a href="{{ route('cart.view') }}" class="unity-icon-btn" aria-label="Cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#cart">
-                            <i class="fas fa-shopping-cart me-1"></i>Cart
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#account">
-                            <i class="fas fa-user me-1"></i>Account
-                        </a>
-                    </li>
-                </ul>
+            @auth
+                <div class="dropdown">
+                    <button class="unity-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                        @if(Auth::user()->isAdmin())
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Panel</a></li>
+                        @endif
+                        <li><hr class="dropdown-divider"></li>
+                        <li><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="dropdown-item w-100 text-start">Log Out</button></form></li>
+                    </ul>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="unity-btn" style="padding: 0.4rem 0.75rem; font-size: 13px;">Login</a>
+                <a href="{{ route('register') }}" class="unity-btn unity-btn-primary" style="padding: 0.4rem 0.75rem; font-size: 13px;">Register</a>
+            @endauth
+        </div>
+    </header>
+
+    <main class="unity-main">
+        <a href="{{ route('home') }}" class="unity-back unity-ani-fade-in">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Products
+        </a>
+
+        @if (session('status'))
+            <div class="alert alert-success alert-dismissible fade show mb-4 unity-ani-fade-in unity-ani-delay-1">
+                {{ session('status') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <div class="unity-pdp">
+            <div class="row g-0">
+                <div class="col-lg-5 unity-ani-fade-in unity-ani-delay-1">
+                    <div class="unity-pdp-image-wrap">
+                        @if ($product->image_path)
+                            <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" class="unity-pdp-image" id="pdpImage" loading="lazy">
+                        @else
+                            <div class="unity-pdp-no-image">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                <p class="mt-2 mb-0">No image</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="unity-pdp-info">
+                        <div class="unity-pdp-badges unity-ani-fade-in unity-ani-delay-2">
+                            @if($product->category)
+                                <span class="unity-pdp-badge">{{ $product->category->name }}</span>
+                            @endif
+                            <span class="unity-pdp-badge">{{ $product->brand_name ?? '—' }}</span>
+                        </div>
+                        <h1 class="unity-pdp-title unity-ani-fade-in unity-ani-delay-2">{{ $product->name }}</h1>
+                        @if($product->product_name_hi)
+                            <p class="unity-pdp-subtitle unity-ani-fade-in unity-ani-delay-2">{{ $product->product_name_hi }}</p>
+                        @endif
+
+                        <div class="unity-pdp-details">
+                            <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
+                                <div class="unity-pdp-detail-label">Company Part Number</div>
+                                <div class="unity-pdp-detail-value">{{ $product->company_part_number ?? '—' }}</div>
+                            </div>
+                            @if($product->company_part_number_substitute)
+                                <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
+                                    <div class="unity-pdp-detail-label">Alternative Part No.</div>
+                                    <div class="unity-pdp-detail-value">{{ $product->company_part_number_substitute }}</div>
+                                </div>
+                            @endif
+                            @if($product->local_part_number)
+                                <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
+                                    <div class="unity-pdp-detail-label">Local Part Number</div>
+                                    <div class="unity-pdp-detail-value">{{ $product->local_part_number }}</div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="unity-pdp-cart unity-ani-fade-in unity-ani-delay-4">
+                            <form method="POST" action="{{ route('cart.add', $product) }}">
+                                @csrf
+                                <div class="unity-pdp-qty">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1">
+                                </div>
+                                <button type="submit" class="unity-pdp-add">Add to Cart</button>
+                            </form>
+                            @guest
+                                <p class="mt-2 mb-0 small text-muted">Guests can add items to cart.</p>
+                            @endguest
+                        </div>
+
+                        <div class="unity-pdp-price unity-ani-fade-in unity-ani-delay-4">
+                            <div class="unity-pdp-price-label">MRP</div>
+                            <div class="unity-pdp-price-value">₹{{ number_format((float) $product->price, 2) }}</div>
+                        </div>
+
+                        @if($product->description)
+                            <div class="unity-pdp-desc unity-ani-fade-in unity-ani-delay-5" id="descSection">
+                                <div class="unity-pdp-desc-title">Description</div>
+                                <div class="unity-pdp-desc-text is-clamped" id="descText">{{ $product->description }}</div>
+                                <button type="button" class="unity-pdp-desc-toggle d-md-none" id="descToggle" aria-expanded="false">
+                                    <span id="descToggleLabel">Read more</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb custom-breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('products.index') }}">
-                            <i class="fas fa-home me-1"></i>Products
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        {{ $product->name }}
-                    </li>
-                </ol>
-            </nav>
-
-            <!-- Product Detail Card -->
-            <div class="product-detail-card">
-                <div class="product-content">
-                    <div class="row g-5">
-                        <!-- Product Image -->
-                        <div class="col-lg-6">
-                            <div class="product-image-container">
-                                @if ($product->image_path)
-                                    <img src="{{ asset('storage/products/' . $product->image_path) }}" 
-                                         alt="{{ $product->name }}">
+        @if($youMayAlsoLike->isNotEmpty())
+            <section class="unity-related unity-ani-fade-in unity-ani-delay-6" aria-label="You may also like">
+                <h2 class="unity-related-title">You May Also Like</h2>
+                <div class="unity-related-wrap">
+                    <button type="button" class="unity-related-btn prev" aria-label="Previous" id="relatedPrev">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" class="unity-related-btn next" aria-label="Next" id="relatedNext">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                    <div class="unity-related-track" id="relatedTrack">
+                    @foreach($youMayAlsoLike as $related)
+                        <a href="{{ route('products.show', $related) }}" class="unity-related-card">
+                            <div class="unity-related-card-image">
+                                @if ($related->image_path)
+                                    <img src="{{ asset($related->image_path) }}" alt="{{ $related->name }}" loading="lazy">
                                 @else
-                                    <div class="no-image-placeholder">
-                                        <i class="fas fa-image fa-4x mb-3"></i>
-                                        <p class="fs-5">No image available</p>
+                                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--unity-text-secondary);">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
                                     </div>
                                 @endif
                             </div>
-                        </div>
-                        
-                        <!-- Product Details -->
-                        <div class="col-lg-6">
-                            <h1 class="product-title">{{ $product->name }}</h1>
-                            
-                            @if($product->description)
-                                <p class="product-description">{{ $product->description }}</p>
-                            @endif
-                            
-                            <!-- Price -->
-                            <div class="product-price">
-                                ${{ number_format((float) $product->price, 2) }}
+                            <div class="unity-related-card-body">
+                                <div class="unity-related-card-title">{{ $related->name }}</div>
+                                <div class="unity-related-card-price">₹{{ number_format((float) $related->price, 2) }}</div>
                             </div>
-                            
-                            <!-- Stock Information -->
-                            <div class="stock-info">
-                                @if($product->stock > 10)
-                                    <span class="stock-badge in-stock">
-                                        <i class="fas fa-check-circle"></i>
-                                        In Stock ({{ $product->stock }} available)
-                                    </span>
-                                @elseif($product->stock > 0)
-                                    <span class="stock-badge low-stock">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        Limited Stock ({{ $product->stock }} left)
-                                    </span>
-                                @else
-                                    <span class="stock-badge out-of-stock">
-                                        <i class="fas fa-times-circle"></i>
-                                        Out of Stock
-                                    </span>
-                                @endif
-                            </div>
-                            
-                            <!-- Add to Cart Form -->
-                            @if($product->stock > 0)
-                                <div class="cart-form">
-                                    <form method="POST" action="{{ route('cart.add', $product) }}">
-                                        @csrf
-                                        <div class="quantity-selector">
-                                            <label for="quantity">Quantity:</label>
-                                            <input type="number" 
-                                                   id="quantity"
-                                                   name="quantity" 
-                                                   value="1" 
-                                                   min="1" 
-                                                   max="{{ $product->stock }}"
-                                                   class="quantity-input">
-                                        </div>
-                                        <button type="submit" class="btn btn-add-cart">
-                                            <i class="fas fa-shopping-cart me-2"></i>
-                                            Add to Cart
-                                        </button>
-                                    </form>
-                                </div>
-                            @else
-                                <div class="out-of-stock-alert">
-                                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
-                                    <h4>Out of Stock</h4>
-                                    <p class="mb-0">This product is currently unavailable. Please check back later!</p>
-                                </div>
-                            @endif
-                            
-                            <!-- Features -->
-                            <div class="features-section">
-                                <h3 class="features-title">
-                                    <i class="fas fa-star me-2"></i>Product Features
-                                </h3>
-                                <div class="feature-item">
-                                    <i class="fas fa-shipping-fast"></i>
-                                    <span>Free shipping on orders over $50</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-undo"></i>
-                                    <span>30-day hassle-free returns</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-shield-alt"></i>
-                                    <span>1-year manufacturer warranty</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-headset"></i>
-                                    <span>24/7 customer support</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-lock"></i>
-                                    <span>Secure payment processing</span>
-                                </div>
-                            </div>
-                        </div>
+                        </a>
+                    @endforeach
                     </div>
                 </div>
-            </div>
-            
-            <!-- Product Description Section -->
-            @if($product->description)
-                <div class="description-section">
-                    <h2 class="description-title">
-                        <i class="fas fa-info-circle me-3"></i>Detailed Description
-                    </h2>
-                    <div class="description-text">
-                        <p>{{ $product->description }}</p>
-                        <p>This premium product is carefully crafted to meet the highest standards of quality and performance. Whether you're looking for functionality, style, or durability, this product delivers on all fronts.</p>
-                        <p>Key highlights include superior materials, innovative design, and exceptional value for money. Perfect for both professional and personal use, this product will exceed your expectations.</p>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
+            </section>
+        @endif
+    </main>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JavaScript -->
     <script>
-        // Smooth scrolling for navbar links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Header scroll
+            var header = document.getElementById('unityHeader');
+            if (header) window.addEventListener('scroll', function() { header.classList.toggle('scrolled', window.scrollY > 10); });
 
-        // Quantity input validation
-        const quantityInput = document.getElementById('quantity');
-        if (quantityInput) {
-            quantityInput.addEventListener('input', function() {
-                const max = parseInt(this.getAttribute('max'));
-                const min = parseInt(this.getAttribute('min'));
-                let value = parseInt(this.value);
-                
-                if (value > max) this.value = max;
-                if (value < min) this.value = min;
-            });
-        }
-
-        // Add to cart button animation
-        const addToCartBtn = document.querySelector('.btn-add-cart');
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', function() {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
-                this.disabled = true;
-                
-                // Re-enable after form submission (you can remove this in production)
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }, 2000);
-            });
-        }
-
-        // Navbar background change on scroll
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.custom-navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(0, 0, 0, 0.98)';
-            } else {
-                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+            // Image fade-in when loaded — class only (no inline opacity so .loaded can show image)
+            var img = document.getElementById('pdpImage');
+            if (img) {
+                if (img.complete) img.classList.add('loaded');
+                else img.addEventListener('load', function() { img.classList.add('loaded'); });
             }
+
+            // Cart form AJAX + toast
+            var cartForm = document.querySelector('form[action*="/cart/"]');
+            if (cartForm) {
+                cartForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var btn = this.querySelector('button[type="submit"]');
+                    var orig = btn ? btn.innerHTML : '';
+                    if (btn) { btn.innerHTML = 'Adding…'; btn.disabled = true; }
+                    fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(function(r) { return r.json(); })
+                        .then(function() {
+                            var t = document.createElement('div'); t.id = 'cart-toast'; t.className = 'cart-toast'; t.textContent = 'Added to cart';
+                            document.body.appendChild(t);
+                            setTimeout(function() { if (t.parentNode) t.remove(); }, 2500);
+                            if (btn) { btn.innerHTML = orig; btn.disabled = false; }
+                        })
+                        .catch(function() { if (btn) { btn.innerHTML = orig; btn.disabled = false; } });
+                });
+            }
+
+            // Quantity
+            var qty = document.getElementById('quantity');
+            if (qty) qty.addEventListener('change', function() { var v = parseInt(this.value, 10); if (isNaN(v) || v < 1) this.value = 1; });
+
+            // Description read more (mobile)
+            var descSection = document.getElementById('descSection');
+            var descToggle = document.getElementById('descToggle');
+            var descLabel = document.getElementById('descToggleLabel');
+            var descText = document.getElementById('descText');
+            if (descSection && descToggle && descLabel && descText) {
+                descToggle.addEventListener('click', function() {
+                    var open = descSection.classList.toggle('is-expanded');
+                    descText.classList.toggle('is-clamped', !open);
+                    descLabel.textContent = open ? 'Read less' : 'Read more';
+                });
+            }
+
+            // Related carousel
+            var track = document.getElementById('relatedTrack');
+            if (track) {
+                var step = Math.min(280, track.offsetWidth * 0.85);
+                document.getElementById('relatedPrev').addEventListener('click', function() { track.scrollBy({ left: -step, behavior: 'smooth' }); });
+                document.getElementById('relatedNext').addEventListener('click', function() { track.scrollBy({ left: step, behavior: 'smooth' }); });
+            }
+
+            // Alert auto-dismiss
+            document.querySelectorAll('.alert').forEach(function(a) {
+                setTimeout(function() { a.classList.remove('show'); setTimeout(function() { a.remove(); }, 150); }, 5000);
+            });
         });
     </script>
 </body>

@@ -22,8 +22,11 @@ class Order extends Model
         'guest_email',
         'guest_phone',
         'guest_address',
+        'delivery_location',
         'total',
         'status',
+        'loyalty_points_used',
+        'loyalty_discount_amount',
     ];
 
     /**
@@ -35,6 +38,7 @@ class Order extends Model
     {
         return [
             'total' => 'decimal:2',
+            'loyalty_discount_amount' => 'decimal:2',
         ];
     }
 

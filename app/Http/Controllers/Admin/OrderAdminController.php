@@ -11,9 +11,17 @@ use Illuminate\View\View;
 
 class OrderAdminController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::withCount('items')->latest()->simplepaginate(20);
+        $query = Order::withCount('items')->latest();
+
+        if ($request->filled('status') && $request->status === 'pending') {
+            $query->whereIn('status', ['pending', 'paid']);
+        } elseif ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->simplePaginate(20)->withQueryString();
         return view('admin.orders.index', compact('orders'));
     }
 
@@ -29,7 +37,7 @@ class OrderAdminController extends Controller
             'status' => ['required', 'string', 'in:pending,paid,shipped,completed,cancelled'],
         ]);
         $order->update(['status' => $validated['status']]);
-        return Redirect::back()->with('status', 'Order status updated');
+        return Redirect::back()->with('success', 'Order status updated');
     }
 }
 

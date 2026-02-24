@@ -28,7 +28,44 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+        if ($user) {
+            $user->update(['last_login' => now()]);
+        }
+
+        // Merge guest cart with user cart if exists
+        $this->mergeGuestCart($request);
+
+        // If the intended URL is checkout, send them there; otherwise role-aware default
+        $intended = redirect()->intended();
+        $intendedUrl = $request->session()->get('url.intended');
+        if ($intendedUrl && str_contains($intendedUrl, '/checkout')) {
+            return redirect()->to(url('/checkout'));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Merge guest cart with user cart after login
+     */
+    private function mergeGuestCart(Request $request): void
+    {
+        $guestCart = $request->session()->get('guest_cart', []);
+        $userCart = $request->session()->get('cart', []);
+
+        if (!empty($guestCart)) {
+            foreach ($guestCart as $productId => $item) {
+                if (isset($userCart[$productId])) {
+                    $userCart[$productId]['quantity'] += $item['quantity'];
+                } else {
+                    $userCart[$productId] = $item;
+                }
+            }
+
+            $request->session()->put('cart', $userCart);
+            $request->session()->forget('guest_cart');
+        }
     }
 
     /**
