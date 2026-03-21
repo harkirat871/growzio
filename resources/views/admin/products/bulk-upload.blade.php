@@ -16,14 +16,30 @@
             <div class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-800">{{ session('error') }}</div>
         @endif
         @if (session('import_errors_count') && session('import_errors_count') > 0)
+            @php
+                $importErrorsCount = (int) session('import_errors_count', 0);
+                $importErrorsShown = is_array(session('import_errors')) ? count(session('import_errors')) : 0;
+                $importErrorsRemaining = session('import_errors_remaining', []);
+            @endphp
             <div class="mb-4 rounded-md bg-amber-50 p-4 text-sm text-amber-800">
-                <strong>{{ session('import_errors_count') }} row(s) had errors.</strong>
-                @if (session('import_errors'))
+                <strong>{{ $importErrorsCount }} row(s) had errors.</strong>
+                @if (session('import_errors') && $importErrorsShown > 0)
                     <ul class="mt-2 list-inside list-disc text-amber-700">
                         @foreach (session('import_errors') as $err)
                             <li>{{ $err }}</li>
                         @endforeach
                     </ul>
+                @endif
+
+                @if ($importErrorsCount > $importErrorsShown && ! empty($importErrorsRemaining))
+                    <details class="mt-2">
+                        <summary class="cursor-pointer font-medium">Show all ({{ $importErrorsCount }})</summary>
+                        <ul class="mt-1 list-inside list-disc text-amber-700">
+                            @foreach ($importErrorsRemaining as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </details>
                 @endif
             </div>
         @endif

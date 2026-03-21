@@ -23,13 +23,31 @@
                 </div>
             @endif
             @if (session('import_errors') && count(session('import_errors')) > 0)
+                @php
+                    $importErrorsCount = (int) session('import_errors_count', 0);
+                    $importErrorsShown = is_array(session('import_errors')) ? count(session('import_errors')) : 0;
+                    $importErrorsRemaining = session('import_errors_remaining', []);
+                @endphp
                 <div class="mb-6 bg-amber-50 border border-amber-300 text-amber-800 px-4 py-3 rounded relative" role="alert">
-                    <p class="font-medium">Import row errors (showing first {{ count(session('import_errors')) }} of {{ session('import_errors_count', 0) }}):</p>
+                    <p class="font-medium">
+                        Import row errors (showing first {{ $importErrorsShown }} of {{ $importErrorsCount }}):
+                    </p>
                     <ul class="mt-2 list-disc list-inside text-sm">
                         @foreach (session('import_errors') as $err)
                             <li>{{ $err }}</li>
                         @endforeach
                     </ul>
+
+                    @if ($importErrorsCount > $importErrorsShown && ! empty($importErrorsRemaining))
+                        <details class="mt-2">
+                            <summary class="cursor-pointer font-medium">Show all ({{ $importErrorsCount }})</summary>
+                            <ul class="mt-1 list-disc list-inside text-sm">
+                                @foreach ($importErrorsRemaining as $err)
+                                    <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        </details>
+                    @endif
                 </div>
             @endif
             @if (session('general_fallback_report') && count(session('general_fallback_report')) > 0)

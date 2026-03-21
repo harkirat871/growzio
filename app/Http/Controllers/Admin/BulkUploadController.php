@@ -156,6 +156,7 @@ class BulkUploadController extends Controller
         ksort($errorsList, SORT_NUMERIC);
         $errorMessages = array_values($errorsList);
         $firstErrors = array_slice($errorMessages, 0, 5);
+        $remainingErrors = array_slice($errorMessages, 5);
 
         if ($stats['total'] === 0 && ! empty($errorMessages)) {
             return redirect()
@@ -174,6 +175,7 @@ class BulkUploadController extends Controller
             ->route('admin.products.bulk-upload')
             ->with('success', $message)
             ->with('import_errors', $firstErrors)
+            ->with('import_errors_remaining', $remainingErrors)
             ->with('import_errors_count', count($errorMessages));
 
         $generalFallback = $stats['general_fallback'] ?? [];
@@ -209,6 +211,7 @@ class BulkUploadController extends Controller
         ksort($errorsList, SORT_NUMERIC);
         $errorMessages = array_values($errorsList);
         $firstErrors = array_slice($errorMessages, 0, 5);
+        $remainingErrors = array_slice($errorMessages, 5);
 
         $message = sprintf(
             'Total rows processed: %d. Imported: %d. Skipped: %d.',
@@ -221,6 +224,7 @@ class BulkUploadController extends Controller
             ->route('admin.products.index')
             ->with('success', $message)
             ->with('import_errors', $firstErrors)
+            ->with('import_errors_remaining', $remainingErrors)
             ->with('import_errors_count', count($errorMessages));
 
         $generalFallback = $stats['general_fallback'] ?? [];
