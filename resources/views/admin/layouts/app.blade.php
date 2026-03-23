@@ -8,7 +8,7 @@
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root { --admin-primary: #0A0A0A; --admin-secondary: #1A1A1A; --admin-accent: #2563EB; --admin-text: #F4F4F5; --admin-text-muted: #71717A; --admin-border: rgba(255,255,255,0.08); }
         .admin-sidebar { background: var(--admin-primary); border-right: 1px solid var(--admin-border); }
