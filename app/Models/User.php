@@ -86,7 +86,8 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         // `role` is an enum added by migration; `is_admin` is a boolean flag.
-        return $this->role === 'admin' || (bool) $this->is_admin;
+        // Middleware expects this to be truthy when `is_admin == 1`.
+        return $this->role === 'admin' || (int) $this->is_admin === 1;
     }
 
     /**
