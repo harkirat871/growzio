@@ -67,6 +67,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login' => 'datetime',
             'password' => 'hashed',
+            // Stored as boolean in the DB (see add_is_admin_to_users_table migration)
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -83,7 +85,8 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin' || $this->is_admin;
+        // `role` is an enum added by migration; `is_admin` is a boolean flag.
+        return $this->role === 'admin' || (bool) $this->is_admin;
     }
 
     /**
