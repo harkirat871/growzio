@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ProductDeletionService;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private ProductDeletionService $productDeletionService
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      * When query is present, uses Laravel Scout for full-text search.
@@ -120,7 +125,7 @@ class ProductController extends Controller
             'name' => $validated['name'],
             'company_part_number' => $validated['company_part_number'],
             'category_id' => $this->resolveCategoryId($validated['category']),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'product_name_hi' => $validated['product_name_hi'] ?? null,
             'brand_name' => $validated['brand_name'] ?? null,
             'local_part_number' => $validated['local_part_number'] ?? null,
@@ -246,16 +251,103 @@ class ProductController extends Controller
     }
 
     /**
+     * Show "Delete Products" page (delete by category + delete all).
+     */
+    public function deleteProductsPage(): View
+    {
+        $rootCategories = $this->buildCategoryTree();
+        $productCount = Product::count();
+
+        return view('admin.products.delete-products', compact('rootCategories', 'productCount'));
+    }
+
+    /**
+     * Permanently delete products assigned directly to selected categories.
+     */
+    public function destroyProductsByCategories(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['integer', 'distinct', 'exists:categories,id'],
+        ]);
+
+        $deletedCount = $this->productDeletionService->deleteProductsByCategoryIds(
+            $validated['category_ids'] ?? []
+        );
+
+        if ($deletedCount === 0) {
+            return redirect()
+                ->route('admin.products.delete-products')
+                ->with('error', 'No products were found in the selected categories.');
+        }
+
+        return redirect()
+            ->route('admin.products.delete-products')
+            ->with('success', "Deleted {$deletedCount} product(s) from the selected categories.");
+    }
+
+    /**
+     * Delete all products via the new Delete Products page.
+     */
+    public function destroyAllFromDeletePage(): RedirectResponse
+    {
+        $this->productDeletionService->deleteAllProducts();
+
+        return redirect()
+            ->route('admin.products.delete-products')
+            ->with('success', 'All products have been permanently deleted. This action cannot be undone.');
+    }
+
+    /**
      * Delete all products (and their order items). Irreversible.
      */
     public function destroyAll(): RedirectResponse
     {
-        DB::transaction(function () {
-            OrderItem::query()->delete();
-            Product::query()->delete();
-        });
+        $this->productDeletionService->deleteAllProducts();
 
         return redirect()->route('admin.products.index')
             ->with('success', 'All products have been permanently deleted. This action cannot be undone.');
+    }
+
+    /**
+     * Build a nested category tree based on parent_id.
+     * Intended for UI rendering where expanding/collapsing is controlled client-side.
+     */
+    private function buildCategoryTree(): mixed
+    {
+        $allCategories = Category::query()->get()->keyBy('id');
+
+        // Ensure every category has a children collection so the view can safely call ->children->isNotEmpty().
+        foreach ($allCategories as $category) {
+            $category->setRelation('children', collect());
+        }
+
+        $rootCategories = $allCategories
+            ->filter(fn ($category) => $category->parent_id === null)
+            ->sortBy('name')
+            ->values();
+
+        foreach ($allCategories as $category) {
+            if ($category->parent_id !== null && isset($allCategories[$category->parent_id])) {
+                $allCategories[$category->parent_id]->children->push($category);
+            }
+        }
+
+        $this->sortChildrenRecursively($rootCategories);
+
+        return $rootCategories;
+    }
+
+    /**
+     * Sort nested children by name recursively.
+     */
+    private function sortChildrenRecursively($categories): void
+    {
+        foreach ($categories as $category) {
+            if ($category->children->isNotEmpty()) {
+                $category->setRelation('children', $category->children->sortBy('name')->values());
+                $this->sortChildrenRecursively($category->children);
+            }
+        }
     }
 }

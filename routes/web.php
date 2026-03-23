@@ -13,6 +13,7 @@ use App\Http\Controllers\HomeController;
 use Google\Client as GoogleClient;
 use Google\Service\Sheets;
 use Google\Service\Sheets\ValueRange;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,7 +22,8 @@ Route::get('/search', [ProductController::class, 'searchResults'])->name('search
 Route::get('/search/suggestions', [ProductController::class, 'searchSuggestions'])->name('search.suggestions');
 
 Route::get('/dashboard', function () {
-    if (auth()->check() && auth()->user()->isAdmin()) {
+    $user = Auth::user();
+    if (Auth::check() && $user instanceof \App\Models\User && $user->isAdmin()) {
         return redirect()->route('admin.dashboard');
     }
     return app(DashboardController::class)->index(request());
@@ -74,6 +76,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/products/bulk-upload/zip-images', [\App\Http\Controllers\Admin\BulkUploadController::class, 'processZipImages'])->name('products.bulk-upload.zip-images');
     Route::get('/products/destroy-all', [\App\Http\Controllers\Admin\ProductController::class, 'destroyAllConfirm'])->name('products.destroy-all.confirm');
     Route::delete('/products/destroy-all', [\App\Http\Controllers\Admin\ProductController::class, 'destroyAll'])->name('products.destroy-all');
+    Route::get('/products/delete-products', [\App\Http\Controllers\Admin\ProductController::class, 'deleteProductsPage'])->name('products.delete-products');
+    Route::post('/products/delete-products/by-category', [\App\Http\Controllers\Admin\ProductController::class, 'destroyProductsByCategories'])->name('products.delete-products.by-category');
+    Route::delete('/products/delete-products/destroy-all', [\App\Http\Controllers\Admin\ProductController::class, 'destroyAllFromDeletePage'])->name('products.delete-products.destroy-all');
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except(['show']);
 });

@@ -9,7 +9,7 @@
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ route('admin.products.bulk-upload') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700">Bulk Upload</a>
                     <a href="{{ route('admin.products.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">New Product</a>
-                    <a href="{{ route('admin.products.destroy-all.confirm') }}" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 border border-red-700">Delete All</a>
+                    <a href="{{ route('admin.products.delete-products') }}" class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 border border-red-700">Delete Products</a>
                 </div>
             </div>
             @if (session('success'))
