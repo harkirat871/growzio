@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/viewer', function () {
+    return view('pdf-viewer');
+});
+
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/search', [ProductController::class, 'searchResults'])->name('search.results');
 Route::get('/search/suggestions', [ProductController::class, 'searchSuggestions'])->name('search.suggestions');
