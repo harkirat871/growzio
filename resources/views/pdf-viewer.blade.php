@@ -23,7 +23,7 @@
     @endphp
 
     <div style="height:100vh; display:flex; align-items:center; justify-content:center; scroll-snap-align:start;">
-      <img src="{{ asset('slides/pdf_pages-to-jpg-' . $num . '.jpg') }}"
+      <img src="{{ asset('slides/pdf_pages-to-jpg-' . $num . '.webp') }}"
            style="max-height:100vh; max-width:100%; object-fit:contain;">
     </div>
   @endfor
