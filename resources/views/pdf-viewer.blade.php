@@ -7,12 +7,7 @@
 
 <body style="background:black; margin:0;">
 
-<!-- Fullscreen button -->
-<button onclick="goFull()" 
-        style="position:fixed; top:10px; right:10px; z-index:999;"
-        class="btn btn-light">
-  ⛶ Fullscreen
-</button>
+
 
 <!-- Scroll container -->
 <div id="viewer" style="height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory;">

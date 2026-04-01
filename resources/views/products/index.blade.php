@@ -1773,6 +1773,96 @@ function buildCard(p) {
             animation: accentBar 0.6s var(--g-ease) 0.3s both;
         }
 
+        /* ── Slides carousel ─────────────────────────── */
+        .g-slides-section { background: var(--g-bg); }
+        .g-slides-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .g-slides-title {
+            font-family: var(--font-head);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--g-light);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .g-slides-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .g-slides-btn {
+            width: 38px; height: 38px;
+            border-radius: var(--g-radius);
+            border: 1px solid var(--g-border);
+            background: var(--g-bg2);
+            color: var(--g-text);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s, transform 0.2s, color 0.2s;
+        }
+        .g-slides-btn:hover { border-color: var(--g-border-hover); color: var(--g-accent); transform: translateY(-1px); }
+        .g-slides-fullscreen {
+            border-radius: var(--g-radius);
+            border: 1px solid var(--g-border);
+            background: var(--g-bg2);
+            color: var(--g-text);
+            padding: 0 0.85rem;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .g-slides-fullscreen:hover { border-color: var(--g-border-hover); color: var(--g-accent); }
+
+        .g-slides-viewport {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--g-radius-lg);
+            border: 1px solid var(--g-border);
+            background: rgba(57,62,70,0.35);
+        }
+        .g-slides-track {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 14px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .g-slides-track::-webkit-scrollbar { height: 8px; }
+        .g-slides-track::-webkit-scrollbar-thumb { background: rgba(255,211,105,0.45); border-radius: 8px; }
+
+        .g-slide-card {
+            flex: 0 0 auto;
+            width: 220px;
+            scroll-snap-align: start;
+            background: rgba(34,40,49,0.65);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
+            overflow: hidden;
+        }
+        .g-slide-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        @media (min-width: 992px) {
+            .g-slide-card { width: 240px; }
+        }
+        @media (max-width: 767.98px) {
+            .g-slides-track { padding: 12px; gap: 10px; }
+            .g-slide-card {
+                width: min(84vw, 360px);
+                scroll-snap-align: center;
+            }
+        }
+
         /* ── Categories section ─────────────────────── */
         .g-categories-section { background: var(--g-bg); }
         .g-category-dropdown {
@@ -2357,6 +2447,45 @@ function buildCard(p) {
             </div>
         </section>
 
+        <!-- Slides carousel -->
+        @if(!isset($searchQuery))
+        <section class="g-section g-slides-section g-reveal" aria-label="Slides">
+            <div class="g-container">
+                <div class="g-slides-head">
+                    <h2 class="g-slides-title">Results</h2>
+                    <div class="g-slides-actions">
+                        <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+                        <button type="button" class="g-slides-btn" id="gSlidesNext" aria-label="Next slides">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                        <a class="g-slides-fullscreen" href="{{ url('/viewer') }}" target="_blank" rel="noopener">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                            Fullscreen
+                        </a>
+                    </div>
+                </div>
+
+                <div class="g-slides-viewport">
+                    <div class="g-slides-track" id="gSlidesTrack">
+                        @for ($i = 1; $i <= 21; $i++)
+                            @php $num = str_pad($i, 4, '0', STR_PAD_LEFT); @endphp
+                            <div class="g-slide-card">
+                                <img
+                                    src="{{ asset('slides/pdf_pages-to-jpg-' . $num . '.webp') }}"
+                                    alt="Slide {{ $i }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </div>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+
         <!-- Categories -->
         @if(!isset($searchQuery))
         <section class="g-section g-categories-section g-reveal">
@@ -2667,6 +2796,20 @@ function buildCard(p) {
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+
+        /* Slides carousel buttons */
+        var slidesTrack = document.getElementById('gSlidesTrack');
+        var slidesPrev = document.getElementById('gSlidesPrev');
+        var slidesNext = document.getElementById('gSlidesNext');
+        function scrollSlides(dir) {
+            if (!slidesTrack) return;
+            var firstCard = slidesTrack.querySelector('.g-slide-card');
+            var cardW = firstCard ? firstCard.getBoundingClientRect().width : 260;
+            var gap = 12;
+            slidesTrack.scrollBy({ left: dir * (cardW + gap) * 2, behavior: 'smooth' });
+        }
+        if (slidesPrev) slidesPrev.addEventListener('click', function () { scrollSlides(-1); });
+        if (slidesNext) slidesNext.addEventListener('click', function () { scrollSlides(1); });
 
         /* Bind cart forms */
         document.querySelectorAll('form[action*="/cart/"]').forEach(function (form) {
