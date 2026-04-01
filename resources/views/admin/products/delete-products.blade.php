@@ -57,13 +57,7 @@
                             >
                                 Delete Selected Products
                             </button>
-                            <button
-                                type="button"
-                                onclick="document.querySelectorAll('input[name=\"category_ids[]\"]').forEach(cb => cb.checked = false)"
-                                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                            >
-                                Clear
-                            </button>
+                         
                         </div>
                     </form>
                 </div>

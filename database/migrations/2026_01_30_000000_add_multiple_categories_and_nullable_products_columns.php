@@ -74,11 +74,17 @@ return new class extends Migration
             }
         }
 
-        DB::table('products')->whereNull('company_part_number')->orWhere('company_part_number', '')->update([
-            'company_part_number' => DB::raw("COALESCE(NULLIF(TRIM(company_part_number), ''), CONCAT('LEGACY-', id))"),
-        ]);
-
         $driver = Schema::getConnection()->getDriverName();
+        $legacyExpr = match ($driver) {
+            'sqlite', 'pgsql' => "COALESCE(NULLIF(TRIM(company_part_number), ''), 'LEGACY-' || id)",
+            default => "COALESCE(NULLIF(TRIM(company_part_number), ''), CONCAT('LEGACY-', id))",
+        };
+
+        DB::table('products')
+            ->whereNull('company_part_number')
+            ->orWhere('company_part_number', '')
+            ->update(['company_part_number' => DB::raw($legacyExpr)]);
+
         if ($driver === 'mysql') {
             DB::statement('ALTER TABLE products MODIFY COLUMN category_id BIGINT UNSIGNED NOT NULL');
             DB::statement('ALTER TABLE products MODIFY COLUMN company_part_number VARCHAR(255) NOT NULL');
