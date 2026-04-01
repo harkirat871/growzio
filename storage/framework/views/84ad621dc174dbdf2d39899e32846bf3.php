@@ -658,6 +658,7 @@
         .g-category-link:hover { opacity: 1; }
         .g-category-children { list-style: none; padding-left: 1.5rem; border-left: 2px solid rgba(255,211,105,0.2); margin-left: 1.25rem; }
         .g-category-children.hidden { display: none; }
+        .g-category-children[hidden] { display: none !important; }
 
         /* ── Section header ─────────────────────────── */
         .g-section-head {
