@@ -1736,6 +1736,34 @@ function buildCard(p) {
             color: var(--g-text-muted);
             animation: fadeUp 0.55s var(--g-ease) 0.12s both;
         }
+        .g-hero-search {
+            max-width: 720px;
+            margin-top: 1rem;
+            position: relative;
+            animation: fadeUp 0.55s var(--g-ease) 0.12s both;
+        }
+        .g-hero-search .g-search-input-wrap { margin: 0; }
+        .g-hero-search .g-search-input {
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+        }
+        .g-hero-suggestions {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(34,40,49,0.98);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
+            box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+            max-height: min(420px, 55vh);
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .g-hero-suggestions:empty { display: none; }
+        .g-hero-suggestions .g-suggestion-item { border-radius: var(--g-radius); }
         .g-accent-line {
             width: 0;
             height: 3px;
@@ -2172,9 +2200,6 @@ function buildCard(p) {
             </nav>
         </div>
         <div class="g-header-right">
-            <button type="button" class="g-icon-btn" id="gSearchOpen" aria-label="Search">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            </button>
             <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Filters">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
             </button>
@@ -2222,23 +2247,6 @@ function buildCard(p) {
                 <a href="{{ route('products.byCategory', $cat) }}">{{ $cat->name }}</a>
             @endforeach
         @endif
-    </div>
-
-    <!-- ██ SEARCH OVERLAY ████████████████████████████████ -->
-    <div class="g-search-overlay" id="gSearchOverlay">
-        <div class="g-search-header">
-            <div class="g-search-input-wrap">
-                <form action="{{ route('search.results') }}" method="GET" id="gSearchForm" role="search">
-                    <input type="search" name="q" class="g-search-input" id="gSearchInput"
-                        placeholder="Search Growzio products..." autocomplete="off"
-                        value="{{ $searchQuery ?? '' }}">
-                </form>
-            </div>
-            <button type="button" class="g-icon-btn" id="gSearchClose" aria-label="Close search">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="g-suggestions" id="gSearchSuggestions"></div>
     </div>
 
     <!-- ██ FILTER DRAWER ██████████████████████████████████ -->
@@ -2318,15 +2326,33 @@ function buildCard(p) {
                         Explore our <span>Collection</span>
                     @endif
                 </h1>
-                <p class="g-hero-sub">
-                    @if(isset($searchQuery))
-                        {{ $products->total() }} product(s) found
-                    @elseif(isset($category))
-                        Browse the complete {{ strtolower($category->name) }} range
-                    @else
-                        Curated products, delivered fast
-                    @endif
-                </p>
+
+                <div class="g-hero-search" role="search">
+                    <div class="g-search-input-wrap">
+                        <form action="{{ route('search.results') }}" method="GET" id="gSearchForm">
+                            <input
+                                type="search"
+                                name="q"
+                                class="g-search-input"
+                                id="gSearchInput"
+                                placeholder="Search products..."
+                                autocomplete="off"
+                                value="{{ $searchQuery ?? '' }}"
+                            >
+                        </form>
+                    </div>
+                    <div class="g-hero-suggestions" id="gSearchSuggestions"></div>
+                </div>
+
+                @if(isset($searchQuery) || isset($category))
+                    <p class="g-hero-sub">
+                        @if(isset($searchQuery))
+                            {{ $products->total() }} product(s) found
+                        @else
+                            Browse the complete {{ strtolower($category->name) }} range
+                        @endif
+                    </p>
+                @endif
                 <div class="g-accent-line"></div>
             </div>
         </section>
@@ -2485,15 +2511,6 @@ function buildCard(p) {
         function closeMobile() { mobileMenu.classList.remove('open'); mobileOvly.classList.remove('open'); document.body.style.overflow = ''; }
         if (hamburger) hamburger.addEventListener('click', openMobile);
         if (mobileOvly) mobileOvly.addEventListener('click', closeMobile);
-
-        /* ─── Search overlay ────────────────────────────── */
-        var searchOpen  = document.getElementById('gSearchOpen');
-        var searchOvly  = document.getElementById('gSearchOverlay');
-        var searchClose = document.getElementById('gSearchClose');
-        var searchInput = document.getElementById('gSearchInput');
-        if (searchOpen)  searchOpen.addEventListener('click', function () { searchOvly.classList.add('open'); setTimeout(function () { searchInput && searchInput.focus(); }, 120); });
-        if (searchClose) searchClose.addEventListener('click', function () { searchOvly.classList.remove('open'); });
-        if (searchOvly)  searchOvly.addEventListener('keydown', function (e) { if (e.key === 'Escape') searchOvly.classList.remove('open'); });
 
         /* ─── Filter drawer ─────────────────────────────── */
         var filterOpen  = document.getElementById('gFilterOpen');
