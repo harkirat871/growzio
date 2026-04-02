@@ -229,13 +229,20 @@ class Product extends Model
             case self::SORT_PRICE_DESC:
                 return $builder->orderBy('price', 'desc');
             case self::SORT_BEST_SELLERS:
+                // In production, Meilisearch sortableAttributes may not include `last_sold_at`
+                // (which causes 500s). If it's a Scout builder, avoid ordering by it and let
+                // Meilisearch fall back to its default ranking.
+                if ($builder instanceof \Laravel\Scout\Builder) {
+                    return $builder;
+                }
+
                 return $builder->orderBy('last_sold_at', 'desc');
             default:
-                // For Scout (Meilisearch) pagination, avoid `latest()` which relies on
-                // `created_at` being configured as a sortable attribute in the index.
-                // Production has shown `created_at` can be missing from sortableAttributes.
+                // When using Scout (Meilisearch), avoid default ordering by `created_at`
+                // (or any other field) unless it's configured as sortable in the index.
+                // This prevents Meilisearch "Attribute X is not sortable" 500s.
                 if ($builder instanceof \Laravel\Scout\Builder) {
-                    return $builder->orderBy('last_sold_at', 'desc');
+                    return $builder;
                 }
 
                 return $builder->latest();
