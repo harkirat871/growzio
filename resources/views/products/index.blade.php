@@ -2286,7 +2286,7 @@ function buildCard(p) {
             <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-                <a href="{{ route('home') }}" class="active">Products</a>
+                {{-- <a href="{{ route('home') }}" class="active">Products</a> --}}
             </nav>
         </div>
         <div class="g-header-right">
@@ -2403,144 +2403,204 @@ function buildCard(p) {
             </div>
         @endif
 
-        <!-- Hero band -->
-        <section class="g-hero-band">
-            <div class="g-container">
-                <div class="g-hero-eyebrow">// Growzio Store</div>
-                <h1 class="g-hero-title">
-                    @if(isset($searchQuery))
-                        Results for <span>"{{ $searchQuery }}"</span>
-                    @elseif(isset($category))
-                        {{ $category->name }}
-                    @else
-                        Explore our <span>Collection</span>
-                    @endif
-                </h1>
+      {{-- ═══════════════════════════════════════════
+         HERO BAND
+    ═══════════════════════════════════════════ --}}
+    <section class="g-hero-band">
+        <div class="g-container">
 
-                <div class="g-hero-search" role="search">
-                    <div class="g-search-input-wrap">
-                        <form action="{{ route('search.results') }}" method="GET" id="gSearchForm">
-                            <input
-                                type="search"
-                                name="q"
-                                class="g-search-input"
-                                id="gSearchInput"
-                                placeholder="Search products..."
-                                autocomplete="off"
-                                value="{{ $searchQuery ?? '' }}"
-                            >
-                        </form>
-                    </div>
-                    <div class="g-hero-suggestions" id="gSearchSuggestions"></div>
-                </div>
+            <div class="g-hero-eyebrow">// Growzio</div>
 
-                @if(isset($searchQuery) || isset($category))
-                    <p class="g-hero-sub">
-                        @if(isset($searchQuery))
-                            {{ $products->total() }} product(s) found
-                        @else
-                            Browse the complete {{ strtolower($category->name) }} range
-                        @endif
-                    </p>
+            <h1 class="g-hero-title">
+                @if(isset($searchQuery))
+                    Results for <span>"{{ $searchQuery }}"</span>
+                @elseif(isset($category))
+                    {{ $category->name }}
+                @else
+                    Explore our <span>Collection</span>
                 @endif
-                <div class="g-accent-line"></div>
-            </div>
-        </section>
+            </h1>
 
-        <!-- Slides carousel -->
-        @if(!isset($searchQuery))
-        <section class="g-section g-slides-section g-reveal" aria-label="Slides">
-            <div class="g-container">
-                <div class="g-slides-head">
-                    <h2 class="g-slides-title">Results</h2>
-                    <div class="g-slides-actions">
-                        <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
-                        </button>
-                        <button type="button" class="g-slides-btn" id="gSlidesNext" aria-label="Next slides">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
-                        </button>
-                        <a class="g-slides-fullscreen" href="{{ url('/viewer') }}" target="_blank" rel="noopener">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-                            Fullscreen
-                        </a>
+            @if(isset($searchQuery))
+                <p class="g-hero-meta">{{ $products->total() }} product(s) found</p>
+            @elseif(isset($category))
+                <p class="g-hero-meta">Browse the complete {{ strtolower($category->name) }} range</p>
+            @endif
+
+            <div class="g-hero-search" role="search">
+                <form action="{{ route('search.results') }}" method="GET" id="gSearchForm" class="g-search-form">
+                    <div class="g-search-input-wrap">
+                        <svg class="g-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input
+                            type="search"
+                            name="q"
+                            class="g-search-input"
+                            id="gSearchInput"
+                            placeholder="Search products…"
+                            autocomplete="off"
+                            value="{{ $searchQuery ?? '' }}"
+                            aria-label="Search products"
+                        >
+                        @if(isset($searchQuery))
+                            <a href="{{ route('home') }}" class="g-search-clear" aria-label="Clear search">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </a>
+                        @endif
                     </div>
-                </div>
+                </form>
+                <div class="g-hero-suggestions" id="gSearchSuggestions" aria-live="polite"></div>
+            </div>
 
-                <div class="g-slides-viewport">
-                    <div class="g-slides-track" id="gSlidesTrack">
-                        @for ($i = 1; $i <= 21; $i++)
-                            @php $num = str_pad($i, 4, '0', STR_PAD_LEFT); @endphp
-                            <div class="g-slide-card">
-                                <img
-                                    src="{{ asset('slides/pdf_pages-to-jpg-' . $num . '.webp') }}"
-                                    alt="Slide {{ $i }}"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
-                            </div>
-                        @endfor
-                    </div>
+            <div class="g-accent-line"></div>
+
+        </div>
+    </section>
+
+    {{-- ═══════════════════════════════════════════
+         SLIDES CAROUSEL  (hidden on search)
+    ═══════════════════════════════════════════ --}}
+    @if(!isset($searchQuery))
+    <section class="g-section g-slides-section g-reveal" aria-label="Product catalog slides">
+        <div class="g-container">
+
+            <div class="g-section-head g-section-head--row">
+                <div>
+                    <div class="g-section-eyebrow">// Catalog</div>
+                    <h2 class="g-section-title">Browse the deck</h2>
+                </div>
+                <div class="g-slides-actions">
+                    <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" class="g-slides-btn" id="gSlidesNext" aria-label="Next slides">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                    <a class="g-slides-fullscreen" href="{{ url('/viewer') }}" target="_blank" rel="noopener" aria-label="Open catalog in fullscreen">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                        Fullscreen
+                    </a>
                 </div>
             </div>
-        </section>
-        @endif
 
-        <!-- Categories -->
-        @if(!isset($searchQuery))
-        <section class="g-section g-categories-section g-reveal">
-            <div class="g-container">
-                <details class="g-category-dropdown" @if(!isset($category) || (isset($category) && ($categoryProductCount ?? 0) === 0)) open @endif>
-                    <summary>
-                        <span>@if(isset($category)){{ $category->name }} &mdash; subcategories @else Shop by category @endif</span>
-                        <svg class="g-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>
-                    </summary>
-                    <div class="g-category-dropdown-body">
-                        <ul class="g-category-list">
-                            @if($categories->isNotEmpty())
-                                @include('products.categories._tree_unity', ['categories' => $categories])
+            <div class="g-slides-viewport">
+                <div class="g-slides-track" id="gSlidesTrack">
+                    @for ($i = 1; $i <= 21; $i++)
+                        @php $num = str_pad($i, 4, '0', STR_PAD_LEFT); @endphp
+                        <div class="g-slide-card">
+                            <img
+                                src="{{ asset('slides/pdf_pages-to-jpg-' . $num . '.webp') }}"
+                                alt="Catalog slide {{ $i }} of 21"
+                                loading="lazy"
+                                decoding="async"
+                                width="800"
+                                height="600"
+                            >
+                        </div>
+                    @endfor
+                </div>
+            </div>
+
+        </div>
+    </section>
+    @endif
+
+    {{-- ═══════════════════════════════════════════
+         CATEGORIES  (hidden on search)
+    ═══════════════════════════════════════════ --}}
+    @if(!isset($searchQuery))
+    <section class="g-section g-categories-section g-reveal">
+        <div class="g-container">
+
+            <details class="g-category-dropdown" @if(!isset($category) || ($categoryProductCount ?? 0) === 0) open @endif>
+                <summary class="g-category-summary">
+                    <div class="g-category-summary-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        <span>
+                            @if(isset($category))
+                                {{ $category->name }} &mdash; subcategories
                             @else
-                                <li class="g-category-row"><span class="g-section-sub">No categories.</span></li>
+                                Shop by category
                             @endif
-                        </ul>
+                        </span>
                     </div>
-                </details>
-            </div>
-        </section>
-        @endif
+                    <svg class="g-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
 
-        <!-- Products -->
-        @if(!isset($category) || isset($searchQuery) || (isset($category) && ($categoryProductCount ?? 0) > 0))
-        <section class="g-section g-products-section">
-            <div class="g-container">
-                <div class="g-section-head g-reveal">
-                    @if(isset($category) && $category->image_path)
-                        <img src="{{ asset($category->image_path) }}" alt="{{ $category->name }}"
-                            style="max-width:100px;margin-bottom:1rem;border-radius:var(--g-radius-lg);opacity:0.85;">
+                <div class="g-category-dropdown-body">
+                    @if($categories->isNotEmpty())
+                        <ul class="g-category-list">
+                            @include('products.categories._tree_unity', ['categories' => $categories])
+                        </ul>
+                    @else
+                        <p class="g-section-sub g-category-empty">No categories available yet.</p>
                     @endif
-                    <div class="g-section-eyebrow">// Products</div>
-                    <h2 class="g-section-title">
-                        @if(isset($searchQuery)) "{{ $searchQuery }}"
-                        @elseif(isset($category)) {{ $category->name }}
-                        @else Our Products
-                        @endif
-                    </h2>
-                    <p class="g-section-sub">
-                        @if(isset($searchQuery)) {{ $products->total() }} result(s) found
-                        @elseif(isset($category)) Explore our {{ strtolower($category->name) }} collection
-                        @else Explore everything we carry
-                        @endif
-                    </p>
-                    @if ($products->count() > 0)
+                </div>
+            </details>
+
+        </div>
+    </section>
+    @endif
+
+    {{-- ═══════════════════════════════════════════
+         PRODUCTS GRID
+    ═══════════════════════════════════════════ --}}
+    @if(!isset($category) || isset($searchQuery) || ($categoryProductCount ?? 0) > 0)
+    <section class="g-section g-products-section">
+        <div class="g-container">
+
+            {{-- Section header --}}
+            <div class="g-section-head g-reveal">
+
+                @if(isset($category) && $category->image_path)
+                    <img
+                        src="{{ asset($category->image_path) }}"
+                        alt="{{ $category->name }}"
+                        class="g-category-hero-img"
+                    >
+                @endif
+
+                <div class="g-section-eyebrow">// Products</div>
+
+                <div class="g-products-head-row">
+                    <div>
+                        <h2 class="g-section-title">
+                            @if(isset($searchQuery))
+                                "{{ $searchQuery }}"
+                            @elseif(isset($category))
+                                {{ $category->name }}
+                            @else
+                                Our Products
+                            @endif
+                        </h2>
+                        <p class="g-section-sub">
+                            @if(isset($searchQuery))
+                                {{ $products->total() }} result(s) found
+                            @elseif(isset($category))
+                                Explore our {{ strtolower($category->name) }} collection
+                            @else
+                                Explore everything we carry
+                            @endif
+                        </p>
+                    </div>
+
+                    @if($products->count() > 0)
                         @php
-                            $baseSortParams = isset($searchQuery) ? array_filter(request()->only(['q'])) : request()->except('sort');
-                            $baseSortUrl = request()->url() . (count($baseSortParams) ? '?' . http_build_query($baseSortParams) : '');
-                            $sortPriceAsc   = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=price_asc';
-                            $sortPriceDesc  = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=price_desc';
-                            $sortBestSellers = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=best_sellers';
+                            $baseSortParams = isset($searchQuery)
+                                ? array_filter(request()->only(['q']))
+                                : request()->except('sort');
+                            $baseSortUrl      = request()->url() . (count($baseSortParams) ? '?' . http_build_query($baseSortParams) : '');
+                            $sep              = str_contains($baseSortUrl, '?') ? '&' : '?';
+                            $sortPriceAsc     = $baseSortUrl . $sep . 'sort=price_asc';
+                            $sortPriceDesc    = $baseSortUrl . $sep . 'sort=price_desc';
+                            $sortBestSellers  = $baseSortUrl . $sep . 'sort=best_sellers';
                         @endphp
                         <div class="g-sort-wrap">
-                            <label for="sort-by-select" class="g-sort-label">sort:</label>
+                            <label for="sort-by-select" class="g-sort-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                                Sort
+                            </label>
                             <select id="sort-by-select" class="g-sort-select" aria-label="Sort products">
                                 <option value="{{ $baseSortUrl }}"     {{ !isset($sort) || $sort === null ? 'selected' : '' }}>Newest</option>
                                 <option value="{{ $sortPriceAsc }}"    {{ (isset($sort) && $sort === 'price_asc')    ? 'selected' : '' }}>Price: Low → High</option>
@@ -2551,47 +2611,72 @@ function buildCard(p) {
                     @endif
                 </div>
 
-                @if ($products->count())
-                    @php
-                        $nextUrl = $products->nextPageUrl();
-                        $nextUrlRelative = $nextUrl
-                            ? parse_url($nextUrl, PHP_URL_PATH) . (parse_url($nextUrl, PHP_URL_QUERY) ? '?' . parse_url($nextUrl, PHP_URL_QUERY) : '')
-                            : '';
-                    @endphp
-                    <div id="products-infinite-container"
-                        data-next-url="{{ $nextUrlRelative }}"
-                        data-has-more="{{ $products->hasMorePages() ? '1' : '0' }}"
-                        data-csrf="{{ csrf_token() }}">
-                        <div id="products-grid-row" class="row g-3 g-md-4">
-                            @foreach ($products as $product)
-                                @include('products._card', ['product' => $product])
-                            @endforeach
-                        </div>
-                        <div id="products-infinite-sentinel" aria-hidden="true"></div>
-                        <div id="products-infinite-loading" class="text-center py-4 d-none">
-                            <span class="g-spinner"></span>
-                            <p class="g-section-sub mt-2">Loading more…</p>
-                        </div>
-                        <div id="products-infinite-end" class="text-center py-4 d-none">
-                            <p class="g-section-sub">— You've seen everything —</p>
-                        </div>
-                        <div id="products-infinite-error" class="text-center py-4 d-none">
-                            <p class="g-section-sub">Failed to load. <button type="button" class="g-btn" style="font-size:13px;padding:0.35rem 0.75rem;" id="products-infinite-retry">Retry</button></p>
-                        </div>
+            </div>{{-- /.g-section-head --}}
+
+            {{-- Products grid or empty state --}}
+            @if($products->count())
+                @php
+                    $nextUrl         = $products->nextPageUrl();
+                    $nextUrlRelative = $nextUrl
+                        ? parse_url($nextUrl, PHP_URL_PATH) . (parse_url($nextUrl, PHP_URL_QUERY) ? '?' . parse_url($nextUrl, PHP_URL_QUERY) : '')
+                        : '';
+                @endphp
+
+                <div
+                    id="products-infinite-container"
+                    data-next-url="{{ $nextUrlRelative }}"
+                    data-has-more="{{ $products->hasMorePages() ? '1' : '0' }}"
+                    data-csrf="{{ csrf_token() }}"
+                >
+                    <div id="products-grid-row" class="row g-3 g-md-4">
+                        @foreach ($products as $product)
+                            @include('products._card', ['product' => $product])
+                        @endforeach
                     </div>
-                @else
-                    <div class="no-products g-reveal">
-                        <h3>@if(isset($searchQuery)) No results found @else No products yet @endif</h3>
-                        <p class="g-section-sub mt-1">@if(isset($searchQuery)) Try a different keyword. @else Check back soon. @endif</p>
+
+                    <div id="products-infinite-sentinel" aria-hidden="true"></div>
+
+                    <div id="products-infinite-loading" class="g-infinite-state d-none" role="status" aria-live="polite">
+                        <span class="g-spinner"></span>
+                        <p class="g-section-sub">Loading more…</p>
+                    </div>
+
+                    <div id="products-infinite-end" class="g-infinite-state d-none" aria-live="polite">
+                        <span class="g-infinite-divider"></span>
+                        <p class="g-section-sub">You've seen everything</p>
+                        <span class="g-infinite-divider"></span>
+                    </div>
+
+                    <div id="products-infinite-error" class="g-infinite-state d-none" role="alert">
+                        <p class="g-section-sub">Something went wrong loading more products.</p>
+                        <button type="button" class="g-btn g-btn-sm" id="products-infinite-retry">Try again</button>
+                    </div>
+                </div>
+
+            @else
+                <div class="g-empty-state g-reveal">
+                    <div class="g-empty-state-icon" aria-hidden="true">
                         @if(isset($searchQuery))
-                            <a href="{{ route('home') }}" class="g-btn g-btn-primary mt-4">View all products</a>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity=".4"/></svg>
+                        @else
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" opacity=".4"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                         @endif
                     </div>
-                @endif
-            </div>
-        </section>
-        @endif
-    </main>
+                    <h3 class="g-empty-state-title">
+                        @if(isset($searchQuery)) No results found @else No products yet @endif
+                    </h3>
+                    <p class="g-section-sub">
+                        @if(isset($searchQuery)) Try a different keyword or browse all products. @else Check back soon — products are on the way. @endif
+                    </p>
+                    @if(isset($searchQuery))
+                        <a href="{{ route('home') }}" class="g-btn g-btn-primary">View all products</a>
+                    @endif
+                </div>
+            @endif
+
+        </div>
+    </section>
+    @endif
 
     <!-- ██ STICKY BOTTOM (MOBILE) █████████████████████████ -->
     <div class="g-sticky-bottom">
