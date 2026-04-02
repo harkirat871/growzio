@@ -231,6 +231,13 @@ class Product extends Model
             case self::SORT_BEST_SELLERS:
                 return $builder->orderBy('last_sold_at', 'desc');
             default:
+                // For Scout (Meilisearch) pagination, avoid `latest()` which relies on
+                // `created_at` being configured as a sortable attribute in the index.
+                // Production has shown `created_at` can be missing from sortableAttributes.
+                if ($builder instanceof \Laravel\Scout\Builder) {
+                    return $builder->orderBy('last_sold_at', 'desc');
+                }
+
                 return $builder->latest();
         }
     }
