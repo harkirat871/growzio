@@ -682,7 +682,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>  --}}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -978,7 +977,7 @@
             padding-left: 1.6rem;
         }
 
-        /* filter drawer (minimal, same as index) */
+        /* filter drawer (minimal) */
         .g-filter-overlay {
             position: fixed; inset: 0;
             background: rgba(34,40,49,0.7);
@@ -1064,9 +1063,26 @@
             background: var(--g-bg2);
             border: 1px solid var(--g-border);
         }
-        .cart-item-image img { width: 100%; height: 100%; object-fit: cover; }
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .cart-item-details { flex: 1; min-width: 0; }
-        .cart-item-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .cart-item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .cart-item-name a {
+            color: var(--g-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .cart-item-name a:hover {
+            color: var(--g-accent);
+            text-decoration: underline;
+        }
         .cart-item-price { font-size: 0.8rem; color: var(--g-text-muted); margin-bottom: 0.75rem; }
         .quantity-input {
             background: var(--g-bg2);
@@ -1158,7 +1174,7 @@
             margin-bottom: 1.5rem;
         }
 
-        /* sticky bottom (growzio style but adapted for cart) */
+        /* sticky bottom (growzio style) */
         .g-sticky-bottom-cart {
             display: none;
         }
@@ -1297,7 +1313,7 @@
         </div>
     </header>
 
-    <!-- mobile menu (same as index) -->
+    <!-- mobile menu -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
         <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
@@ -1306,7 +1322,7 @@
         <div class="g-filter-sect" style="padding:0.75rem 1.25rem; font-size:11px; color:var(--g-accent);">Menu</div>
     </div>
 
-    <!-- filter drawer (static, non‑breaking) -->
+    <!-- filter drawer (static) -->
     <div class="g-filter-overlay" id="gFilterOverlay"></div>
     <div class="g-filter-drawer" id="gFilterDrawer">
         <div class="g-filter-header">Filters</div>
@@ -1357,7 +1373,9 @@
                                         @endif
                                     </div>
                                     <div class="cart-item-details">
-                                        <div class="cart-item-name">{{ $item['product']->name }}</div>
+                                        <div class="cart-item-name">
+                                            <a href="{{ route('products.show', $item['product']) }}">{{ $item['product']->name }}</a>
+                                        </div>
                                         <div class="cart-item-price">₹{{ number_format($item['product']->price, 2) }} each</div>
                                         <form method="POST" action="{{ route('cart.update', $item['product']) }}" class="d-flex align-items-center gap-2 flex-wrap">
                                             @csrf
@@ -1441,7 +1459,7 @@
     </main>
 
     @if (count($items))
-    <!-- sticky bottom (growzio themed, mobile only) -->
+    <!-- sticky bottom (mobile only) -->
     <div class="g-sticky-bottom-cart">
         <button type="button" class="sticky-view-cart" onclick="document.getElementById('cart-content').scrollIntoView({ behavior: 'smooth', block: 'start' })">
             <i class="fas fa-shopping-cart me-1"></i> View cart
