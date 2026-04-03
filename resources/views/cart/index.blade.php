@@ -472,7 +472,7 @@
         }
     </style>
 </head>
-<body class="@if($items->count()) cart-has-sticky @endif">
+<body class="@if(count($items)) cart-has-sticky @endif">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg custom-navbar">
         <div class="container">
@@ -563,7 +563,7 @@
 
             <div class="cart-card" id="cart-content">
                 <div class="cart-content">
-                    @if ($items->count())
+                    @if (count($items))
                         <!-- Cart Items -->
                         @foreach ($items as $item)
                             <div class="cart-item">
@@ -664,7 +664,7 @@
         </div>
     </div>
 
-    @if ($items->count())
+    @if (count($items))
     <!-- Sticky bottom bar: mobile only, fixed to bottom of screen like header -->
     <div class="cart-sticky-bottom">
         <button type="button" class="sticky-view-cart" onclick="document.getElementById('cart-content').scrollIntoView({ behavior: 'smooth', block: 'start' })" aria-label="View cart">
