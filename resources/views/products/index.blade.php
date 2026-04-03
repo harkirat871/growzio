@@ -1144,7 +1144,7 @@ function buildCard(p) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growzio — Products</title>
+    <title>Growzio </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -2224,6 +2224,12 @@ function buildCard(p) {
             body.g-has-sticky { padding-bottom: 5rem; }
         }
 
+        /* Cart link: desktop-only (mobile uses sticky bottom) */
+        .g-cart-link { display: none; }
+        @media (min-width: 769px) {
+            .g-cart-link { display: inline-flex; }
+        }
+
         /* ── Back to Top button ─────────────────────── */
         #g-back-top {
             position: fixed;
@@ -2293,12 +2299,9 @@ function buildCard(p) {
             <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Filters">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
             </button>
-            <div class="g-cart-wrap">
-                <button type="button" class="g-icon-btn" id="gCartOpen" aria-label="Cart">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    <span class="g-cart-badge" id="gCartBadge" style="display:none;">0</span>
-                </button>
-            </div>
+            <a href="{{ route('cart.view') }}" class="g-icon-btn g-cart-link" aria-label="Cart">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </a>
             @auth
                 <div class="dropdown">
                     <button class="g-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
@@ -2359,31 +2362,6 @@ function buildCard(p) {
             @else
                 <p class="g-section-sub">No categories yet.</p>
             @endif
-        </div>
-    </div>
-
-    <!-- ██ CART DRAWER ████████████████████████████████████ -->
-    <div class="g-cart-overlay" id="gCartOverlay"></div>
-    <div class="g-cart-drawer" id="gCartDrawer">
-        <div class="g-cart-header">
-            <span class="g-cart-title">Cart</span>
-            <button type="button" class="g-cart-close-btn" id="gCartClose" aria-label="Close cart">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="g-cart-body" id="gCartBody">
-            <div class="g-cart-empty">Loading cart…</div>
-        </div>
-        <div class="g-cart-footer" id="gCartFooter" style="display:none;">
-            <div class="g-cart-subtotal" id="gCartSubtotal">₹0.00</div>
-            <div class="g-cart-actions">
-                <a href="{{ route('cart.view') }}" class="g-btn">View cart</a>
-                @auth
-                    <a href="{{ route('checkout.form') }}" class="g-btn g-btn-primary">Checkout</a>
-                @else
-                    <a href="{{ route('checkout.login-required') }}" class="g-btn g-btn-primary">Checkout</a>
-                @endauth
-            </div>
         </div>
     </div>
 
@@ -2733,69 +2711,7 @@ function buildCard(p) {
         if (filterOpen) filterOpen.addEventListener('click', function () { filterDrw.classList.add('open'); filterOvly.classList.add('open'); document.body.style.overflow = 'hidden'; });
         if (filterOvly) filterOvly.addEventListener('click', function () { filterDrw.classList.remove('open'); filterOvly.classList.remove('open'); document.body.style.overflow = ''; });
 
-        /* ─── Cart drawer ───────────────────────────────── */
-        var cartOpen    = document.getElementById('gCartOpen');
-        var cartDrw     = document.getElementById('gCartDrawer');
-        var cartOvly    = document.getElementById('gCartOverlay');
-        var cartClose   = document.getElementById('gCartClose');
-        var cartBody    = document.getElementById('gCartBody');
-        var cartFooter  = document.getElementById('gCartFooter');
-        var cartSubtotal = document.getElementById('gCartSubtotal');
-        var cartBadge   = document.getElementById('gCartBadge');
-        var drawerUrl   = '{{ route("cart.drawer") }}';
-
-        function loadCartDrawer() {
-            fetch(drawerUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (cartBadge) {
-                        cartBadge.textContent = data.count;
-                        cartBadge.style.display = data.count > 0 ? 'flex' : 'none';
-                    }
-                    if (data.items.length === 0) {
-                        cartBody.innerHTML = '<div class="g-cart-empty">Your cart is empty.</div>';
-                        if (cartFooter) cartFooter.style.display = 'none';
-                    } else {
-                        var csrf = '{{ csrf_token() }}';
-                        var html = data.items.map(function (item) {
-                            var img = item.image_path
-                                ? '<img src="' + escAttr(item.image_path) + '" alt="">'
-                                : '<div style="width:64px;height:80px;background:var(--g-bg);border-radius:var(--g-radius);"></div>';
-                            var remove = data.authenticated
-                                ? '<form method="POST" action="' + escAttr(item.remove_url) + '" class="g-cart-remove-form mt-2"><input type="hidden" name="_token" value="' + escAttr(csrf) + '"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="g-btn" style="padding:0.25rem 0.65rem;font-size:12px;">Remove</button></form>'
-                                : '';
-                            return '<div class="g-cart-item"><a href="' + escAttr(item.show_url) + '">' + img + '</a>'
-                                + '<div class="g-cart-item-info">'
-                                + '<a href="' + escAttr(item.show_url) + '" class="g-cart-item-name">' + escHtml(item.name) + '</a>'
-                                + '<div class="g-cart-item-meta">Qty ' + item.quantity + ' · ₹' + parseFloat(item.subtotal).toFixed(2) + '</div>'
-                                + remove + '</div></div>';
-                        }).join('');
-                        cartBody.innerHTML = html;
-                        if (cartFooter) cartFooter.style.display = 'block';
-                        if (cartSubtotal) cartSubtotal.textContent = '₹' + parseFloat(data.subtotal).toFixed(2);
-                        cartBody.querySelectorAll('form.g-cart-remove-form').forEach(function (f) {
-                            f.addEventListener('submit', function (e) {
-                                e.preventDefault();
-                                var fd = new FormData(this);
-                                fetch(this.action, { method: 'POST', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, body: fd })
-                                    .then(function () { loadCartDrawer(); });
-                            });
-                        });
-                    }
-                })
-                .catch(function () {
-                    cartBody.innerHTML = '<div class="g-cart-empty">Could not load cart.</div>';
-                    if (cartFooter) cartFooter.style.display = 'none';
-                });
-        }
-
-        function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-        function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
-
-        if (cartOpen)  cartOpen.addEventListener('click',  function () { cartDrw.classList.add('open'); cartOvly.classList.add('open'); document.body.style.overflow = 'hidden'; loadCartDrawer(); });
-        if (cartClose) cartClose.addEventListener('click', function () { cartDrw.classList.remove('open'); cartOvly.classList.remove('open'); document.body.style.overflow = ''; });
-        if (cartOvly)  cartOvly.addEventListener('click',  function () { cartDrw.classList.remove('open'); cartOvly.classList.remove('open'); document.body.style.overflow = ''; });
-        loadCartDrawer();
+        // Cart drawer intentionally removed from index page.
 
         /* ─── Reveal on scroll ──────────────────────────── */
         var reveals = document.querySelectorAll('.g-reveal');
@@ -2809,7 +2725,6 @@ function buildCard(p) {
         }, { rootMargin: '0px 0px -50px 0px', threshold: 0.08 });
         reveals.forEach(function (el) { revObserver.observe(el); });
 
-        window.gLoadCartDrawer = loadCartDrawer;
     })();
     </script>
 
@@ -2860,7 +2775,6 @@ function buildCard(p) {
         toast.innerHTML = '<span class="g-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart';
         document.body.appendChild(toast);
         setTimeout(function () { if (toast.parentNode) toast.remove(); }, 2800);
-        if (window.gLoadCartDrawer) window.gLoadCartDrawer();
     }
 
     /* ─── Ajax add-to-cart ──────────────────────────────── */

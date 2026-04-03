@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growzio — Products</title>
+    <title>Growzio </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1084,6 +1084,12 @@
             body.g-has-sticky { padding-bottom: 5rem; }
         }
 
+        /* Cart link: desktop-only (mobile uses sticky bottom) */
+        .g-cart-link { display: none; }
+        @media (min-width: 769px) {
+            .g-cart-link { display: inline-flex; }
+        }
+
         /* ── Back to Top button ─────────────────────── */
         #g-back-top {
             position: fixed;
@@ -1146,19 +1152,16 @@
             <a href="<?php echo e(route('home')); ?>" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
                 <a href="<?php echo e(route('home')); ?>" class="<?php echo e(request()->routeIs('home') ? 'active' : ''); ?>">Home</a>
-                <a href="<?php echo e(route('home')); ?>" class="active">Products</a>
+                
             </nav>
         </div>
         <div class="g-header-right">
             <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Filters">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
             </button>
-            <div class="g-cart-wrap">
-                <button type="button" class="g-icon-btn" id="gCartOpen" aria-label="Cart">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    <span class="g-cart-badge" id="gCartBadge" style="display:none;">0</span>
-                </button>
-            </div>
+            <a href="<?php echo e(route('cart.view')); ?>" class="g-icon-btn g-cart-link" aria-label="Cart">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </a>
             <?php if(auth()->guard()->check()): ?>
                 <div class="dropdown">
                     <button class="g-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
@@ -1222,31 +1225,6 @@
         </div>
     </div>
 
-    <!-- ██ CART DRAWER ████████████████████████████████████ -->
-    <div class="g-cart-overlay" id="gCartOverlay"></div>
-    <div class="g-cart-drawer" id="gCartDrawer">
-        <div class="g-cart-header">
-            <span class="g-cart-title">Cart</span>
-            <button type="button" class="g-cart-close-btn" id="gCartClose" aria-label="Close cart">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="g-cart-body" id="gCartBody">
-            <div class="g-cart-empty">Loading cart…</div>
-        </div>
-        <div class="g-cart-footer" id="gCartFooter" style="display:none;">
-            <div class="g-cart-subtotal" id="gCartSubtotal">₹0.00</div>
-            <div class="g-cart-actions">
-                <a href="<?php echo e(route('cart.view')); ?>" class="g-btn">View cart</a>
-                <?php if(auth()->guard()->check()): ?>
-                    <a href="<?php echo e(route('checkout.form')); ?>" class="g-btn g-btn-primary">Checkout</a>
-                <?php else: ?>
-                    <a href="<?php echo e(route('checkout.login-required')); ?>" class="g-btn g-btn-primary">Checkout</a>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
     <!-- ██ BACK TO TOP ████████████████████████████████████ -->
     <button id="g-back-top" aria-label="Back to top" title="Back to top">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
@@ -1264,146 +1242,198 @@
             </div>
         <?php endif; ?>
 
-        <!-- Hero band -->
-        <section class="g-hero-band">
-            <div class="g-container">
-                <div class="g-hero-eyebrow">// Growzio Store</div>
-                <h1 class="g-hero-title">
-                    <?php if(isset($searchQuery)): ?>
-                        Results for <span>"<?php echo e($searchQuery); ?>"</span>
-                    <?php elseif(isset($category)): ?>
-                        <?php echo e($category->name); ?>
+      
+    <section class="g-hero-band">
+        <div class="g-container">
 
-                    <?php else: ?>
-                        Explore our <span>Collection</span>
-                    <?php endif; ?>
-                </h1>
+            <div class="g-hero-eyebrow">// Growzio</div>
 
-                <div class="g-hero-search" role="search">
-                    <div class="g-search-input-wrap">
-                        <form action="<?php echo e(route('search.results')); ?>" method="GET" id="gSearchForm">
-                            <input
-                                type="search"
-                                name="q"
-                                class="g-search-input"
-                                id="gSearchInput"
-                                placeholder="Search products..."
-                                autocomplete="off"
-                                value="<?php echo e($searchQuery ?? ''); ?>"
-                            >
-                        </form>
-                    </div>
-                    <div class="g-hero-suggestions" id="gSearchSuggestions"></div>
-                </div>
+            <h1 class="g-hero-title">
+                <?php if(isset($searchQuery)): ?>
+                    Results for <span>"<?php echo e($searchQuery); ?>"</span>
+                <?php elseif(isset($category)): ?>
+                    <?php echo e($category->name); ?>
 
-                <?php if(isset($searchQuery) || isset($category)): ?>
-                    <p class="g-hero-sub">
-                        <?php if(isset($searchQuery)): ?>
-                            <?php echo e($products->total()); ?> product(s) found
-                        <?php else: ?>
-                            Browse the complete <?php echo e(strtolower($category->name)); ?> range
-                        <?php endif; ?>
-                    </p>
+                <?php else: ?>
+                    Explore our <span>Collection</span>
                 <?php endif; ?>
-                <div class="g-accent-line"></div>
-            </div>
-        </section>
+            </h1>
 
-        <!-- Slides carousel -->
-        <?php if(!isset($searchQuery)): ?>
-        <section class="g-section g-slides-section g-reveal" aria-label="Slides">
-            <div class="g-container">
-                <div class="g-slides-head">
-                    <h2 class="g-slides-title">Results</h2>
-                    <div class="g-slides-actions">
-                        <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
-                        </button>
-                        <button type="button" class="g-slides-btn" id="gSlidesNext" aria-label="Next slides">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
-                        </button>
-                        <a class="g-slides-fullscreen" href="<?php echo e(url('/viewer')); ?>" target="_blank" rel="noopener">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-                            Fullscreen
-                        </a>
+            <?php if(isset($searchQuery)): ?>
+                <p class="g-hero-meta"><?php echo e($products->total()); ?> product(s) found</p>
+            <?php elseif(isset($category)): ?>
+                <p class="g-hero-meta">Browse the complete <?php echo e(strtolower($category->name)); ?> range</p>
+            <?php endif; ?>
+
+            <div class="g-hero-search" role="search">
+                <form action="<?php echo e(route('search.results')); ?>" method="GET" id="gSearchForm" class="g-search-form">
+                    <div class="g-search-input-wrap">
+                        <svg class="g-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input
+                            type="search"
+                            name="q"
+                            class="g-search-input"
+                            id="gSearchInput"
+                            placeholder="Search products…"
+                            autocomplete="off"
+                            value="<?php echo e($searchQuery ?? ''); ?>"
+                            aria-label="Search products"
+                        >
+                        <?php if(isset($searchQuery)): ?>
+                            <a href="<?php echo e(route('home')); ?>" class="g-search-clear" aria-label="Clear search">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </a>
+                        <?php endif; ?>
                     </div>
-                </div>
+                </form>
+                <div class="g-hero-suggestions" id="gSearchSuggestions" aria-live="polite"></div>
+            </div>
 
-                <div class="g-slides-viewport">
-                    <div class="g-slides-track" id="gSlidesTrack">
-                        <?php for($i = 1; $i <= 21; $i++): ?>
-                            <?php $num = str_pad($i, 4, '0', STR_PAD_LEFT); ?>
-                            <div class="g-slide-card">
-                                <img
-                                    src="<?php echo e(asset('slides/pdf_pages-to-jpg-' . $num . '.webp')); ?>"
-                                    alt="Slide <?php echo e($i); ?>"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
-                            </div>
-                        <?php endfor; ?>
-                    </div>
+            <div class="g-accent-line"></div>
+
+        </div>
+    </section>
+
+    
+    <?php if(!isset($searchQuery)): ?>
+    <section class="g-section g-slides-section g-reveal" aria-label="Product catalog slides">
+        <div class="g-container">
+
+            <div class="g-section-head g-section-head--row">
+                <div>
+                    <div class="g-section-eyebrow">// Catalog</div>
+                    <h2 class="g-section-title">Browse the deck</h2>
+                </div>
+                <div class="g-slides-actions">
+                    <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" class="g-slides-btn" id="gSlidesNext" aria-label="Next slides">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                    <a class="g-slides-fullscreen" href="<?php echo e(url('/viewer')); ?>" target="_blank" rel="noopener" aria-label="Open catalog in fullscreen">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                        Fullscreen
+                    </a>
                 </div>
             </div>
-        </section>
-        <?php endif; ?>
 
-        <!-- Categories -->
-        <?php if(!isset($searchQuery)): ?>
-        <section class="g-section g-categories-section g-reveal">
-            <div class="g-container">
-                <details class="g-category-dropdown" <?php if(!isset($category) || (isset($category) && ($categoryProductCount ?? 0) === 0)): ?> open <?php endif; ?>>
-                    <summary>
-                        <span><?php if(isset($category)): ?><?php echo e($category->name); ?> &mdash; subcategories <?php else: ?> Shop by category <?php endif; ?></span>
-                        <svg class="g-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>
-                    </summary>
-                    <div class="g-category-dropdown-body">
-                        <ul class="g-category-list">
-                            <?php if($categories->isNotEmpty()): ?>
-                                <?php echo $__env->make('products.categories._tree_unity', ['categories' => $categories], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+            <div class="g-slides-viewport">
+                <div class="g-slides-track" id="gSlidesTrack">
+                    <?php for($i = 1; $i <= 21; $i++): ?>
+                        <?php $num = str_pad($i, 4, '0', STR_PAD_LEFT); ?>
+                        <div class="g-slide-card">
+                            <img
+                                src="<?php echo e(asset('slides/pdf_pages-to-jpg-' . $num . '.webp')); ?>"
+                                alt="Catalog slide <?php echo e($i); ?> of 21"
+                                loading="lazy"
+                                decoding="async"
+                                width="800"
+                                height="600"
+                            >
+                        </div>
+                    <?php endfor; ?>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <?php endif; ?>
+
+    
+    <?php if(!isset($searchQuery)): ?>
+    <section class="g-section g-categories-section g-reveal">
+        <div class="g-container">
+
+            <details class="g-category-dropdown" <?php if(!isset($category) || ($categoryProductCount ?? 0) === 0): ?> open <?php endif; ?>>
+                <summary class="g-category-summary">
+                    <div class="g-category-summary-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        <span>
+                            <?php if(isset($category)): ?>
+                                <?php echo e($category->name); ?> &mdash; subcategories
                             <?php else: ?>
-                                <li class="g-category-row"><span class="g-section-sub">No categories.</span></li>
+                                Shop by category
                             <?php endif; ?>
-                        </ul>
+                        </span>
                     </div>
-                </details>
-            </div>
-        </section>
-        <?php endif; ?>
+                    <svg class="g-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
 
-        <!-- Products -->
-        <?php if(!isset($category) || isset($searchQuery) || (isset($category) && ($categoryProductCount ?? 0) > 0)): ?>
-        <section class="g-section g-products-section">
-            <div class="g-container">
-                <div class="g-section-head g-reveal">
-                    <?php if(isset($category) && $category->image_path): ?>
-                        <img src="<?php echo e(asset($category->image_path)); ?>" alt="<?php echo e($category->name); ?>"
-                            style="max-width:100px;margin-bottom:1rem;border-radius:var(--g-radius-lg);opacity:0.85;">
+                <div class="g-category-dropdown-body">
+                    <?php if($categories->isNotEmpty()): ?>
+                        <ul class="g-category-list">
+                            <?php echo $__env->make('products.categories._tree_unity', ['categories' => $categories], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                        </ul>
+                    <?php else: ?>
+                        <p class="g-section-sub g-category-empty">No categories available yet.</p>
                     <?php endif; ?>
-                    <div class="g-section-eyebrow">// Products</div>
-                    <h2 class="g-section-title">
-                        <?php if(isset($searchQuery)): ?> "<?php echo e($searchQuery); ?>"
-                        <?php elseif(isset($category)): ?> <?php echo e($category->name); ?>
+                </div>
+            </details>
 
-                        <?php else: ?> Our Products
-                        <?php endif; ?>
-                    </h2>
-                    <p class="g-section-sub">
-                        <?php if(isset($searchQuery)): ?> <?php echo e($products->total()); ?> result(s) found
-                        <?php elseif(isset($category)): ?> Explore our <?php echo e(strtolower($category->name)); ?> collection
-                        <?php else: ?> Explore everything we carry
-                        <?php endif; ?>
-                    </p>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    
+    <?php if(!isset($category) || isset($searchQuery) || ($categoryProductCount ?? 0) > 0): ?>
+    <section class="g-section g-products-section">
+        <div class="g-container">
+
+            
+            <div class="g-section-head g-reveal">
+
+                <?php if(isset($category) && $category->image_path): ?>
+                    <img
+                        src="<?php echo e(asset($category->image_path)); ?>"
+                        alt="<?php echo e($category->name); ?>"
+                        class="g-category-hero-img"
+                    >
+                <?php endif; ?>
+
+                <div class="g-section-eyebrow">// Products</div>
+
+                <div class="g-products-head-row">
+                    <div>
+                        <h2 class="g-section-title">
+                            <?php if(isset($searchQuery)): ?>
+                                "<?php echo e($searchQuery); ?>"
+                            <?php elseif(isset($category)): ?>
+                                <?php echo e($category->name); ?>
+
+                            <?php else: ?>
+                                Our Products
+                            <?php endif; ?>
+                        </h2>
+                        <p class="g-section-sub">
+                            <?php if(isset($searchQuery)): ?>
+                                <?php echo e($products->total()); ?> result(s) found
+                            <?php elseif(isset($category)): ?>
+                                Explore our <?php echo e(strtolower($category->name)); ?> collection
+                            <?php else: ?>
+                                Explore everything we carry
+                            <?php endif; ?>
+                        </p>
+                    </div>
+
                     <?php if($products->count() > 0): ?>
                         <?php
-                            $baseSortParams = isset($searchQuery) ? array_filter(request()->only(['q'])) : request()->except('sort');
-                            $baseSortUrl = request()->url() . (count($baseSortParams) ? '?' . http_build_query($baseSortParams) : '');
-                            $sortPriceAsc   = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=price_asc';
-                            $sortPriceDesc  = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=price_desc';
-                            $sortBestSellers = $baseSortUrl . (str_contains($baseSortUrl, '?') ? '&' : '?') . 'sort=best_sellers';
+                            $baseSortParams = isset($searchQuery)
+                                ? array_filter(request()->only(['q']))
+                                : request()->except('sort');
+                            $baseSortUrl      = request()->url() . (count($baseSortParams) ? '?' . http_build_query($baseSortParams) : '');
+                            $sep              = str_contains($baseSortUrl, '?') ? '&' : '?';
+                            $sortPriceAsc     = $baseSortUrl . $sep . 'sort=price_asc';
+                            $sortPriceDesc    = $baseSortUrl . $sep . 'sort=price_desc';
+                            $sortBestSellers  = $baseSortUrl . $sep . 'sort=best_sellers';
                         ?>
                         <div class="g-sort-wrap">
-                            <label for="sort-by-select" class="g-sort-label">sort:</label>
+                            <label for="sort-by-select" class="g-sort-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                                Sort
+                            </label>
                             <select id="sort-by-select" class="g-sort-select" aria-label="Sort products">
                                 <option value="<?php echo e($baseSortUrl); ?>"     <?php echo e(!isset($sort) || $sort === null ? 'selected' : ''); ?>>Newest</option>
                                 <option value="<?php echo e($sortPriceAsc); ?>"    <?php echo e((isset($sort) && $sort === 'price_asc')    ? 'selected' : ''); ?>>Price: Low → High</option>
@@ -1414,47 +1444,72 @@
                     <?php endif; ?>
                 </div>
 
-                <?php if($products->count()): ?>
-                    <?php
-                        $nextUrl = $products->nextPageUrl();
-                        $nextUrlRelative = $nextUrl
-                            ? parse_url($nextUrl, PHP_URL_PATH) . (parse_url($nextUrl, PHP_URL_QUERY) ? '?' . parse_url($nextUrl, PHP_URL_QUERY) : '')
-                            : '';
-                    ?>
-                    <div id="products-infinite-container"
-                        data-next-url="<?php echo e($nextUrlRelative); ?>"
-                        data-has-more="<?php echo e($products->hasMorePages() ? '1' : '0'); ?>"
-                        data-csrf="<?php echo e(csrf_token()); ?>">
-                        <div id="products-grid-row" class="row g-3 g-md-4">
-                            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php echo $__env->make('products._card', ['product' => $product], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                        <div id="products-infinite-sentinel" aria-hidden="true"></div>
-                        <div id="products-infinite-loading" class="text-center py-4 d-none">
-                            <span class="g-spinner"></span>
-                            <p class="g-section-sub mt-2">Loading more…</p>
-                        </div>
-                        <div id="products-infinite-end" class="text-center py-4 d-none">
-                            <p class="g-section-sub">— You've seen everything —</p>
-                        </div>
-                        <div id="products-infinite-error" class="text-center py-4 d-none">
-                            <p class="g-section-sub">Failed to load. <button type="button" class="g-btn" style="font-size:13px;padding:0.35rem 0.75rem;" id="products-infinite-retry">Retry</button></p>
-                        </div>
+            </div>
+
+            
+            <?php if($products->count()): ?>
+                <?php
+                    $nextUrl         = $products->nextPageUrl();
+                    $nextUrlRelative = $nextUrl
+                        ? parse_url($nextUrl, PHP_URL_PATH) . (parse_url($nextUrl, PHP_URL_QUERY) ? '?' . parse_url($nextUrl, PHP_URL_QUERY) : '')
+                        : '';
+                ?>
+
+                <div
+                    id="products-infinite-container"
+                    data-next-url="<?php echo e($nextUrlRelative); ?>"
+                    data-has-more="<?php echo e($products->hasMorePages() ? '1' : '0'); ?>"
+                    data-csrf="<?php echo e(csrf_token()); ?>"
+                >
+                    <div id="products-grid-row" class="row g-3 g-md-4">
+                        <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php echo $__env->make('products._card', ['product' => $product], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                <?php else: ?>
-                    <div class="no-products g-reveal">
-                        <h3><?php if(isset($searchQuery)): ?> No results found <?php else: ?> No products yet <?php endif; ?></h3>
-                        <p class="g-section-sub mt-1"><?php if(isset($searchQuery)): ?> Try a different keyword. <?php else: ?> Check back soon. <?php endif; ?></p>
+
+                    <div id="products-infinite-sentinel" aria-hidden="true"></div>
+
+                    <div id="products-infinite-loading" class="g-infinite-state d-none" role="status" aria-live="polite">
+                        <span class="g-spinner"></span>
+                        <p class="g-section-sub">Loading more…</p>
+                    </div>
+
+                    <div id="products-infinite-end" class="g-infinite-state d-none" aria-live="polite">
+                        <span class="g-infinite-divider"></span>
+                        <p class="g-section-sub">You've seen everything</p>
+                        <span class="g-infinite-divider"></span>
+                    </div>
+
+                    <div id="products-infinite-error" class="g-infinite-state d-none" role="alert">
+                        <p class="g-section-sub">Something went wrong loading more products.</p>
+                        <button type="button" class="g-btn g-btn-sm" id="products-infinite-retry">Try again</button>
+                    </div>
+                </div>
+
+            <?php else: ?>
+                <div class="g-empty-state g-reveal">
+                    <div class="g-empty-state-icon" aria-hidden="true">
                         <?php if(isset($searchQuery)): ?>
-                            <a href="<?php echo e(route('home')); ?>" class="g-btn g-btn-primary mt-4">View all products</a>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity=".4"/></svg>
+                        <?php else: ?>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" opacity=".4"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                         <?php endif; ?>
                     </div>
-                <?php endif; ?>
-            </div>
-        </section>
-        <?php endif; ?>
-    </main>
+                    <h3 class="g-empty-state-title">
+                        <?php if(isset($searchQuery)): ?> No results found <?php else: ?> No products yet <?php endif; ?>
+                    </h3>
+                    <p class="g-section-sub">
+                        <?php if(isset($searchQuery)): ?> Try a different keyword or browse all products. <?php else: ?> Check back soon — products are on the way. <?php endif; ?>
+                    </p>
+                    <?php if(isset($searchQuery)): ?>
+                        <a href="<?php echo e(route('home')); ?>" class="g-btn g-btn-primary">View all products</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- ██ STICKY BOTTOM (MOBILE) █████████████████████████ -->
     <div class="g-sticky-bottom">
@@ -1511,69 +1566,7 @@
         if (filterOpen) filterOpen.addEventListener('click', function () { filterDrw.classList.add('open'); filterOvly.classList.add('open'); document.body.style.overflow = 'hidden'; });
         if (filterOvly) filterOvly.addEventListener('click', function () { filterDrw.classList.remove('open'); filterOvly.classList.remove('open'); document.body.style.overflow = ''; });
 
-        /* ─── Cart drawer ───────────────────────────────── */
-        var cartOpen    = document.getElementById('gCartOpen');
-        var cartDrw     = document.getElementById('gCartDrawer');
-        var cartOvly    = document.getElementById('gCartOverlay');
-        var cartClose   = document.getElementById('gCartClose');
-        var cartBody    = document.getElementById('gCartBody');
-        var cartFooter  = document.getElementById('gCartFooter');
-        var cartSubtotal = document.getElementById('gCartSubtotal');
-        var cartBadge   = document.getElementById('gCartBadge');
-        var drawerUrl   = '<?php echo e(route("cart.drawer")); ?>';
-
-        function loadCartDrawer() {
-            fetch(drawerUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (cartBadge) {
-                        cartBadge.textContent = data.count;
-                        cartBadge.style.display = data.count > 0 ? 'flex' : 'none';
-                    }
-                    if (data.items.length === 0) {
-                        cartBody.innerHTML = '<div class="g-cart-empty">Your cart is empty.</div>';
-                        if (cartFooter) cartFooter.style.display = 'none';
-                    } else {
-                        var csrf = '<?php echo e(csrf_token()); ?>';
-                        var html = data.items.map(function (item) {
-                            var img = item.image_path
-                                ? '<img src="' + escAttr(item.image_path) + '" alt="">'
-                                : '<div style="width:64px;height:80px;background:var(--g-bg);border-radius:var(--g-radius);"></div>';
-                            var remove = data.authenticated
-                                ? '<form method="POST" action="' + escAttr(item.remove_url) + '" class="g-cart-remove-form mt-2"><input type="hidden" name="_token" value="' + escAttr(csrf) + '"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="g-btn" style="padding:0.25rem 0.65rem;font-size:12px;">Remove</button></form>'
-                                : '';
-                            return '<div class="g-cart-item"><a href="' + escAttr(item.show_url) + '">' + img + '</a>'
-                                + '<div class="g-cart-item-info">'
-                                + '<a href="' + escAttr(item.show_url) + '" class="g-cart-item-name">' + escHtml(item.name) + '</a>'
-                                + '<div class="g-cart-item-meta">Qty ' + item.quantity + ' · ₹' + parseFloat(item.subtotal).toFixed(2) + '</div>'
-                                + remove + '</div></div>';
-                        }).join('');
-                        cartBody.innerHTML = html;
-                        if (cartFooter) cartFooter.style.display = 'block';
-                        if (cartSubtotal) cartSubtotal.textContent = '₹' + parseFloat(data.subtotal).toFixed(2);
-                        cartBody.querySelectorAll('form.g-cart-remove-form').forEach(function (f) {
-                            f.addEventListener('submit', function (e) {
-                                e.preventDefault();
-                                var fd = new FormData(this);
-                                fetch(this.action, { method: 'POST', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, body: fd })
-                                    .then(function () { loadCartDrawer(); });
-                            });
-                        });
-                    }
-                })
-                .catch(function () {
-                    cartBody.innerHTML = '<div class="g-cart-empty">Could not load cart.</div>';
-                    if (cartFooter) cartFooter.style.display = 'none';
-                });
-        }
-
-        function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-        function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
-
-        if (cartOpen)  cartOpen.addEventListener('click',  function () { cartDrw.classList.add('open'); cartOvly.classList.add('open'); document.body.style.overflow = 'hidden'; loadCartDrawer(); });
-        if (cartClose) cartClose.addEventListener('click', function () { cartDrw.classList.remove('open'); cartOvly.classList.remove('open'); document.body.style.overflow = ''; });
-        if (cartOvly)  cartOvly.addEventListener('click',  function () { cartDrw.classList.remove('open'); cartOvly.classList.remove('open'); document.body.style.overflow = ''; });
-        loadCartDrawer();
+        // Cart drawer intentionally removed from index page.
 
         /* ─── Reveal on scroll ──────────────────────────── */
         var reveals = document.querySelectorAll('.g-reveal');
@@ -1587,7 +1580,6 @@
         }, { rootMargin: '0px 0px -50px 0px', threshold: 0.08 });
         reveals.forEach(function (el) { revObserver.observe(el); });
 
-        window.gLoadCartDrawer = loadCartDrawer;
     })();
     </script>
 
@@ -1638,7 +1630,6 @@
         toast.innerHTML = '<span class="g-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart';
         document.body.appendChild(toast);
         setTimeout(function () { if (toast.parentNode) toast.remove(); }, 2800);
-        if (window.gLoadCartDrawer) window.gLoadCartDrawer();
     }
 
     /* ─── Ajax add-to-cart ──────────────────────────────── */

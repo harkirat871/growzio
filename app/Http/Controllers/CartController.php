@@ -23,18 +23,28 @@ class CartController extends Controller
      */
     private function getCartItems(Request $request): array
     {
-        $cart = collect($request->session()->get('cart', []));
-        $items = $cart->map(function ($item) {
-            $product = Product::find($item['product_id']);
-            if (!$product) {
-                return null;
+        $cart = $request->session()->get('cart', []);
+        $items = [];
+
+        foreach ($cart as $item) {
+            $productId = $item['product_id'] ?? null;
+            $qty = (int) ($item['quantity'] ?? 0);
+            if (! $productId || $qty <= 0) {
+                continue;
             }
-            return [
+
+            $product = Product::find($productId);
+            if (! $product) {
+                continue;
+            }
+
+            $items[] = [
                 'product' => $product,
-                'quantity' => $item['quantity'],
-                'subtotal' => round($product->price * $item['quantity'], 2),
+                'quantity' => $qty,
+                'subtotal' => round(((float) $product->price) * $qty, 2),
             ];
-        })->filter()->values()->all();
+        }
+
         return $items;
     }
 
