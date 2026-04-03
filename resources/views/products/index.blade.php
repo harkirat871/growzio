@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +42,7 @@
             scroll-behavior: smooth;
         }
 
+        /* Native scrollbar — styled to match theme */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--g-bg2); }
         ::-webkit-scrollbar-thumb {
@@ -48,6 +50,7 @@
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover { background: #e8bc52; }
+        /* Firefox */
         * { scrollbar-width: thin; scrollbar-color: var(--g-accent) var(--g-bg2); }
 
         body {
@@ -182,36 +185,23 @@
 
         .g-header-right { display: flex; align-items: center; gap: 0.4rem; }
 
-        /* ── [UX FIX #3] Icon buttons — auto-width to support text labels ── */
         .g-icon-btn {
-            /* CHANGED: width/height fixed removed; now auto with padding */
-            min-width: 40px;
-            height: 40px;
-            padding: 0 0.6rem;
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
             color: var(--g-text-muted);
             border: 1px solid transparent;
             background: transparent;
             border-radius: var(--g-radius);
             cursor: pointer;
             transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s var(--g-ease-spring);
-            text-decoration: none;
-            font-family: var(--font-body);
         }
         .g-icon-btn:hover {
             color: var(--g-accent);
             background: rgba(255,211,105,0.08);
             border-color: var(--g-border-hover);
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
         .g-icon-btn:active { transform: scale(0.95); }
-
-        /* Label inside icon buttons */
-        .g-icon-btn .g-btn-label {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.01em;
-        }
 
         .g-cart-wrap { position: relative; }
         .g-cart-badge {
@@ -228,22 +218,15 @@
             animation: pulse-glow 2s ease infinite;
         }
 
-        /* ── [UX FIX #8] Hamburger — auto-width for "Menu" label ── */
         .g-hamburger {
-            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-            height: 40px;
-            padding: 0 0.6rem;
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
             border: 1px solid var(--g-border);
             background: transparent;
             color: var(--g-text-muted);
             cursor: pointer;
             border-radius: var(--g-radius);
             transition: all 0.2s;
-            font-family: var(--font-body);
-        }
-        .g-hamburger .g-btn-label {
-            font-size: 12px;
-            font-weight: 600;
         }
         .g-hamburger:hover { color: var(--g-accent); border-color: var(--g-border-hover); }
         @media (min-width: 768px) { .g-hamburger { display: none; } }
@@ -327,9 +310,8 @@
         .g-mobile-menu a,
         .g-mobile-menu .g-filter-sect {
             display: block;
-            padding: 0.9rem 1.25rem;
-            /* CHANGED: increased font-size for easier reading */
-            font-size: 15px;
+            padding: 0.75rem 1.25rem;
+            font-size: 14px;
             font-weight: 500;
             color: var(--g-text-muted);
             text-decoration: none;
@@ -397,14 +379,7 @@
         }
         .g-suggestion-item:hover { background: var(--g-bg2); }
         .g-suggestion-item img { width: 48px; height: 48px; object-fit: cover; border-radius: var(--g-radius); }
-        /* [UX FIX #6] Suggestion price: bigger and more readable */
-        .g-suggestion-item .price {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--g-accent);
-            font-family: var(--font-mono);
-        }
-        .g-suggestion-item .price::before { content: 'Price: '; font-weight: 400; color: var(--g-text-muted); font-family: var(--font-body); font-size: 12px; }
+        .g-suggestion-item .price { font-size: 13px; color: var(--g-text-muted); font-family: var(--font-mono); }
 
         /* ── Filter drawer ──────────────────────────── */
         .g-filter-overlay {
@@ -596,14 +571,11 @@
             background: radial-gradient(circle, rgba(255,211,105,0.07) 0%, transparent 70%);
             pointer-events: none;
         }
-
-        /* [UX FIX #4] Eyebrow: removed // prefix, cleaner plain label */
         .g-hero-eyebrow {
-            font-family: var(--font-body);
-            font-size: 12px;
-            font-weight: 600;
+            font-family: var(--font-mono);
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             color: var(--g-accent);
             margin-bottom: 0.6rem;
             animation: slideRight 0.5s var(--g-ease) both;
@@ -633,7 +605,6 @@
         .g-hero-search .g-search-input-wrap { margin: 0; }
         .g-hero-search .g-search-input {
             padding: 0.85rem 1rem;
-            /* [UX FIX #13] Slightly larger search input text */
             font-size: 1rem;
         }
         .g-hero-suggestions {
@@ -793,8 +764,7 @@
             transition: background 0.2s;
         }
         .g-category-row:hover { background: rgba(255,211,105,0.04); }
-        /* [UX FIX #13] Category name bigger */
-        .g-category-name { font-size: 14.5px; color: var(--g-text-muted); }
+        .g-category-name { font-size: 13.5px; color: var(--g-text-muted); }
         .g-category-link {
             font-size: 13px;
             font-weight: 500;
@@ -813,13 +783,11 @@
             text-align: center;
             margin-bottom: 3rem;
         }
-        /* [UX FIX #4] Section eyebrow: removed // prefix, plain body font */
         .g-section-eyebrow {
-            font-family: var(--font-body);
-            font-size: 12px;
-            font-weight: 600;
+            font-family: var(--font-mono);
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             color: var(--g-accent);
             margin-bottom: 0.6rem;
         }
@@ -831,21 +799,14 @@
             color: var(--g-light);
             margin-bottom: 0.5rem;
         }
-        /* [UX FIX #13] Sub text slightly larger */
-        .g-section-sub { font-size: 15px; color: var(--g-text-muted); }
+        .g-section-sub { font-size: 14px; color: var(--g-text-muted); }
 
-        /* ── [UX FIX #10] Sort label — plain, readable, body font ── */
+        /* ── Sort ───────────────────────────────────── */
         .g-sort-wrap { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.25rem; }
-        .g-sort-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--g-text-muted);
-            font-family: var(--font-body);
-        }
+        .g-sort-label { font-size: 13px; color: var(--g-text-muted); font-family: var(--font-mono); }
         .g-sort-select {
-            padding: 0.5rem 0.9rem;
-            /* [UX FIX #13] Bigger font in sort select */
-            font-size: 14px;
+            padding: 0.45rem 0.9rem;
+            font-size: 13px;
             font-family: var(--font-body);
             font-weight: 500;
             border: 1px solid var(--g-border);
@@ -862,23 +823,6 @@
             padding-right: 2rem;
         }
         .g-sort-select:focus { border-color: var(--g-accent); box-shadow: 0 0 0 3px rgba(255,211,105,0.1); }
-
-        /* ── [UX FIX #7] Product count banner ── */
-        .g-product-count-bar {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            padding: 0.6rem 1rem;
-            background: rgba(255,211,105,0.05);
-            border: 1px solid var(--g-border);
-            border-radius: var(--g-radius-lg);
-            font-size: 14px;
-            color: var(--g-text-muted);
-        }
-        .g-product-count-bar strong {
-            color: var(--g-accent);
-            font-weight: 700;
-            font-family: var(--font-head);
-        }
 
         /* ── Product cards ──────────────────────────── */
         .g-products-section { background: var(--g-bg); }
@@ -953,9 +897,8 @@
             align-items: baseline;
             gap: 0.4rem;
         }
-        /* [UX FIX #13] Product name: 13.5px → 15px */
         .g-product-name {
-            font-size: 15px;
+            font-size: 13.5px;
             font-weight: 500;
             color: var(--g-light);
             flex: 1; min-width: 0;
@@ -965,16 +908,15 @@
             overflow: hidden;
             line-height: 1.45;
         }
-        /* [UX FIX #13] Product price: 13px → 15px */
         .g-product-price {
             font-family: var(--font-mono);
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             color: var(--g-accent);
         }
         .g-product-meta {
             display: none;
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--g-text-muted);
             width: 100%;
             margin-top: 0.2rem;
@@ -982,25 +924,24 @@
         .g-product-meta .g-product-category { display: block; }
         .g-product-meta .g-product-partno   { display: block; margin-top: 0.2rem; font-family: var(--font-mono); }
 
-        /* ── [UX FIX #1] Add to Cart: ALWAYS VISIBLE on all screen sizes ── */
         .g-product-actions {
             padding: 0 1rem 1rem;
-            /* CHANGED: was opacity:0, now always shown */
-            opacity: 1;
-            transform: none;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity 0.25s var(--g-ease), transform 0.25s var(--g-ease);
         }
-        /* Removed the hover-only reveal — button is always visible */
-
+        .g-product-card:hover .g-product-actions {
+            opacity: 1; transform: translateY(0);
+        }
         .g-btn-add {
             width: 100%;
             background: var(--g-accent);
             color: var(--g-bg);
             border: 1px solid var(--g-accent);
             border-radius: var(--g-radius);
-            font-weight: 700;
-            /* [UX FIX #13] Slightly bigger add button text */
-            font-size: 14px;
-            padding: 0.65rem 1rem;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 0.6rem 1rem;
             display: flex; align-items: center; justify-content: center; gap: 0.4rem;
             cursor: pointer;
             transition: all 0.2s var(--g-ease);
@@ -1009,9 +950,7 @@
             background: #e8bc52;
             border-color: #e8bc52;
             box-shadow: 0 4px 20px rgba(255,211,105,0.3);
-            transform: translateY(-1px);
         }
-        .g-btn-add:active { transform: scale(0.97); }
 
         /* ── Mobile cards (list view) ───────────────── */
         @media (max-width: 767.98px) {
@@ -1032,9 +971,8 @@
                 padding: 0.75rem 1rem;
                 gap: 0;
             }
-            /* [UX FIX #13] Mobile product name bigger */
-            .g-product-name { font-size: 15px; font-weight: 600; -webkit-line-clamp: 3; flex: none; margin-bottom: 0.35rem; }
-            .g-product-price { font-size: 1rem; margin-bottom: 0.4rem; }
+            .g-product-name { font-size: 13.5px; font-weight: 600; -webkit-line-clamp: 3; flex: none; margin-bottom: 0.35rem; }
+            .g-product-price { font-size: 0.95rem; margin-bottom: 0.4rem; }
             .g-product-meta { display: block; }
             .g-product-actions {
                 flex: none;
@@ -1043,25 +981,15 @@
                 border-top: 1px solid var(--g-border);
                 width: 100%;
             }
-            .g-btn-add { min-height: 44px; font-size: 14px; }
+            .g-product-card .g-product-actions { opacity: 1; }
+            .g-btn-add { min-height: 38px; font-size: 13px; }
+        }
+        @media (max-width: 575.98px) {
+            .g-product-actions { opacity: 1; transform: none; }
         }
 
         /* ── Infinite scroll states ─────────────────── */
         #products-infinite-sentinel { height: 1px; visibility: hidden; pointer-events: none; }
-        .g-infinite-state {
-            text-align: center;
-            padding: 2rem 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-        .g-infinite-divider {
-            display: inline-block;
-            width: 60px; height: 1px;
-            background: var(--g-border);
-        }
         .no-products {
             text-align: center; padding: 5rem 0;
             color: var(--g-text-muted);
@@ -1104,13 +1032,12 @@
         .g-toast {
             position: fixed; bottom: 1.5rem; right: 1.5rem;
             z-index: 9999;
-            padding: 0.9rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             background: var(--g-bg2);
             border: 1px solid var(--g-border-hover);
             color: var(--g-light);
-            /* [UX FIX] Bigger toast text */
-            font-size: 15px; font-weight: 600;
-            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 13.5px; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
             border-radius: var(--g-radius-lg);
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             animation: toastSlide 0.35s var(--g-ease-spring);
@@ -1145,7 +1072,7 @@
             }
             .g-sticky-bottom a {
                 flex: 1; text-align: center;
-                padding: 0.85rem; font-size: 15px; font-weight: 700;
+                padding: 0.75rem; font-size: 14px; font-weight: 600;
                 text-decoration: none; border-radius: var(--g-radius);
                 transition: all 0.2s;
                 font-family: var(--font-body);
@@ -1219,32 +1146,26 @@
     <!-- ██ HEADER ████████████████████████████████████████ -->
     <header class="g-header" id="gHeader">
         <div class="g-header-left">
-            {{-- [UX FIX #8] Hamburger now has a "Menu" text label --}}
-            <button type="button" class="g-hamburger" id="gHamburger" aria-label="Open menu">
+            <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-                <span class="g-btn-label">Menu</span>
             </button>
             <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                {{-- <a href="{{ route('home') }}" class="active">Products</a> --}}
             </nav>
         </div>
         <div class="g-header-right">
-            {{-- [UX FIX #3] Filter button now has a visible "Filter" label --}}
-            <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Open category filter">
+            <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Filters">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
-                <span class="g-btn-label">Filter</span>
             </button>
-            {{-- [UX FIX #2] Cart link now has a visible "Cart" label --}}
-            <a href="{{ route('cart.view') }}" class="g-icon-btn g-cart-link" aria-label="View your cart">
+            <a href="{{ route('cart.view') }}" class="g-icon-btn g-cart-link" aria-label="Cart">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span class="g-btn-label">Cart</span>
             </a>
             @auth
                 <div class="dropdown">
-                    <button class="g-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="My account">
+                    <button class="g-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        <span class="g-btn-label">Account</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
@@ -1272,8 +1193,7 @@
     <div class="g-mobile-menu" id="gMobileMenu">
         <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
         <a href="{{ route('home') }}">Home</a>
-        <a href="{{ route('home') }}">All Products</a>
-        {{-- [UX FIX #4] Removed // prefix from section label --}}
+        <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect">Categories</div>
         @if($categories->isNotEmpty())
             @foreach($categories->take(8) as $cat)
@@ -1285,8 +1205,9 @@
     <!-- ██ FILTER DRAWER ██████████████████████████████████ -->
     <div class="g-filter-overlay" id="gFilterOverlay"></div>
     <div class="g-filter-drawer" id="gFilterDrawer">
-        <div class="g-filter-header">Shop by Category</div>
+        <div class="g-filter-header">Filters</div>
         <div class="g-filter-body">
+            <p class="g-section-sub mb-3" style="font-size:12px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--g-accent);">Shop by category</p>
             @if($categories->isNotEmpty())
                 <ul class="g-category-list">
                     @foreach($categories as $cat)
@@ -1326,8 +1247,7 @@
     <section class="g-hero-band">
         <div class="g-container">
 
-            {{-- [UX FIX #4] Removed // prefix --}}
-            <div class="g-hero-eyebrow">Growzio</div>
+            <div class="g-hero-eyebrow">// Growzio</div>
 
             <h1 class="g-hero-title">
                 @if(isset($searchQuery))
@@ -1362,10 +1282,8 @@
                             aria-label="Search products"
                         >
                         @if(isset($searchQuery))
-                            {{-- [UX FIX #5] Clear search as visible link, not just tiny icon --}}
-                            <a href="{{ route('home') }}" class="g-search-clear" aria-label="Clear search" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--g-text-muted);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                Clear
+                            <a href="{{ route('home') }}" class="g-search-clear" aria-label="Clear search">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                             </a>
                         @endif
                     </div>
@@ -1387,10 +1305,8 @@
 
             <div class="g-section-head g-section-head--row">
                 <div>
-                    {{-- [UX FIX #4] Removed // prefix --}}
-                    <div class="g-section-eyebrow">Product Catalog</div>
-                    {{-- [UX FIX #9] Renamed from "Browse the deck" to clear language --}}
-                    <h2 class="g-section-title">View Our Catalog</h2>
+                    <div class="g-section-eyebrow">// Catalog</div>
+                    <h2 class="g-section-title">Browse the deck</h2>
                 </div>
                 <div class="g-slides-actions">
                     <button type="button" class="g-slides-btn" id="gSlidesPrev" aria-label="Previous slides">
@@ -1401,7 +1317,7 @@
                     </button>
                     <a class="g-slides-fullscreen" href="{{ url('/viewer') }}" target="_blank" rel="noopener" aria-label="Open catalog in fullscreen">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-                        Open Fullscreen
+                        Fullscreen
                     </a>
                 </div>
             </div>
@@ -1441,9 +1357,9 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                         <span>
                             @if(isset($category))
-                                {{ $category->name }} — Subcategories
+                                {{ $category->name }} &mdash; subcategories
                             @else
-                                Shop by Category
+                                Shop by category
                             @endif
                         </span>
                     </div>
@@ -1483,8 +1399,7 @@
                     >
                 @endif
 
-                {{-- [UX FIX #4] Removed // prefix --}}
-                <div class="g-section-eyebrow">Products</div>
+                <div class="g-section-eyebrow">// Products</div>
 
                 <div class="g-products-head-row">
                     <div>
@@ -1520,12 +1435,14 @@
                             $sortBestSellers  = $baseSortUrl . $sep . 'sort=best_sellers';
                         @endphp
                         <div class="g-sort-wrap">
-                            {{-- [UX FIX #10] Sort label: bigger, plain font, "Sort by:" --}}
-                            <label for="sort-by-select" class="g-sort-label">Sort by:</label>
+                            <label for="sort-by-select" class="g-sort-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                                Sort
+                            </label>
                             <select id="sort-by-select" class="g-sort-select" aria-label="Sort products">
-                                <option value="{{ $baseSortUrl }}"     {{ !isset($sort) || $sort === null ? 'selected' : '' }}>Newest First</option>
-                                <option value="{{ $sortPriceAsc }}"    {{ (isset($sort) && $sort === 'price_asc')    ? 'selected' : '' }}>Price: Low to High</option>
-                                <option value="{{ $sortPriceDesc }}"   {{ (isset($sort) && $sort === 'price_desc')   ? 'selected' : '' }}>Price: High to Low</option>
+                                <option value="{{ $baseSortUrl }}"     {{ !isset($sort) || $sort === null ? 'selected' : '' }}>Newest</option>
+                                <option value="{{ $sortPriceAsc }}"    {{ (isset($sort) && $sort === 'price_asc')    ? 'selected' : '' }}>Price: Low → High</option>
+                                <option value="{{ $sortPriceDesc }}"   {{ (isset($sort) && $sort === 'price_desc')   ? 'selected' : '' }}>Price: High → Low</option>
                                 <option value="{{ $sortBestSellers }}" {{ (isset($sort) && $sort === 'best_sellers') ? 'selected' : '' }}>Best Sellers</option>
                             </select>
                         </div>
@@ -1543,18 +1460,11 @@
                         : '';
                 @endphp
 
-                {{-- [UX FIX #7] Product count bar — always visible, updates via JS --}}
-                <div class="g-product-count-bar" id="g-product-count-bar">
-                    Showing <strong id="g-count-shown">{{ $products->count() }}</strong> of <strong>{{ $products->total() }}</strong> products
-                </div>
-
                 <div
                     id="products-infinite-container"
                     data-next-url="{{ $nextUrlRelative }}"
                     data-has-more="{{ $products->hasMorePages() ? '1' : '0' }}"
                     data-csrf="{{ csrf_token() }}"
-                    data-total="{{ $products->total() }}"
-                    data-initial-count="{{ $products->count() }}"
                 >
                     <div id="products-grid-row" class="row g-3 g-md-4">
                         @foreach ($products as $product)
@@ -1566,38 +1476,38 @@
 
                     <div id="products-infinite-loading" class="g-infinite-state d-none" role="status" aria-live="polite">
                         <span class="g-spinner"></span>
-                        <p class="g-section-sub">Loading more products…</p>
+                        <p class="g-section-sub">Loading more…</p>
                     </div>
 
                     <div id="products-infinite-end" class="g-infinite-state d-none" aria-live="polite">
                         <span class="g-infinite-divider"></span>
-                        <p class="g-section-sub">You've seen all {{ $products->total() }} products</p>
+                        <p class="g-section-sub">You've seen everything</p>
                         <span class="g-infinite-divider"></span>
                     </div>
 
                     <div id="products-infinite-error" class="g-infinite-state d-none" role="alert">
                         <p class="g-section-sub">Something went wrong loading more products.</p>
-                        <button type="button" class="g-btn" id="products-infinite-retry">Try again</button>
+                        <button type="button" class="g-btn g-btn-sm" id="products-infinite-retry">Try again</button>
                     </div>
                 </div>
 
             @else
-                <div class="g-empty-state g-reveal" style="text-align:center;padding:4rem 1rem;">
-                    <div class="g-empty-state-icon" aria-hidden="true" style="margin-bottom:1.5rem;color:var(--g-text-muted);">
+                <div class="g-empty-state g-reveal">
+                    <div class="g-empty-state-icon" aria-hidden="true">
                         @if(isset($searchQuery))
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity=".4"/></svg>
                         @else
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" opacity=".4"/></svg>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" opacity=".4"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                         @endif
                     </div>
-                    <h3 style="font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:var(--g-light);margin-bottom:0.75rem;">
-                        @if(isset($searchQuery)) No results found for "{{ $searchQuery }}" @else No products yet @endif
+                    <h3 class="g-empty-state-title">
+                        @if(isset($searchQuery)) No results found @else No products yet @endif
                     </h3>
-                    <p class="g-section-sub" style="margin-bottom:1.5rem;">
-                        @if(isset($searchQuery)) Try a shorter or different keyword, or browse all products below. @else Check back soon — products are on the way. @endif
+                    <p class="g-section-sub">
+                        @if(isset($searchQuery)) Try a different keyword or browse all products. @else Check back soon — products are on the way. @endif
                     </p>
                     @if(isset($searchQuery))
-                        <a href="{{ route('home') }}" class="g-btn g-btn-primary" style="font-size:15px;padding:0.75rem 1.5rem;">See All Products</a>
+                        <a href="{{ route('home') }}" class="g-btn g-btn-primary">View all products</a>
                     @endif
                 </div>
             @endif
@@ -1608,11 +1518,11 @@
 
     <!-- ██ STICKY BOTTOM (MOBILE) █████████████████████████ -->
     <div class="g-sticky-bottom">
-        <a href="{{ route('cart.view') }}" class="g-sticky-cart">🛒 View Cart</a>
+        <a href="{{ route('cart.view') }}" class="g-sticky-cart">View Cart</a>
         @auth
-            <a href="{{ route('checkout.form') }}" class="g-sticky-checkout">Checkout →</a>
+            <a href="{{ route('checkout.form') }}" class="g-sticky-checkout">Checkout</a>
         @else
-            <a href="{{ route('checkout.login-required') }}" class="g-sticky-checkout">Checkout →</a>
+            <a href="{{ route('checkout.login-required') }}" class="g-sticky-checkout">Checkout</a>
         @endauth
     </div>
 
@@ -1620,6 +1530,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     (function () {
+        var ease = 'cubic-bezier(0.4,0,0.2,1)';
 
         /* ─── Sticky header ─────────────────────────────── */
         var header = document.getElementById('gHeader');
@@ -1629,12 +1540,11 @@
             }, { passive: true });
         }
 
-        /* ─── [UX FIX #14] Back to Top — lowered threshold from 320 to 200 ── */
+        /* ─── Back to Top ───────────────────────────────── */
         var backTopBtn = document.getElementById('g-back-top');
         if (backTopBtn) {
             window.addEventListener('scroll', function () {
-                // CHANGED: was 320, now 200 — appears sooner
-                if (window.scrollY > 200) {
+                if (window.scrollY > 320) {
                     backTopBtn.classList.add('visible');
                 } else {
                     backTopBtn.classList.remove('visible');
@@ -1660,6 +1570,8 @@
         var filterOvly  = document.getElementById('gFilterOverlay');
         if (filterOpen) filterOpen.addEventListener('click', function () { filterDrw.classList.add('open'); filterOvly.classList.add('open'); document.body.style.overflow = 'hidden'; });
         if (filterOvly) filterOvly.addEventListener('click', function () { filterDrw.classList.remove('open'); filterOvly.classList.remove('open'); document.body.style.overflow = ''; });
+
+        // Cart drawer intentionally removed from index page.
 
         /* ─── Reveal on scroll ──────────────────────────── */
         var reveals = document.querySelectorAll('.g-reveal');
@@ -1706,17 +1618,10 @@
                                     + '<div><div style="font-size:14px;font-weight:500;">' + escHtml(p.name || '') + '</div>'
                                     + '<span class="price">₹' + escHtml(p.price || '') + '</span></div></a>';
                             }).join('')
-                            + '<a href="' + viewAllUrl + '" class="g-suggestion-item" style="justify-content:center;color:var(--g-accent);font-weight:600;border-top:1px solid var(--g-border);margin-top:0.5rem;padding-top:1rem;">See all results →</a>';
+                            + '<a href="' + viewAllUrl + '" class="g-suggestion-item" style="justify-content:center;color:var(--g-accent);font-weight:600;border-top:1px solid var(--g-border);margin-top:0.5rem;padding-top:1rem;">View all results →</a>';
                         }
                     });
             }, 300);
-        });
-
-        /* Close suggestions when clicking outside */
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.g-hero-search')) {
-                suggestEl.innerHTML = '';
-            }
         });
     })();
 
@@ -1727,16 +1632,16 @@
         var toast = document.createElement('div');
         toast.id = 'g-toast';
         toast.className = 'g-toast';
-        toast.innerHTML = '<span class="g-toast-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart!';
+        toast.innerHTML = '<span class="g-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart';
         document.body.appendChild(toast);
-        setTimeout(function () { if (toast.parentNode) toast.remove(); }, 3000);
+        setTimeout(function () { if (toast.parentNode) toast.remove(); }, 2800);
     }
 
     /* ─── Ajax add-to-cart ──────────────────────────────── */
     function submitCartFormAjax(form, button) {
         var origHtml = button ? button.innerHTML : '';
         if (button) {
-            button.innerHTML = '<span class="g-spinner"></span> Adding…';
+            button.innerHTML = '<span class="g-spinner"></span>';
             button.disabled = true;
         }
         fetch(form.action, {
@@ -1745,20 +1650,8 @@
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(function (r) { return r.json(); })
-        .then(function () {
-            if (button) {
-                button.innerHTML = '✓ Added!';
-                setTimeout(function() {
-                    button.innerHTML = origHtml;
-                    button.disabled = false;
-                }, 1500);
-            }
-            showCartToast();
-        })
-        .catch(function () {
-            if (button) { button.innerHTML = origHtml; button.disabled = false; }
-            showCartToast();
-        });
+        .then(function () { showCartToast(); if (button) { button.innerHTML = origHtml; button.disabled = false; } })
+        .catch(function () { if (button) { button.innerHTML = origHtml; button.disabled = false; } showCartToast(); });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1791,15 +1684,8 @@
         var sortSelect = document.getElementById('sort-by-select');
         if (sortSelect) sortSelect.addEventListener('change', function () { if (this.value) window.location.href = this.value; });
 
-        /* ─── [UX FIX #7] Live product count tracker ─── */
-        var countShownEl = document.getElementById('g-count-shown');
-        var shownCount = 0;
-        var container = document.getElementById('products-infinite-container');
-        if (container) {
-            shownCount = parseInt(container.getAttribute('data-initial-count') || '0', 10);
-        }
-
         /* ─── Infinite scroll ───────────────────────────── */
+        var container = document.getElementById('products-infinite-container');
         if (container) {
             var gridRow    = document.getElementById('products-grid-row');
             var sentinel   = document.getElementById('products-infinite-sentinel');
@@ -1861,10 +1747,6 @@
                                     card.style.transform = 'translateY(0)';
                                 });
                             });
-                            /* [UX FIX #7] Update the shown count as more load */
-                            shownCount += json.data.length;
-                            if (countShownEl) countShownEl.textContent = shownCount;
-
                             document.querySelectorAll('#products-grid-row form[action*="/cart/"]').forEach(function (form) {
                                 if (form.dataset.bound) return;
                                 form.dataset.bound = '1';
@@ -1893,11 +1775,13 @@
             var icon = document.getElementById('unity-icon-' + categoryId);
             if (childrenList && icon) {
                 var isHidden = childrenList.classList.contains('hidden') || childrenList.hidden === true;
+                // Expand
                 if (isHidden) {
                     childrenList.classList.remove('hidden');
                     childrenList.hidden = false;
                     icon.textContent = '▼';
                 } else {
+                    // Collapse
                     childrenList.classList.add('hidden');
                     childrenList.hidden = true;
                     icon.textContent = '▶';
