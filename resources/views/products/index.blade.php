@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,12 +53,12 @@
         * { scrollbar-width: thin; scrollbar-color: var(--g-accent) var(--g-bg2); }
 
         body {
-    background: var(--g-bg);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--g-text);
-}
+            background: var(--g-bg);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--g-text);
+        }
 
         /* ── Typography ────────────────────────────── */
         h1,h2,h3,h4,h5,h6 { font-family: var(--font-head); }
@@ -122,21 +121,21 @@
 
         /* ── Header ────────────────────────────────── */
         .g-header {
-    position: sticky;
-    top: 0;
-    z-index: 1100;
-    background: rgba(34,40,49,0.92);
-    backdrop-filter: blur(18px) saturate(1.5);
-    -webkit-backdrop-filter: blur(18px) saturate(1.5);
-    border-bottom: 1px solid var(--g-border);
-    padding: 0 1.25rem;
-    height: 62px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: box-shadow 0.3s var(--g-ease), border-color 0.3s;
-    will-change: transform;
-}
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1100;
+            background: rgba(34,40,49,0.92);
+            backdrop-filter: blur(18px) saturate(1.5);
+            -webkit-backdrop-filter: blur(18px) saturate(1.5);
+            border-bottom: 1px solid var(--g-border);
+            padding: 0 1.25rem;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: box-shadow 0.3s var(--g-ease), border-color 0.3s;
+        }
         .g-header.scrolled {
             border-bottom-color: rgba(255,211,105,0.18);
             box-shadow: 0 4px 32px rgba(0,0,0,0.35);
@@ -556,11 +555,11 @@
 
         /* ── Hero band ──────────────────────────────── */
         .g-hero-band {
-    background: var(--g-bg2);
-    border-bottom: 1px solid var(--g-border);
-    padding: 2.5rem 1.25rem 2rem;
-    position: relative;
-}
+            background: var(--g-bg2);
+            border-bottom: 1px solid var(--g-border);
+            padding: 2.5rem 1.25rem 2rem;
+            position: relative;
+        }
         .g-hero-band::before {
             content: '';
             position: absolute;
@@ -611,11 +610,11 @@
             top: calc(100% + 10px);
             left: 0;
             right: 0;
-            z-index: 50;
+            z-index: 9999;
             background: rgba(34,40,49,0.98);
-            border: 1px solid var(--g-border);
+            border: 1px solid var(--g-accent);
             border-radius: var(--g-radius-lg);
-            box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             overflow: hidden;
             max-height: min(420px, 55vh);
             overflow-y: auto;
@@ -1138,19 +1137,6 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
-        /* Force suggestions above everything else */
-.g-hero-suggestions {
-    z-index: 1060 !important;          /* Higher than header (1050) */
-    background: var(--g-bg2) !important; /* Solid background */
-    border: 1px solid var(--g-accent) !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
-}
-
-/* Ensure hero band creates a stacking context */
-.g-hero-band {
-    isolation: isolate;
-    z-index: 10;
-}
     </style>
 </head>
 <body class="g-has-sticky">
@@ -1203,7 +1189,7 @@
     <!-- ██ MOBILE MENU ████████████████████████████████████ -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
-        
+        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect">Categories</div>
