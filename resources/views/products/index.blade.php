@@ -1210,11 +1210,11 @@
             background: rgba(255,211,105,0.15);
             color: var(--g-accent);
         }
-        /* ── Back to Top button (fixed, no horizontal scroll) ── */
+        /* ── Back to Top button (overlays products, no horizontal scroll) ── */
 #g-back-top {
     position: fixed;
     bottom: 1.75rem;
-    right: 0.75rem;          /* almost touching right border */
+    right: 1rem;               /* safe distance from right edge */
     z-index: 1049;
     width: 44px;
     height: 44px;
@@ -1240,11 +1240,11 @@
 }
 #g-back-top:active { transform: scale(0.92); }
 
-/* Mobile: above the sticky bottom bar */
+/* Mobile: just above the sticky bottom bar */
 @media (max-width: 768px) {
     #g-back-top {
-        bottom: 5.5rem;      /* sits just above the sticky bar */
-        right: 0.75rem;      /* same right edge */
+        bottom: 5.5rem;        /* sits above the sticky cart/checkout bar */
+        right: 1rem;           /* same as desktop – no horizontal scroll */
         width: 40px;
         height: 40px;
     }
