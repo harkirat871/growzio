@@ -95,6 +95,11 @@ class RegisteredUserController extends Controller
         // Merge guest cart with user cart if exists
         $this->mergeGuestCart($request);
 
+        $intendedUrl = $request->session()->get('url.intended');
+        if ($intendedUrl && str_contains($intendedUrl, '/cart')) {
+            return redirect()->to($intendedUrl);
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 

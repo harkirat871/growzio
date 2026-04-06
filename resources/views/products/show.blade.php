@@ -476,15 +476,43 @@
                     var btn = this.querySelector('button[type="submit"]');
                     var orig = btn ? btn.innerHTML : '';
                     if (btn) { btn.innerHTML = 'Adding…'; btn.disabled = true; }
-                    fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                        .then(function(r) { return r.json(); })
-                        .then(function() {
-                            var t = document.createElement('div'); t.id = 'cart-toast'; t.className = 'cart-toast'; t.textContent = 'Added to cart';
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        credentials: 'same-origin',
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(function(r) {
+                            var ct = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
+                            if (!r.ok) {
+                                if (ct.indexOf('application/json') !== -1) {
+                                    return r.json().then(function (j) { throw new Error((j && j.message) ? j.message : ('Request failed (' + r.status + ')')); });
+                                }
+                                throw new Error('Request failed (' + r.status + ')');
+                            }
+                            if (ct.indexOf('application/json') === -1) throw new Error('Unexpected response');
+                            return r.json();
+                        })
+                        .then(function(json) {
+                            if (!json || json.success !== true) throw new Error((json && json.message) ? json.message : 'Could not add to cart');
+                            var t = document.createElement('div');
+                            t.id = 'cart-toast';
+                            t.className = 'cart-toast';
+                            t.textContent = json.message || 'Added to cart';
                             document.body.appendChild(t);
                             setTimeout(function() { if (t.parentNode) t.remove(); }, 2500);
                             if (btn) { btn.innerHTML = orig; btn.disabled = false; }
                         })
-                        .catch(function() { if (btn) { btn.innerHTML = orig; btn.disabled = false; } });
+                        .catch(function(err) {
+                            var t = document.createElement('div');
+                            t.id = 'cart-toast';
+                            t.className = 'cart-toast';
+                            t.style.background = '#991b1b';
+                            t.textContent = (err && err.message) ? err.message : 'Could not add to cart';
+                            document.body.appendChild(t);
+                            setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
+                            if (btn) { btn.innerHTML = orig; btn.disabled = false; }
+                        });
                 });
             }
 

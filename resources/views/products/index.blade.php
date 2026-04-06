@@ -1626,13 +1626,18 @@
     })();
 
     /* ─── Toast ─────────────────────────────────────────── */
-    function showCartToast() {
+    function showCartToast(message, isError) {
         var existing = document.getElementById('g-toast');
         if (existing) existing.remove();
         var toast = document.createElement('div');
         toast.id = 'g-toast';
         toast.className = 'g-toast';
-        toast.innerHTML = '<span class="g-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart';
+        var icon = isError
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        var safeMsg = (message || (isError ? 'Could not add to cart' : 'Added to cart'))
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        toast.innerHTML = '<span class="g-toast-icon" style="' + (isError ? 'color:#f87171;' : '') + '">' + icon + '</span> ' + safeMsg;
         document.body.appendChild(toast);
         setTimeout(function () { if (toast.parentNode) toast.remove(); }, 2800);
     }
@@ -1647,11 +1652,33 @@
         fetch(form.action, {
             method: 'POST',
             body: new FormData(form),
+            credentials: 'same-origin',
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(function (r) { return r.json(); })
-        .then(function () { showCartToast(); if (button) { button.innerHTML = origHtml; button.disabled = false; } })
-        .catch(function () { if (button) { button.innerHTML = origHtml; button.disabled = false; } showCartToast(); });
+        .then(function (r) {
+            var ct = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
+            if (!r.ok) {
+                if (ct.indexOf('application/json') !== -1) {
+                    return r.json().then(function (j) { throw new Error((j && j.message) ? j.message : ('Request failed (' + r.status + ')')); });
+                }
+                throw new Error('Request failed (' + r.status + ')');
+            }
+            if (ct.indexOf('application/json') === -1) {
+                throw new Error('Unexpected response');
+            }
+            return r.json();
+        })
+        .then(function (json) {
+            if (!json || json.success !== true) {
+                throw new Error((json && json.message) ? json.message : 'Could not add to cart');
+            }
+            showCartToast(json.message || 'Added to cart', false);
+            if (button) { button.innerHTML = origHtml; button.disabled = false; }
+        })
+        .catch(function (err) {
+            if (button) { button.innerHTML = origHtml; button.disabled = false; }
+            showCartToast((err && err.message) ? err.message : 'Could not add to cart', true);
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function () {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,18 +30,22 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        if ($user) {
-            $user->update(['last_login' => now()]);
+        if ($user instanceof User) {
+            $user->forceFill(['last_login' => now()])->save();
         }
 
         // Merge guest cart with user cart if exists
         $this->mergeGuestCart($request);
 
         // If the intended URL is checkout, send them there; otherwise role-aware default
-        $intended = redirect()->intended();
         $intendedUrl = $request->session()->get('url.intended');
-        if ($intendedUrl && str_contains($intendedUrl, '/checkout')) {
-            return redirect()->to(url('/checkout'));
+        if ($intendedUrl) {
+            if (str_contains($intendedUrl, '/checkout')) {
+                return redirect()->to(url('/checkout'));
+            }
+            if (str_contains($intendedUrl, '/cart')) {
+                return redirect()->to($intendedUrl);
+            }
         }
 
         return redirect()->intended(route('dashboard', absolute: false));
