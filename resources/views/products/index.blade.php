@@ -54,13 +54,12 @@
         * { scrollbar-width: thin; scrollbar-color: var(--g-accent) var(--g-bg2); }
 
         body {
-            background: var(--g-bg);
-            font-family: var(--font-body);
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--g-text);
-            overflow-x: hidden;
-        }
+    background: var(--g-bg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--g-text);
+}
 
         /* ── Typography ────────────────────────────── */
         h1,h2,h3,h4,h5,h6 { font-family: var(--font-head); }
@@ -123,20 +122,21 @@
 
         /* ── Header ────────────────────────────────── */
         .g-header {
-            position: sticky;
-            top: 0;
-            z-index: 1050;
-            background: rgba(34,40,49,0.92);
-            backdrop-filter: blur(18px) saturate(1.5);
-            -webkit-backdrop-filter: blur(18px) saturate(1.5);
-            border-bottom: 1px solid var(--g-border);
-            padding: 0 1.25rem;
-            height: 62px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: box-shadow 0.3s var(--g-ease), border-color 0.3s;
-        }
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    background: rgba(34,40,49,0.92);
+    backdrop-filter: blur(18px) saturate(1.5);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5);
+    border-bottom: 1px solid var(--g-border);
+    padding: 0 1.25rem;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow 0.3s var(--g-ease), border-color 0.3s;
+    will-change: transform;
+}
         .g-header.scrolled {
             border-bottom-color: rgba(255,211,105,0.18);
             box-shadow: 0 4px 32px rgba(0,0,0,0.35);
@@ -1203,7 +1203,7 @@
     <!-- ██ MOBILE MENU ████████████████████████████████████ -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
-        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
+        
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect">Categories</div>
