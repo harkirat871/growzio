@@ -1210,6 +1210,45 @@
             background: rgba(255,211,105,0.15);
             color: var(--g-accent);
         }
+        /* ── Back to Top button (fixed, no horizontal scroll) ── */
+#g-back-top {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 0.75rem;          /* almost touching right border */
+    z-index: 1049;
+    width: 44px;
+    height: 44px;
+    background: var(--g-accent);
+    color: var(--g-bg);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255,211,105,0.4);
+    transition: transform 0.25s var(--g-ease-spring), box-shadow 0.25s, background 0.2s;
+}
+#g-back-top.visible {
+    display: flex;
+    animation: backTopAppear 0.35s var(--g-ease-spring) both;
+}
+#g-back-top:hover {
+    background: #e8bc52;
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 8px 28px rgba(255,211,105,0.5);
+}
+#g-back-top:active { transform: scale(0.92); }
+
+/* Mobile: above the sticky bottom bar */
+@media (max-width: 768px) {
+    #g-back-top {
+        bottom: 5.5rem;      /* sits just above the sticky bar */
+        right: 0.75rem;      /* same right edge */
+        width: 40px;
+        height: 40px;
+    }
+}
     </style>
 </head>
 <body class="g-has-sticky">
