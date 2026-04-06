@@ -590,6 +590,7 @@
     </style>
 </head>
 <body class="@if(count($items)) cart-has-sticky @endif">
+    @include('partials.toast')
     <!-- ██ HEADER (exactly as index) ██ -->
     <header class="g-header" id="gHeader">
         <div class="g-header-left">

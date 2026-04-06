@@ -333,12 +333,7 @@
             Back to Products
         </a>
 
-        @if (session('status'))
-            <div class="alert alert-success alert-dismissible fade show mb-4 unity-ani-fade-in unity-ani-delay-1">
-                {{ session('status') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        @include('partials.toast')
 
         <div class="unity-pdp">
             <div class="row g-0">

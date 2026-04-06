@@ -158,6 +158,7 @@ class CheckoutController extends Controller
     {
         // Guests can build cart freely; only gate at checkout.
         // Send them to login and come back to cart after authentication.
+        session()->flash('toast', ['type' => 'info', 'message' => 'Log in to checkout']);
         session(['url.intended' => route('cart.view')]);
         return redirect()->route('login');
     }

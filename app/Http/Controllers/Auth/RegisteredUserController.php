@@ -92,6 +92,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        $request->session()->flash('toast', ['type' => 'success', 'message' => 'Account created']);
+
         // Merge guest cart with user cart if exists
         $this->mergeGuestCart($request);
 

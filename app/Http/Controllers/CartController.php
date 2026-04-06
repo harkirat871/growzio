@@ -125,12 +125,14 @@ class CartController extends Controller
         $requested = (int) $request->input('loyalty_points_to_use');
         $user = Auth::user();
         if (!$user) {
-            return Redirect::route('cart.view')->with('status', 'Please log in to use loyalty points.');
+            $request->session()->flash('toast', ['type' => 'error', 'message' => 'Log in to use points']);
+            return Redirect::route('cart.view');
         }
         $maxAllowed = (int) $user->loyalty_points;
         $points = min($requested, $maxAllowed);
         $request->session()->put(self::SESSION_LOYALTY_POINTS, $points);
-        return Redirect::route('cart.view')->with('status', $points > 0 ? 'Loyalty points applied.' : 'Loyalty points cleared.');
+        $request->session()->flash('toast', ['type' => 'success', 'message' => $points > 0 ? 'Points applied' : 'Points cleared']);
+        return Redirect::route('cart.view');
     }
 
     public function add(Request $request, Product $product): RedirectResponse|\Illuminate\Http\JsonResponse

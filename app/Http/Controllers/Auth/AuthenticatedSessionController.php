@@ -29,6 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $request->session()->flash('toast', ['type' => 'success', 'message' => 'Logged in']);
+
         $user = Auth::user();
         if ($user instanceof User) {
             $user->forceFill(['last_login' => now()])->save();

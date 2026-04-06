@@ -25,5 +25,6 @@
             {{ $slot }}
         </div>
     </div>
+    @include('partials.toast')
 </body>
 </html>

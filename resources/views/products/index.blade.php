@@ -1232,14 +1232,7 @@
 
     <!-- ██ MAIN ███████████████████████████████████████████ -->
     <main class="g-main">
-
-        @if (session('status'))
-            <div class="g-container g-section" style="padding-bottom:0;">
-                <div class="g-alert-success">
-                    {{ session('status') }}
-                </div>
-            </div>
-        @endif
+        @include('partials.toast')
 
       {{-- ═══════════════════════════════════════════
          HERO BAND
