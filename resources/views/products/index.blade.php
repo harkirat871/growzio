@@ -1138,6 +1138,19 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
+        /* Force suggestions above everything else */
+.g-hero-suggestions {
+    z-index: 1060 !important;          /* Higher than header (1050) */
+    background: var(--g-bg2) !important; /* Solid background */
+    border: 1px solid var(--g-accent) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+
+/* Ensure hero band creates a stacking context */
+.g-hero-band {
+    isolation: isolate;
+    z-index: 10;
+}
     </style>
 </head>
 <body class="g-has-sticky">
