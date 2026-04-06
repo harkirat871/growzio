@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,6 +157,13 @@
         }
         .g-logo span { color: var(--g-accent); }
         .g-logo:hover { animation: logoFloat 0.8s ease; color: var(--g-light); }
+
+        /* CHANGE 2: Hide logo on mobile (phone) */
+        @media (max-width: 767.98px) {
+            .g-logo {
+                display: none;
+            }
+        }
 
         .g-nav-desktop { display: none; }
         @media (min-width: 768px) {
@@ -1068,13 +1074,25 @@
                 border-top: 1px solid var(--g-border);
                 backdrop-filter: blur(10px);
                 gap: 0.75rem;
+                /* CHANGE 3: fix width & prevent horizontal scroll */
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+                box-sizing: border-box;
             }
             .g-sticky-bottom a {
-                flex: 1; text-align: center;
-                padding: 0.75rem; font-size: 14px; font-weight: 600;
-                text-decoration: none; border-radius: var(--g-radius);
+                flex: 1;
+                min-width: 0;           /* allow shrinking */
+                text-align: center;
+                padding: 0.75rem;
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: var(--g-radius);
                 transition: all 0.2s;
                 font-family: var(--font-body);
+                white-space: normal;
+                word-break: keep-all;
             }
             .g-sticky-cart { border: 1px solid var(--g-border); color: var(--g-text); }
             .g-sticky-cart:hover { border-color: var(--g-border-hover); color: var(--g-accent); }
@@ -1139,18 +1157,59 @@
             display: inline-block;
         }
         /* Force suggestions above everything else */
-.g-hero-suggestions {
-    z-index: 1060 !important;          /* Higher than header (1050) */
-    background: var(--g-bg2) !important; /* Solid background */
-    border: 1px solid var(--g-accent) !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
-}
+        .g-hero-suggestions {
+            z-index: 1060 !important;          /* Higher than header (1050) */
+            background: var(--g-bg2) !important; /* Solid background */
+            border: 1px solid var(--g-accent) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
 
-/* Ensure hero band creates a stacking context */
-.g-hero-band {
-    isolation: isolate;
-    z-index: 10;
-}
+        /* Ensure hero band creates a stacking context */
+        .g-hero-band {
+            isolation: isolate;
+            z-index: 10;
+        }
+
+        /* CHANGE 5: fix search SVG icon alignment */
+        .g-search-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .g-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--g-text-muted);
+            width: 18px;
+            height: 18px;
+            z-index: 2;
+        }
+        .g-search-input {
+            padding-left: 38px !important;
+        }
+        /* adjust clear button if present */
+        .g-search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--g-text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .g-search-clear:hover {
+            background: rgba(255,211,105,0.15);
+            color: var(--g-accent);
+        }
     </style>
 </head>
 <body class="g-has-sticky">
@@ -1161,7 +1220,7 @@
             <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
-            {{-- <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a> --}}
+            <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                 {{-- <a href="{{ route('home') }}" class="active">Products</a> --}}
@@ -1821,6 +1880,26 @@
             }
         }
         window.toggleUnityCategory = toggleUnityCategory;
+
+        /* CHANGE 4: Make category names clickable (not only the arrow) */
+        document.querySelectorAll('.g-category-row').forEach(function(row) {
+            // Find the toggle element inside this row (the span that calls toggleUnityCategory)
+            var toggleSpan = row.querySelector('[onclick*="toggleUnityCategory"]');
+            if (!toggleSpan) return;
+            // Extract categoryId from onclick attribute
+            var onclickAttr = toggleSpan.getAttribute('onclick');
+            var match = onclickAttr && onclickAttr.match(/toggleUnityCategory\(['"]?(\d+)['"]?\)/);
+            if (!match) return;
+            var catId = match[1];
+            var categoryNameSpan = row.querySelector('.g-category-name');
+            if (!categoryNameSpan) return;
+            // Make the name clickable
+            categoryNameSpan.style.cursor = 'pointer';
+            categoryNameSpan.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleUnityCategory(catId);
+            });
+        });
     });
     </script>
 
