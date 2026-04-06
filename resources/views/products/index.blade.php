@@ -1161,7 +1161,7 @@
             <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
-            <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
+            {{-- <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a> --}}
             <nav class="g-nav-desktop">
                 <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                 {{-- <a href="{{ route('home') }}" class="active">Products</a> --}}
