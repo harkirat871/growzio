@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +59,7 @@
             font-size: 16px;
             line-height: 1.6;
             color: var(--g-text);
+            overflow-x: hidden;
         }
 
         /* ── Typography ────────────────────────────── */
@@ -121,10 +123,9 @@
 
         /* ── Header ────────────────────────────────── */
         .g-header {
-            position: -webkit-sticky;
             position: sticky;
             top: 0;
-            z-index: 1100;
+            z-index: 1050;
             background: rgba(34,40,49,0.92);
             backdrop-filter: blur(18px) saturate(1.5);
             -webkit-backdrop-filter: blur(18px) saturate(1.5);
@@ -555,11 +556,11 @@
 
         /* ── Hero band ──────────────────────────────── */
         .g-hero-band {
-            background: var(--g-bg2);
-            border-bottom: 1px solid var(--g-border);
-            padding: 2.5rem 1.25rem 2rem;
-            position: relative;
-        }
+    background: var(--g-bg2);
+    border-bottom: 1px solid var(--g-border);
+    padding: 2.5rem 1.25rem 2rem;
+    position: relative;
+}
         .g-hero-band::before {
             content: '';
             position: absolute;
@@ -610,11 +611,11 @@
             top: calc(100% + 10px);
             left: 0;
             right: 0;
-            z-index: 9999;
+            z-index: 50;
             background: rgba(34,40,49,0.98);
-            border: 1px solid var(--g-accent);
+            border: 1px solid var(--g-border);
             border-radius: var(--g-radius-lg);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 18px 60px rgba(0,0,0,0.55);
             overflow: hidden;
             max-height: min(420px, 55vh);
             overflow-y: auto;
@@ -1137,6 +1138,19 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
+        /* Force suggestions above everything else */
+.g-hero-suggestions {
+    z-index: 1060 !important;          /* Higher than header (1050) */
+    background: var(--g-bg2) !important; /* Solid background */
+    border: 1px solid var(--g-accent) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+
+/* Ensure hero band creates a stacking context */
+.g-hero-band {
+    isolation: isolate;
+    z-index: 10;
+}
     </style>
 </head>
 <body class="g-has-sticky">
@@ -1189,7 +1203,7 @@
     <!-- ██ MOBILE MENU ████████████████████████████████████ -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
-        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
+        
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect">Categories</div>
