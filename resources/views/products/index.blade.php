@@ -556,12 +556,11 @@
 
         /* ── Hero band ──────────────────────────────── */
         .g-hero-band {
-            background: var(--g-bg2);
-            border-bottom: 1px solid var(--g-border);
-            padding: 2.5rem 1.25rem 2rem;
-            overflow: hidden;
-            position: relative;
-        }
+    background: var(--g-bg2);
+    border-bottom: 1px solid var(--g-border);
+    padding: 2.5rem 1.25rem 2rem;
+    position: relative;
+}
         .g-hero-band::before {
             content: '';
             position: absolute;
