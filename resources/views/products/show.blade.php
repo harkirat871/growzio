@@ -6,12 +6,12 @@
     <title>{{ $product->name }} - Growzio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* =============================================
-           GROWZIO — DESIGN SYSTEM (identical to index)
+           GROWZIO — DESIGN SYSTEM (exactly as index)
            ============================================= */
         :root {
             --g-bg:         #222831;
@@ -33,6 +33,7 @@
             --font-mono:    'JetBrains Mono', monospace;
         }
 
+        /* Reset & Scrollbar */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -70,6 +71,10 @@
             0%   { background-position: -400px 0; }
             100% { background-position: 400px 0; }
         }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,211,105,0.4); }
+            50%       { box-shadow: 0 0 0 8px rgba(255,211,105,0); }
+        }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -80,6 +85,14 @@
         @keyframes logoFloat {
             0%,100% { transform: translateY(0); }
             50%      { transform: translateY(-3px); }
+        }
+        @keyframes accentBar {
+            from { width: 0; }
+            to   { width: 48px; }
+        }
+        @keyframes backTopAppear {
+            from { opacity: 0; transform: translateY(10px) scale(0.8); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* Reveal on scroll */
@@ -141,6 +154,7 @@
                 text-decoration: none;
                 border-radius: var(--g-radius);
                 transition: color 0.2s, background 0.2s;
+                letter-spacing: 0.01em;
             }
             .g-nav-desktop a:hover,
             .g-nav-desktop a.active {
@@ -166,6 +180,9 @@
             border-color: var(--g-border-hover);
             transform: scale(1.08);
         }
+        .g-cart-link { display: none; }
+        @media (min-width: 769px) { .g-cart-link { display: inline-flex; } }
+
         .g-btn-ghost {
             padding: 0.38rem 0.9rem;
             font-size: 13px;
@@ -202,6 +219,18 @@
         }
 
         /* Mobile menu */
+        .g-hamburger {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            border: 1px solid var(--g-border);
+            background: transparent;
+            color: var(--g-text-muted);
+            cursor: pointer;
+            border-radius: var(--g-radius);
+            transition: all 0.2s;
+        }
+        .g-hamburger:hover { color: var(--g-accent); border-color: var(--g-border-hover); }
+        @media (min-width: 768px) { .g-hamburger { display: none; } }
         .g-mobile-overlay {
             position: fixed; inset: 0;
             background: rgba(34,40,49,0.7);
@@ -236,11 +265,89 @@
             color: var(--g-text-muted);
             text-decoration: none;
             border-bottom: 1px solid var(--g-border);
+            transition: color 0.2s, background 0.2s, padding-left 0.2s;
         }
         .g-mobile-menu a:hover {
             color: var(--g-accent);
             background: rgba(255,211,105,0.05);
             padding-left: 1.6rem;
+        }
+        .g-mobile-menu .g-filter-sect {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--g-accent);
+            pointer-events: none;
+        }
+
+        /* Filter drawer (from index) */
+        .g-filter-overlay {
+            position: fixed; inset: 0;
+            background: rgba(34,40,49,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1055;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .g-filter-overlay.open { opacity: 1; visibility: visible; }
+        .g-filter-drawer {
+            position: fixed; top: 0; right: 0;
+            width: 320px; max-width: 90vw;
+            height: 100vh;
+            background: var(--g-bg2);
+            border-left: 1px solid var(--g-border);
+            z-index: 1060;
+            transform: translateX(100%);
+            transition: transform 0.35s var(--g-ease);
+            overflow-y: auto;
+        }
+        .g-filter-drawer.open { transform: translateX(0); }
+        .g-filter-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--g-border);
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--g-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .g-filter-header::before {
+            content: '';
+            display: inline-block;
+            width: 3px; height: 18px;
+            background: var(--g-accent);
+            border-radius: 2px;
+        }
+        .g-filter-body { padding: 1.25rem; }
+
+        /* Back to Top */
+        #g-back-top {
+            position: fixed;
+            bottom: 1.75rem; right: 1.75rem;
+            z-index: 1049;
+            width: 44px; height: 44px;
+            background: var(--g-accent);
+            color: var(--g-bg);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(255,211,105,0.4);
+            transition: transform 0.25s var(--g-ease-spring), box-shadow 0.25s, background 0.2s;
+        }
+        #g-back-top.visible { display: flex; animation: backTopAppear 0.35s var(--g-ease-spring) both; }
+        #g-back-top:hover {
+            background: #e8bc52;
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 8px 28px rgba(255,211,105,0.5);
+        }
+        @media (max-width: 768px) {
+            #g-back-top { bottom: 5.5rem; right: 1rem; width: 40px; height: 40px; }
         }
 
         /* Main container */
@@ -273,7 +380,7 @@
             border: 1px solid var(--g-border);
             border-radius: var(--g-radius-lg);
             overflow: hidden;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
         .g-product-image-wrap {
             background: var(--g-bg2);
@@ -313,7 +420,7 @@
             border-radius: var(--g-radius);
         }
 
-        /* Product title: use DM Sans for clean numbers */
+        /* Product title: clean DM Sans for numbers */
         .g-product-title {
             font-family: var(--font-body);
             font-size: 1.75rem;
@@ -454,7 +561,7 @@
             cursor: pointer;
         }
 
-        /* You May Also Like — improved for mobile (smaller cards, better alignment) */
+        /* You May Also Like – GRID (same as index product grid) */
         .g-related-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -478,37 +585,39 @@
             color: var(--g-light);
             margin-bottom: 2rem;
         }
-        .g-related-carousel-wrap {
-            position: relative;
-            padding: 0 40px;
-        }
-        .g-related-track {
-            display: flex;
+        .g-related-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding: 0.5rem 0;
         }
-        .g-related-track::-webkit-scrollbar { display: none; }
+        @media (min-width: 768px) {
+            .g-related-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        @media (min-width: 992px) {
+            .g-related-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
         .g-related-card {
-            flex: 0 0 200px;
-            scroll-snap-align: start;
             background: var(--g-card-bg);
             border: 1px solid var(--g-border);
             border-radius: var(--g-radius-lg);
             overflow: hidden;
             text-decoration: none;
             transition: border-color 0.2s, transform 0.2s var(--g-ease-spring);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .g-related-card:hover {
             border-color: var(--g-border-hover);
             transform: translateY(-4px);
         }
         .g-related-card-image {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 4/5;
             background: var(--g-bg2);
             display: flex;
             align-items: center;
@@ -525,10 +634,11 @@
             transform: scale(1.05);
         }
         .g-related-card-body {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem 0.5rem;
+            flex: 1;
         }
         .g-related-card-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--g-light);
             display: -webkit-box;
@@ -536,63 +646,44 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 0.25rem;
-            line-height: 1.4;
+            line-height: 1.45;
         }
         .g-related-card-price {
-            font-size: 12px;
+            font-size: 13px;
             font-family: var(--font-mono);
             color: var(--g-accent);
         }
-        .g-carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
-            background: var(--g-bg2);
-            border: 1px solid var(--g-border);
+        .g-related-card-actions {
+            padding: 0 1rem 1rem;
+            margin-top: auto;
+        }
+        .g-related-add-btn {
+            width: 100%;
+            background: var(--g-accent);
+            color: var(--g-bg);
+            border: none;
+            padding: 0.5rem;
+            font-weight: 600;
+            font-size: 12px;
             border-radius: var(--g-radius);
-            color: var(--g-text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
-            z-index: 2;
+            transition: background 0.2s, transform 0.2s;
         }
-        .g-carousel-btn:hover {
-            border-color: var(--g-border-hover);
-            color: var(--g-accent);
-            background: rgba(255,211,105,0.08);
-        }
-        .g-carousel-btn.prev { left: 0; }
-        .g-carousel-btn.next { right: 0; }
-
-        /* Mobile adjustments for related section */
-        @media (max-width: 768px) {
-            .g-related-carousel-wrap { padding: 0 20px; }
-            .g-related-card { flex: 0 0 160px; }
-            .g-related-card-body { padding: 0.6rem; }
-            .g-related-card-title { font-size: 11px; }
-            .g-related-card-price { font-size: 11px; }
-            .g-carousel-btn { width: 30px; height: 30px; }
+        .g-related-add-btn:hover {
+            background: #e8bc52;
+            transform: translateY(-1px);
         }
 
-        /* Toast */
+        /* Toast & spinner (same as index) */
         .g-toast {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
             z-index: 9999;
             padding: 0.75rem 1.25rem;
             background: var(--g-bg2);
             border: 1px solid var(--g-border-hover);
             color: var(--g-light);
-            font-size: 13.5px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
+            font-size: 13.5px; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
             border-radius: var(--g-radius-lg);
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             animation: toastSlide 0.35s var(--g-ease-spring);
@@ -606,6 +697,20 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
+        .dropdown-menu {
+            background: var(--g-bg2);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
+            padding: 0.5rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+        .dropdown-item {
+            color: var(--g-text-muted);
+            padding: 0.55rem 0.9rem;
+            font-size: 13.5px;
+            border-radius: var(--g-radius);
+        }
+        .dropdown-item:hover { background: rgba(255,211,105,0.08); color: var(--g-accent); }
     </style>
 </head>
 <body>
@@ -623,6 +728,9 @@
             </nav>
         </div>
         <div class="g-header-right">
+            <button type="button" class="g-icon-btn" id="gFilterOpen" aria-label="Filters">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
+            </button>
             <a href="{{ route('cart.view') }}" class="g-icon-btn g-cart-link" aria-label="Cart">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             </a>
@@ -652,14 +760,46 @@
         </div>
     </header>
 
-    <!-- Mobile menu overlay -->
+    <!-- Mobile menu (exact copy) -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect">Categories</div>
-        <!-- dynamic categories would go here if needed, but keeping as index -->
+        @if(isset($categories) && $categories->isNotEmpty())
+            @foreach($categories->take(8) as $cat)
+                <a href="{{ route('products.byCategory', $cat) }}">{{ $cat->name }}</a>
+            @endforeach
+        @endif
     </div>
+
+    <!-- Filter drawer (from index) -->
+    <div class="g-filter-overlay" id="gFilterOverlay"></div>
+    <div class="g-filter-drawer" id="gFilterDrawer">
+        <div class="g-filter-header">Filters</div>
+        <div class="g-filter-body">
+            <p class="g-section-sub mb-3" style="font-size:12px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--g-accent);">Shop by category</p>
+            @if(isset($categories) && $categories->isNotEmpty())
+                <ul class="g-category-list">
+                    @foreach($categories as $cat)
+                        <li class="g-category-item">
+                            <div class="g-category-row">
+                                <span class="g-category-name">{{ $cat->name }}</span>
+                                <a href="{{ route('products.byCategory', $cat) }}" class="g-category-link">View →</a>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="g-section-sub">No categories yet.</p>
+            @endif
+        </div>
+    </div>
+
+    <!-- Back to Top button -->
+    <button id="g-back-top" aria-label="Back to top">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
 
     <!-- ██ MAIN CONTENT ██ -->
     <main class="g-main">
@@ -750,34 +890,37 @@
             </div>
         </div>
 
-        @if($youMayAlsoLike->isNotEmpty())
+        @if(isset($youMayAlsoLike) && $youMayAlsoLike->isNotEmpty())
         <section class="g-related-section g-reveal">
             <div class="g-section-eyebrow">// You may also like</div>
             <h2 class="g-section-title">Similar products</h2>
-            <div class="g-related-carousel-wrap">
-                <button class="g-carousel-btn prev" id="relatedPrev" aria-label="Previous">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
-                </button>
-                <button class="g-carousel-btn next" id="relatedNext" aria-label="Next">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-                <div class="g-related-track" id="relatedTrack">
-                    @foreach($youMayAlsoLike as $related)
-                    <a href="{{ route('products.show', $related) }}" class="g-related-card">
-                        <div class="g-related-card-image">
-                            @if ($related->image_path)
-                                <img src="{{ asset($related->image_path) }}" alt="{{ $related->name }}" loading="lazy">
-                            @else
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                            @endif
-                        </div>
+            <div class="g-related-grid">
+                @foreach($youMayAlsoLike as $related)
+                    <div class="g-related-card">
+                        <a href="{{ route('products.show', $related) }}" class="g-related-card-image-link" style="text-decoration: none;">
+                            <div class="g-related-card-image">
+                                @if ($related->image_path)
+                                    <img src="{{ asset($related->image_path) }}" alt="{{ $related->name }}" loading="lazy">
+                                @else
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                                @endif
+                            </div>
+                        </a>
                         <div class="g-related-card-body">
-                            <div class="g-related-card-title">{{ $related->name }}</div>
-                            <div class="g-related-card-price">₹{{ number_format((float) $related->price, 2) }}</div>
+                            <a href="{{ route('products.show', $related) }}" style="text-decoration: none; color: inherit;">
+                                <div class="g-related-card-title">{{ $related->name }}</div>
+                                <div class="g-related-card-price">₹{{ number_format((float) $related->price, 2) }}</div>
+                            </a>
                         </div>
-                    </a>
-                    @endforeach
-                </div>
+                        <div class="g-related-card-actions">
+                            <form method="POST" action="{{ route('cart.add', $related) }}" class="related-add-form">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="g-related-add-btn">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </section>
         @endif
@@ -801,60 +944,43 @@
             if (hamburger) hamburger.addEventListener('click', openMobile);
             if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobile);
 
-            // Product image fade-in
+            // Filter drawer
+            const filterOpen = document.getElementById('gFilterOpen');
+            const filterDrawer = document.getElementById('gFilterDrawer');
+            const filterOverlay = document.getElementById('gFilterOverlay');
+            if (filterOpen) filterOpen.addEventListener('click', () => { filterDrawer.classList.add('open'); filterOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; });
+            if (filterOverlay) filterOverlay.addEventListener('click', () => { filterDrawer.classList.remove('open'); filterOverlay.classList.remove('open'); document.body.style.overflow = ''; });
+
+            // Back to top
+            const backTop = document.getElementById('g-back-top');
+            if (backTop) {
+                window.addEventListener('scroll', () => backTop.classList.toggle('visible', window.scrollY > 320), { passive: true });
+                backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            }
+
+            // Product image fade
             const prodImg = document.getElementById('productImage');
             if (prodImg) {
                 if (prodImg.complete) prodImg.style.opacity = '1';
                 else prodImg.addEventListener('load', () => prodImg.style.opacity = '1');
             }
 
-            // Description toggle (mobile)
+            // Description toggle
             const descSection = document.getElementById('descSection');
             const descToggle = document.getElementById('descToggle');
             const descLabel = document.getElementById('descToggleLabel');
             const descText = document.getElementById('descText');
             if (descSection && descToggle && descText) {
                 descToggle.addEventListener('click', () => {
-                    const isExpanded = descSection.classList.toggle('is-expanded');
-                    descText.classList.toggle('is-clamped', !isExpanded);
-                    descLabel.textContent = isExpanded ? 'Read less' : 'Read more';
+                    const expanded = descSection.classList.toggle('is-expanded');
+                    descText.classList.toggle('is-clamped', !expanded);
+                    descLabel.textContent = expanded ? 'Read less' : 'Read more';
                 });
             }
 
-            // Add to cart AJAX
+            // Add to cart (main product)
             const cartForm = document.getElementById('addToCartForm');
             const cartBtn = document.getElementById('addToCartBtn');
-            if (cartForm && cartBtn) {
-                cartForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const originalHtml = cartBtn.innerHTML;
-                    cartBtn.innerHTML = '<span class="g-spinner"></span>';
-                    cartBtn.disabled = true;
-                    fetch(cartForm.action, {
-                        method: 'POST',
-                        body: new FormData(cartForm),
-                        credentials: 'same-origin',
-                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-                    })
-                    .then(res => {
-                        if (!res.ok) return res.json().then(err => { throw new Error(err.message || 'Request failed'); });
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (!data.success) throw new Error(data.message || 'Could not add to cart');
-                        showToast(data.message || 'Added to cart', false);
-                        cartBtn.innerHTML = originalHtml;
-                        cartBtn.disabled = false;
-                    })
-                    .catch(err => {
-                        showToast(err.message || 'Could not add to cart', true);
-                        cartBtn.innerHTML = originalHtml;
-                        cartBtn.disabled = false;
-                    });
-                });
-            }
-
-            // Toast helper
             function showToast(message, isError) {
                 const existing = document.getElementById('g-toast');
                 if (existing) existing.remove();
@@ -874,21 +1000,67 @@
                     return m;
                 });
             }
-
-            // Related products carousel
-            const track = document.getElementById('relatedTrack');
-            const prevBtn = document.getElementById('relatedPrev');
-            const nextBtn = document.getElementById('relatedNext');
-            if (track && prevBtn && nextBtn) {
-                const scrollAmount = () => {
-                    const card = track.querySelector('.g-related-card');
-                    const cardWidth = card ? card.offsetWidth : 160;
-                    const gap = 16;
-                    return cardWidth + gap;
-                };
-                prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
-                nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+            if (cartForm && cartBtn) {
+                cartForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const original = cartBtn.innerHTML;
+                    cartBtn.innerHTML = '<span class="g-spinner"></span>';
+                    cartBtn.disabled = true;
+                    fetch(cartForm.action, {
+                        method: 'POST',
+                        body: new FormData(cartForm),
+                        credentials: 'same-origin',
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => {
+                        if (!res.ok) return res.json().then(err => { throw new Error(err.message || 'Request failed'); });
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Could not add to cart');
+                        showToast(data.message || 'Added to cart', false);
+                        cartBtn.innerHTML = original;
+                        cartBtn.disabled = false;
+                    })
+                    .catch(err => {
+                        showToast(err.message || 'Could not add to cart', true);
+                        cartBtn.innerHTML = original;
+                        cartBtn.disabled = false;
+                    });
+                });
             }
+
+            // Add to cart for related products
+            document.querySelectorAll('.related-add-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const btn = this.querySelector('button');
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<span class="g-spinner"></span>';
+                    btn.disabled = true;
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        credentials: 'same-origin',
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => {
+                        if (!res.ok) return res.json().then(err => { throw new Error(err.message || 'Request failed'); });
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Could not add to cart');
+                        showToast(data.message || 'Added to cart', false);
+                        btn.innerHTML = original;
+                        btn.disabled = false;
+                    })
+                    .catch(err => {
+                        showToast(err.message || 'Could not add to cart', true);
+                        btn.innerHTML = original;
+                        btn.disabled = false;
+                    });
+                });
+            });
 
             // Reveal on scroll
             const reveals = document.querySelectorAll('.g-reveal');
