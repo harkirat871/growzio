@@ -760,7 +760,7 @@
         .g-category-dropdown[open] summary .g-chev { transform: rotate(180deg); }
         .g-category-dropdown-body { border-top: 1px solid var(--g-border); }
 
-        /* ========== NEW TWO‑ZONE CATEGORY STYLES ========== */
+        /* ========== IMPROVED TWO‑ZONE CATEGORY STYLES ========== */
         .g-category-list {
             list-style: none;
             margin: 0;
@@ -792,18 +792,29 @@
             font-size: 13.5px;
             color: var(--g-text-muted);
         }
+        /* SVG toggle icon — consistent across all platforms (no emoji) */
         .g-toggle-icon {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 20px;
-            font-size: 12px;
+            height: 20px;
             transition: transform 0.2s ease;
             color: var(--g-accent);
+            flex-shrink: 0;
         }
-        .g-category-item.expanded .g-toggle-icon {
+        .g-toggle-icon svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.2s ease;
+        }
+        .g-category-item.expanded .g-toggle-icon svg {
             transform: rotate(90deg);
         }
         .g-cat-name {
             font-weight: 500;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         /* Right zone (view button) */
         .g-cat-view {
@@ -831,26 +842,63 @@
             font-size: 12px;
             font-weight: 600;
         }
-        /* Subcategories indentation */
+        /* Subcategories indentation — fixed for deep nesting on mobile */
         .g-subcategories {
-            margin-left: 44px;
+            margin-left: 32px;
             padding-left: 12px;
             border-left: 2px solid rgba(255,211,105,0.3);
+            overflow-x: visible;
+        }
+        /* Deeper levels get progressive but safe indentation */
+        .g-subcategories .g-subcategories {
+            margin-left: 24px;
+            padding-left: 10px;
+        }
+        .g-subcategories .g-subcategories .g-subcategories {
+            margin-left: 16px;
+            padding-left: 8px;
         }
         .g-toggle-placeholder {
             width: 20px;
+            flex-shrink: 0;
             visibility: hidden;
         }
-        /* Ensure consistent spacing on mobile */
+        /* Ensure category rows never overflow horizontally */
+        .g-category-row {
+            overflow-x: visible;
+        }
+        /* Mobile-specific improvements: prevent cutting off deep nested items */
         @media (max-width: 768px) {
             .g-category-row {
                 padding: 0.9rem 1rem;
+                gap: 8px;
             }
             .g-cat-view {
                 padding: 6px 12px;
+                white-space: nowrap;
+            }
+            .g-subcategories {
+                margin-left: 20px;
+                padding-left: 8px;
+            }
+            .g-subcategories .g-subcategories {
+                margin-left: 16px;
+                padding-left: 6px;
+            }
+            .g-subcategories .g-subcategories .g-subcategories {
+                margin-left: 12px;
+                padding-left: 4px;
+            }
+            .g-cat-name {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            /* Make sure parent container allows horizontal scrolling if needed (fallback) */
+            .g-category-dropdown-body {
+                overflow-x: auto;
             }
         }
-        /* ========== END NEW STYLES ========== */
+        /* ========== END IMPROVED STYLES ========== */
 
         /* ── Section header ─────────────────────────── */
         .g-section-head {
@@ -1541,7 +1589,7 @@
                 <div class="g-category-dropdown-body">
                     @if($categories->isNotEmpty())
                         <ul class="g-category-list">
-                            {{-- Recursive category tree with two‑zone UX --}}
+                            {{-- Recursive category tree with fixed two‑zone UX & SVG icons --}}
                             @php
                                 function renderCategoryTree($cats, $level = 0) {
                                     $html = '';
@@ -1549,9 +1597,13 @@
                                         $hasChildren = $cat->children->isNotEmpty();
                                         $html .= '<li class="g-category-item" data-category-id="' . $cat->id . '">';
                                         $html .= '<div class="g-category-row">';
-                                        // LEFT ZONE: toggle expand/collapse
+                                        // LEFT ZONE: toggle expand/collapse with SVG (no emoji)
                                         $html .= '<div class="g-cat-toggle" data-action="toggle" data-category-id="' . $cat->id . '">';
-                                        $html .= '<span class="g-toggle-icon">' . ($hasChildren ? '▶' : '<span class="g-toggle-placeholder"></span>') . '</span>';
+                                        if ($hasChildren) {
+                                            $html .= '<span class="g-toggle-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>';
+                                        } else {
+                                            $html .= '<span class="g-toggle-placeholder"></span>';
+                                        }
                                         $html .= '<span class="g-cat-name">' . e($cat->name) . '</span>';
                                         $html .= '</div>';
                                         // RIGHT ZONE: view category page
@@ -1788,7 +1840,7 @@
         }, { rootMargin: '0px 0px -50px 0px', threshold: 0.08 });
         reveals.forEach(function (el) { revObserver.observe(el); });
 
-        /* ─── Category toggle (two‑zone) ────────────────── */
+        /* ─── Category toggle (two‑zone) with SVG ────────────────── */
         function toggleCategory(categoryItem, toggleElement) {
             var subcatContainer = categoryItem.querySelector('.g-subcategories');
             var iconSpan = toggleElement ? toggleElement.querySelector('.g-toggle-icon') : categoryItem.querySelector('.g-toggle-icon');
@@ -1797,11 +1849,15 @@
             if (isExpanded) {
                 subcatContainer.style.display = 'none';
                 categoryItem.classList.remove('expanded');
-                if (iconSpan) iconSpan.textContent = '▶';
+                if (iconSpan) {
+                    iconSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                }
             } else {
                 subcatContainer.style.display = 'block';
                 categoryItem.classList.add('expanded');
-                if (iconSpan) iconSpan.textContent = '▼';
+                if (iconSpan) {
+                    iconSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                }
             }
         }
 
