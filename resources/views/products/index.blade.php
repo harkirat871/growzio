@@ -612,108 +612,23 @@
             padding: 0.85rem 1rem;
             font-size: 1rem;
         }
-/* Search wrapper */
-.g-hero-search {
-    max-width: 720px;
-    margin-top: 1rem;
-    position: relative;
-}
-
-/* Input */
-.g-search-input-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.g-search-input {
-    width: 100%;
-    padding: 0.9rem 2.5rem 0.9rem 2.4rem;
-    font-size: 1rem;
-    font-family: var(--font-body);
-    background: var(--g-bg2);
-    border: 1px solid var(--g-border);
-    border-radius: var(--g-radius-lg);
-    color: var(--g-text);
-    outline: none;
-}
-.g-search-input:focus {
-    border-color: var(--g-accent);
-    box-shadow: 0 0 0 3px rgba(255,211,105,0.12);
-}
-
-/* Suggestions default */
-.g-hero-suggestions {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    z-index: 1060;
-    background: var(--g-bg2);
-    border: 1px solid var(--g-border);
-    border-radius: 16px;
-    box-shadow: 0 18px 50px rgba(0,0,0,0.45);
-    overflow: hidden;
-    max-height: 360px;
-    overflow-y: auto;
-    padding: 0.35rem;
-    display: none;
-}
-.g-hero-suggestions:not(:empty) {
-    display: block;
-}
-
-.g-suggestion-item {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.75rem;
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--g-text);
-}
-.g-suggestion-item:hover {
-    background: rgba(255,255,255,0.04);
-}
-.g-suggestion-item img {
-    width: 46px;
-    height: 46px;
-    object-fit: cover;
-    border-radius: 10px;
-    flex-shrink: 0;
-}
-
-/* Mobile: make suggestions a clean bottom sheet */
-@media (max-width: 768px) {
-    .g-hero-search {
-        max-width: 100%;
-    }
-
-    .g-search-input {
-        font-size: 16px; /* stops iPhone zoom */
-        padding: 0.95rem 2.5rem 0.95rem 2.4rem;
-    }
-
-    .g-hero-suggestions {
-        position: fixed;
-        left: 12px;
-        right: 12px;
-        top: auto;
-        bottom: calc(env(safe-area-inset-bottom) + 12px);
-        max-height: 45vh;
-        border-radius: 18px;
-        padding: 0.4rem;
-        box-shadow: 0 18px 45px rgba(0,0,0,0.55);
-    }
-
-    .g-suggestion-item {
-        padding: 0.8rem;
-    }
-
-    .g-suggestion-item img {
-        width: 42px;
-        height: 42px;
-    }
-}
+        .g-hero-suggestions {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(34,40,49,0.98);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
+            box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+            max-height: min(420px, 55vh);
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .g-hero-suggestions:empty { display: none; }
+        .g-hero-suggestions .g-suggestion-item { border-radius: var(--g-radius); }
         .g-accent-line {
             width: 0;
             height: 3px;
@@ -1358,7 +1273,13 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
-
+        /* Force suggestions above everything else */
+        .g-hero-suggestions {
+            z-index: 1060 !important;          /* Higher than header (1050) */
+            background: var(--g-bg2) !important; /* Solid background */
+            border: 1px solid var(--g-accent) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
 
         /* Ensure hero band creates a stacking context */
         .g-hero-band {
@@ -2169,69 +2090,6 @@
         }
     });
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('gSearchInput');
-    const box = document.getElementById('gSearchSuggestions');
 
-    if (!input || !box) return;
-
-    function positionSuggestions() {
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-        if (!isMobile) {
-            box.style.position = 'absolute';
-            box.style.left = '0';
-            box.style.right = '0';
-            box.style.top = 'calc(100% + 8px)';
-            box.style.bottom = '';
-            box.style.maxHeight = '360px';
-            return;
-        }
-
-        const rect = input.getBoundingClientRect();
-        const viewportH = window.innerHeight;
-
-        const spaceBelow = viewportH - rect.bottom;
-        const spaceAbove = rect.top;
-
-        // Pick the side with more room
-        const openBelow = spaceBelow >= spaceAbove;
-
-        box.style.position = 'fixed';
-        box.style.left = '12px';
-        box.style.right = '12px';
-        box.style.maxHeight = Math.max(180, Math.min(420, openBelow ? spaceBelow - 16 : spaceAbove - 16)) + 'px';
-
-        if (openBelow) {
-            box.style.top = (rect.bottom + 8) + 'px';
-            box.style.bottom = '';
-        } else {
-            box.style.bottom = (viewportH - rect.top + 8) + 'px';
-            box.style.top = '';
-        }
-    }
-
-    input.addEventListener('focus', positionSuggestions);
-    input.addEventListener('input', positionSuggestions);
-    window.addEventListener('resize', positionSuggestions);
-    window.addEventListener('scroll', positionSuggestions, { passive: true });
-
-    // If your AJAX renders suggestions, call this after you inject them too
-    window.gPositionSearchSuggestions = positionSuggestions;
-});
-</script>
-<script>
-const observer = new MutationObserver(() => {
-    if (window.gPositionSearchSuggestions) {
-        window.gPositionSearchSuggestions();
-    }
-});
-
-const target = document.getElementById('gSearchSuggestions');
-if (target) {
-    observer.observe(target, { childList: true });
-}
-</script>
 </body>
 </html>
