@@ -131,7 +131,7 @@
                                         @if ($item->product)
                                             <button
                                                 type="button"
-                                                class="product-view-trigger text-left text-blue-300 hover:underline focus:outline-none"
+                                                class="product-view-trigger text-left text-indigo-600 hover:text-indigo-800 hover:underline focus:outline-none font-medium"
                                                 data-product-name="{{ $item->product->name }}"
                                                 data-product-url="{{ route('products.show', $item->product) }}"
                                             >
@@ -162,7 +162,7 @@
                                 @if ($item->product)
                                     <button
                                         type="button"
-                                        class="product-view-trigger text-left text-blue-300 hover:underline focus:outline-none"
+                                        class="product-view-trigger text-left text-indigo-600 hover:text-indigo-800 hover:underline focus:outline-none"
                                         data-product-name="{{ $item->product->name }}"
                                         data-product-url="{{ route('products.show', $item->product) }}"
                                     >
@@ -202,27 +202,34 @@
     </div>
 </div>
 
+{{-- iOS-style popup modal with blur and improved design --}}
 <div id="product-view-modal" class="fixed inset-0 z-[70] hidden" aria-hidden="true">
-    <button type="button" id="product-view-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-label="Close"></button>
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-md transition-all duration-200" id="product-view-overlay"></div>
     <div class="relative flex min-h-full items-center justify-center p-4">
-        <div class="w-full max-w-md rounded-2xl border border-white/10 p-4 sm:p-5 shadow-2xl" style="background: #2D3340;">
-            <div class="flex items-start justify-between gap-3">
-                <h3 class="text-base sm:text-lg font-semibold text-white">View product</h3>
-                <button type="button" id="product-view-close" class="text-white/80 hover:text-white text-xl leading-none" aria-label="Close">
-                    ×
-                </button>
-            </div>
-            <p class="mt-3 text-sm sm:text-base text-white">
-                Do you want to view the product
-                <span id="product-view-name" class="font-semibold text-white"></span>?
-            </p>
-            <div class="mt-5 flex items-center justify-end gap-2 sm:gap-3">
-                <button type="button" id="product-view-no" class="px-4 py-2 rounded-lg text-sm font-medium border border-white/20 text-white bg-white/5 hover:bg-white/10">
-                    No
-                </button>
-                <button type="button" id="product-view-yes" class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                    Yes
-                </button>
+        <div class="w-full max-w-sm mx-auto transform transition-all duration-200 scale-95 opacity-0" id="modal-card">
+            <div class="rounded-2xl bg-[#2D3340] shadow-2xl overflow-hidden border border-white/10">
+                <div class="flex items-center justify-between px-4 pt-4 sm:px-5 sm:pt-5">
+                    <h3 class="text-lg font-semibold text-white tracking-tight">View product</h3>
+                    <button type="button" id="product-view-close" class="text-white/70 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 focus:outline-none" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="px-4 pb-4 sm:px-5 sm:pb-5">
+                    <p class="text-white/90 text-base leading-relaxed">
+                        Do you want to view the product
+                        <span id="product-view-name" class="font-semibold text-white break-words"></span>?
+                    </p>
+                    <div class="mt-6 flex items-center justify-end gap-3">
+                        <button type="button" id="product-view-no" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all duration-150 border border-white/20">
+                            No
+                        </button>
+                        <button type="button" id="product-view-yes" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-150 shadow-sm">
+                            Yes
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -240,13 +247,22 @@
     const closeBtn = document.getElementById('product-view-close');
     const noBtn = document.getElementById('product-view-no');
     const yesBtn = document.getElementById('product-view-yes');
+    const modalCard = document.getElementById('modal-card');
     const triggers = document.querySelectorAll('.product-view-trigger');
     let targetUrl = '';
 
     const closeModal = function () {
-        modal.classList.add('hidden');
-        modal.setAttribute('aria-hidden', 'true');
-        targetUrl = '';
+        if (!modal.classList.contains('hidden')) {
+            if (modalCard) {
+                modalCard.classList.add('scale-95', 'opacity-0');
+                modalCard.classList.remove('scale-100', 'opacity-100');
+            }
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+                targetUrl = '';
+            }, 150);
+        }
     };
 
     const openModal = function (name, url) {
@@ -254,16 +270,21 @@
         nameEl.textContent = name ? '"' + name + '"' : '';
         modal.classList.remove('hidden');
         modal.setAttribute('aria-hidden', 'false');
+        if (modalCard) {
+            modalCard.classList.remove('scale-95', 'opacity-0');
+            modalCard.classList.add('scale-100', 'opacity-100');
+        }
     };
 
     triggers.forEach(function (trigger) {
-        trigger.addEventListener('click', function () {
+        trigger.addEventListener('click', function (e) {
+            e.preventDefault();
             openModal(trigger.getAttribute('data-product-name'), trigger.getAttribute('data-product-url'));
         });
     });
 
     [overlay, closeBtn, noBtn].forEach(function (el) {
-        el.addEventListener('click', closeModal);
+        if (el) el.addEventListener('click', closeModal);
     });
 
     yesBtn.addEventListener('click', function () {
@@ -282,5 +303,3 @@
 })();
 </script>
 @endpush
-
-
