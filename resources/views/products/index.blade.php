@@ -40,6 +40,18 @@
         html {
             scroll-behavior: smooth;
         }
+        /* Force no horizontal scroll on any screen */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Lock the Back to Top button to the viewport’s right edge */
+#g-back-top {
+    right: 16px !important;
+    left: auto !important;
+}
 
         /* Native scrollbar — styled to match theme */
         ::-webkit-scrollbar { width: 8px; height: 8px; }

@@ -140,6 +140,14 @@
         }
         .g-logo span { color: var(--g-accent); }
         .g-logo:hover { animation: logoFloat 0.8s ease; color: var(--g-light); }
+
+        /* Hide logo on mobile (phones) */
+        @media (max-width: 767px) {
+            .g-logo {
+                display: none !important;
+            }
+        }
+
         .g-nav-desktop { display: none; }
         @media (min-width: 768px) {
             .g-nav-desktop {
@@ -497,9 +505,7 @@
             margin-bottom: 1.5rem;
         }
 
-        /* --- REMOVED STICKY BOTTOM (mobile) --- */
-        /* (No .g-sticky-bottom-cart styles anymore) */
-
+        /* Back to top */
         #g-back-top {
             position: fixed;
             bottom: 1.75rem; right: 1.75rem;
@@ -518,7 +524,6 @@
         }
         #g-back-top.visible { display: flex; animation: backTopAppear 0.35s var(--g-ease-spring) both; }
         #g-back-top:hover { background: #e8bc52; transform: translateY(-4px) scale(1.08); }
-        /* Since sticky removed, adjust back-top spacing */
         @media (max-width: 768px) { #g-back-top { bottom: 1.75rem; right: 1rem; } }
 
         .dropdown-menu {
@@ -538,17 +543,16 @@
         }
     </style>
 </head>
-<body>   <!-- No cart-has-sticky class anymore -->
+<body>
     @include('partials.toast')
-    <!-- ██ HEADER (exactly as index) ██ -->
+    <!-- ██ HEADER ██ -->
     <header class="g-header" id="gHeader">
         <div class="g-header-left">
             <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
-            
+            <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
-                
                 <a href="{{ route('home') }}">Home</a>
                 <a href="{{ route('home') }}">Products</a>
             </nav>
@@ -590,6 +594,7 @@
     <!-- mobile menu -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
+        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect" style="padding:0.75rem 1.25rem; font-size:11px; color:var(--g-accent);">Menu</div>
@@ -733,8 +738,6 @@
             </div>
         </div>
     </main>
-
-    <!-- STICKY BOTTOM BAR COMPLETELY REMOVED -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
