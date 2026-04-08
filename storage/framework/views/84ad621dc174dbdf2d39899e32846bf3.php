@@ -1770,7 +1770,10 @@
     <div class="g-sticky-bottom">
         <a href="<?php echo e(route('cart.view')); ?>" class="g-sticky-cart">View Cart</a>
         <?php if(auth()->guard()->check()): ?>
-            <a href="<?php echo e(route('checkout.form')); ?>" class="g-sticky-checkout">Checkout</a>
+            <form method="POST" action="<?php echo e(route('checkout.store')); ?>" style="margin:0;">
+                <?php echo csrf_field(); ?>
+                <button type="submit" class="g-sticky-checkout" style="border:none;">Checkout</button>
+            </form>
         <?php else: ?>
             <a href="<?php echo e(route('checkout.login-required')); ?>" class="g-sticky-checkout">Checkout</a>
         <?php endif; ?>

@@ -762,7 +762,10 @@
                                         <button type="submit" class="btn-clear">Clear Cart</button>
                                     </form>
                                     @auth
-                                        <a href="{{ route('checkout.form') }}" class="btn-checkout"><i class="fas fa-arrow-right"></i> Checkout</a>
+                                        <form method="POST" action="{{ route('checkout.store') }}">
+                                            @csrf
+                                            <button type="submit" class="btn-checkout"><i class="fas fa-arrow-right"></i> Checkout</button>
+                                        </form>
                                     @else
                                         <a href="{{ route('checkout.login-required') }}" class="btn-checkout"><i class="fas fa-arrow-right"></i> Proceed to Checkout</a>
                                     @endauth
@@ -790,7 +793,10 @@
         </button>
         <span class="sticky-total">₹{{ number_format($total, 2) }}</span>
         @auth
-            <a href="{{ route('checkout.form') }}" class="sticky-checkout">Checkout</a>
+            <form method="POST" action="{{ route('checkout.store') }}" style="margin:0;">
+                @csrf
+                <button type="submit" class="sticky-checkout" style="border:none;">Checkout</button>
+            </form>
         @else
             <a href="{{ route('checkout.login-required') }}" class="sticky-checkout">Proceed</a>
         @endauth

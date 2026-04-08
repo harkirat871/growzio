@@ -1775,7 +1775,10 @@
     <div class="g-sticky-bottom">
         <a href="{{ route('cart.view') }}" class="g-sticky-cart">View Cart</a>
         @auth
-            <a href="{{ route('checkout.form') }}" class="g-sticky-checkout">Checkout</a>
+            <form method="POST" action="{{ route('checkout.store') }}" style="margin:0;">
+                @csrf
+                <button type="submit" class="g-sticky-checkout" style="border:none;">Checkout</button>
+            </form>
         @else
             <a href="{{ route('checkout.login-required') }}" class="g-sticky-checkout">Checkout</a>
         @endauth

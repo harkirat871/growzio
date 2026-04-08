@@ -202,33 +202,39 @@
     </div>
 </div>
 
-{{-- iOS-style popup modal with blur and improved design --}}
-<div id="product-view-modal" class="fixed inset-0 z-[70] hidden" aria-hidden="true">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-md transition-all duration-200" id="product-view-overlay"></div>
-    <div class="relative flex min-h-full items-center justify-center p-4">
-        <div class="w-full max-w-sm mx-auto transform transition-all duration-200 scale-95 opacity-0" id="modal-card">
-            <div class="rounded-2xl bg-[#2D3340] shadow-2xl overflow-hidden border border-white/10">
-                <div class="flex items-center justify-between px-4 pt-4 sm:px-5 sm:pt-5">
-                    <h3 class="text-lg font-semibold text-white tracking-tight">View product</h3>
-                    <button type="button" id="product-view-close" class="text-white/70 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 focus:outline-none" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+{{-- IOS‑STYLE MODAL – perfectly centered, smooth blur, dark grey card, rounded corners --}}
+<div id="product-view-modal" class="fixed inset-0 z-[100] hidden items-center justify-center" aria-hidden="true">
+    {{-- Blurred backdrop --}}
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-lg transition-all duration-200" id="product-view-overlay"></div>
+    
+    {{-- Modal card – centered with flex --}}
+    <div class="relative w-full max-w-sm mx-4 transform transition-all duration-200 scale-95 opacity-0" id="modal-card">
+        <div class="bg-[#2D3340] rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+            {{-- Header with close button --}}
+            <div class="flex items-center justify-between px-5 pt-5">
+                <h3 class="text-lg font-semibold text-white tracking-tight">View product</h3>
+                <button type="button" id="product-view-close" class="text-white/60 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 focus:outline-none" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            {{-- Body --}}
+            <div class="px-5 pb-5 pt-2">
+                <p class="text-white/90 text-base leading-relaxed">
+                    Do you want to view the product
+                    <span id="product-view-name" class="font-semibold text-white"></span>?
+                </p>
+                
+                {{-- Buttons: No (left) / Yes (right) --}}
+                <div class="mt-6 flex flex-row gap-3">
+                    <button type="button" id="product-view-no" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all duration-150 border border-white/20">
+                        No
                     </button>
-                </div>
-                <div class="px-4 pb-4 sm:px-5 sm:pb-5">
-                    <p class="text-white/90 text-base leading-relaxed">
-                        Do you want to view the product
-                        <span id="product-view-name" class="font-semibold text-white break-words"></span>?
-                    </p>
-                    <div class="mt-6 flex items-center justify-end gap-3">
-                        <button type="button" id="product-view-no" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all duration-150 border border-white/20">
-                            No
-                        </button>
-                        <button type="button" id="product-view-yes" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-150 shadow-sm">
-                            Yes
-                        </button>
-                    </div>
+                    <button type="button" id="product-view-yes" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-150 shadow-sm">
+                        Yes
+                    </button>
                 </div>
             </div>
         </div>
@@ -251,54 +257,52 @@
     const triggers = document.querySelectorAll('.product-view-trigger');
     let targetUrl = '';
 
-    const closeModal = function () {
-        if (!modal.classList.contains('hidden')) {
-            if (modalCard) {
-                modalCard.classList.add('scale-95', 'opacity-0');
-                modalCard.classList.remove('scale-100', 'opacity-100');
-            }
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.setAttribute('aria-hidden', 'true');
-                targetUrl = '';
-            }, 150);
+    // Helper to close modal with animation
+    const closeModal = () => {
+        if (modalCard) {
+            modalCard.classList.remove('scale-100', 'opacity-100');
+            modalCard.classList.add('scale-95', 'opacity-0');
         }
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            targetUrl = '';
+        }, 150);
     };
 
-    const openModal = function (name, url) {
+    // Helper to open modal
+    const openModal = (name, url) => {
         targetUrl = url || '';
-        nameEl.textContent = name ? '"' + name + '"' : '';
+        nameEl.textContent = name ? `“${name}”` : '';
         modal.classList.remove('hidden');
         modal.setAttribute('aria-hidden', 'false');
-        if (modalCard) {
-            modalCard.classList.remove('scale-95', 'opacity-0');
-            modalCard.classList.add('scale-100', 'opacity-100');
-        }
+        // Force reflow then animate in
+        modalCard.classList.remove('scale-95', 'opacity-0');
+        modalCard.classList.add('scale-100', 'opacity-100');
     };
 
-    triggers.forEach(function (trigger) {
-        trigger.addEventListener('click', function (e) {
+    // Attach click handlers to product name buttons
+    triggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
             e.preventDefault();
             openModal(trigger.getAttribute('data-product-name'), trigger.getAttribute('data-product-url'));
         });
     });
 
-    [overlay, closeBtn, noBtn].forEach(function (el) {
+    // Close on overlay, close button, or No button
+    [overlay, closeBtn, noBtn].forEach(el => {
         if (el) el.addEventListener('click', closeModal);
     });
 
-    yesBtn.addEventListener('click', function () {
-        if (!targetUrl) {
-            closeModal();
-            return;
-        }
-        window.location.href = targetUrl;
+    // Yes button: navigate to product page
+    yesBtn.addEventListener('click', () => {
+        if (targetUrl) window.location.href = targetUrl;
+        else closeModal();
     });
 
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeModal();
-        }
+    // Escape key closes
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
     });
 })();
 </script>

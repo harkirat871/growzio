@@ -154,13 +154,10 @@ class CheckoutController extends Controller
         return view('checkout.confirmation', compact('order'));
     }
 
-    public function loginRequired(): RedirectResponse
+    public function loginRequired(): View
     {
-        // Guests can build cart freely; only gate at checkout.
-        // Send them to login and come back to cart after authentication.
-        session()->flash('toast', ['type' => 'info', 'message' => 'Log in to checkout']);
-        session(['url.intended' => route('cart.view')]);
-        return redirect()->route('login');
+        // Show login-required card instead of redirecting immediately to login.
+        return view('checkout.login-required');
     }
 }
 
