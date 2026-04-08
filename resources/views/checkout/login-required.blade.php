@@ -1,273 +1,339 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Required </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+<div
+  class="export-wrapper"
+  style="
+    width: 1440px;
+    min-height: 812px;
+    position: relative;
+    font-family: var(--font-family-body);
+    background-color: var(--background);
+  "
+>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100;200;300;400;500;600;700;800;900&family=Geist:wght@100;200;300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@100;200;300;400;500;600;700&family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@200;300;400;500;600;700;800;900&family=PT+Serif:wght@400;700&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Shantell+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Login Required - Growzio</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet"
+      />
+      <style id="growzio-theme">
+        /* =============================================
+           GROWZIO — DESIGN SYSTEM
+           ============================================= */
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-            --card-gradient: linear-gradient(145deg, #1e1e1e 0%, #2d2d2d 100%);
+          --g-bg: #222831;
+          --g-bg2: #393e46;
+          --g-accent: #ffd369;
+          --g-light: #eeeeee;
+          --g-text: #eeeeee;
+          --g-text-muted: rgba(238, 238, 238, 0.55);
+          --g-border: rgba(238, 238, 238, 0.1);
+          --g-border-hover: rgba(255, 211, 105, 0.35);
+          --g-card-bg: #2d3340;
+          --g-radius: 4px;
+          --g-radius-lg: 10px;
+          --font-head: "Syne", sans-serif;
+          --font-body: "DM Sans", sans-serif;
+          --font-mono: "JetBrains Mono", monospace;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
         }
 
-        body {
-            background: var(--dark-gradient);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .export-wrapper {
+          background: var(--g-bg);
+          font-family: var(--font-body);
+          font-size: 16px;
+          line-height: 1.5;
+          color: var(--g-text);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem 1rem;
+        }
+      </style>
+
+      <style id="login-required-styles">
+        /* Login container */
+        .g-login-container {
+          max-width: 480px;
+          width: 100%;
+          background: var(--g-card-bg);
+          border: 1px solid var(--g-border);
+          border-radius: var(--g-radius-lg);
+          padding: 2rem 1.5rem;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .login-required-card {
-            background: var(--card-gradient);
-            border-radius: 25px;
-            padding: 60px 40px;
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
+        @media (min-width: 640px) {
+          .g-login-container {
+            padding: 2.5rem;
+          }
         }
 
-        .login-required-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--primary-gradient);
-            opacity: 0.03;
-            border-radius: 25px;
-            z-index: 1;
+        /* Headings */
+        .g-login-title {
+          font-family: var(--font-head);
+          font-size: 1.75rem;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          color: var(--g-light);
+          margin-bottom: 0.25rem;
         }
 
-        .card-content {
-            position: relative;
-            z-index: 2;
+        .g-login-subtitle {
+          font-size: 0.9375rem;
+          color: var(--g-text-muted);
+          margin-bottom: 1.75rem;
+          border-left: 3px solid var(--g-accent);
+          padding-left: 0.75rem;
         }
 
-        .icon-container {
-            width: 120px;
-            height: 120px;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        /* Benefits Box */
+        .g-benefits {
+          background: rgba(255, 211, 105, 0.05);
+          border: 1px solid var(--g-border);
+          border-radius: var(--g-radius);
+          padding: 1.25rem;
+          margin-bottom: 1.75rem;
         }
 
-        .icon-container i {
-            font-size: 3rem;
-            color: white;
+        .g-benefit-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          font-size: 0.875rem;
+          color: var(--g-text-muted);
+          margin-bottom: 0.75rem;
         }
 
-        .title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
+        .g-benefit-item:last-child {
+          margin-bottom: 0;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #b0b0b0;
-            margin-bottom: 40px;
-            line-height: 1.6;
+        .g-benefit-icon {
+          color: var(--g-accent);
+          flex-shrink: 0;
+          margin-top: 0.125rem;
         }
 
-        .benefits {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Actions */
+        .g-btn-block {
+          background: var(--g-accent);
+          color: var(--g-bg);
+          border: none;
+          border-radius: var(--g-radius);
+          padding: 0.875rem 1.5rem;
+          font-weight: 600;
+          font-size: 0.9375rem;
+          font-family: var(--font-body);
+          cursor: pointer;
+          transition:
+            transform 0.2s,
+            background 0.2s;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          margin-bottom: 1.25rem;
         }
 
-        .benefits h4 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: #ffffff;
+        .g-btn-block:hover {
+          background: #e8bc52;
+          transform: translateY(-1px);
         }
 
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            color: #b0b0b0;
+        .g-signup-text {
+          text-align: center;
+          font-size: 0.875rem;
+          color: var(--g-text-muted);
+          margin-bottom: 1.5rem;
         }
 
-        .benefit-item i {
-            color: #667eea;
-            margin-right: 15px;
-            font-size: 1.1rem;
+        .g-signup-text a {
+          color: var(--g-accent);
+          text-decoration: none;
+          font-weight: 600;
+          margin-left: 0.25rem;
+          transition: color 0.2s;
         }
 
-        .benefit-item:last-child {
-            margin-bottom: 0;
+        .g-signup-text a:hover {
+          color: #e8bc52;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .g-divider {
+          height: 1px;
+          background: var(--g-border);
+          margin: 1.5rem 0;
         }
 
-        .btn-login {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+        .g-link {
+          font-size: 0.875rem;
+          color: var(--g-text-muted);
+          text-decoration: none;
+          transition: color 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
         }
 
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-            color: white;
+        .g-link:hover {
+          color: var(--g-accent);
         }
-
-        .btn-register {
-            background: transparent;
-            border: 2px solid #667eea;
-            color: #667eea;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-register:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .back-link {
-            margin-top: 30px;
-        }
-
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .back-link a:hover {
-            color: #8b94ff;
-        }
-
-        @media (max-width: 768px) {
-            .login-required-card {
-                padding: 40px 20px;
-                margin: 20px;
-            }
-            
-            .title {
-                font-size: 2rem;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn-login, .btn-register {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="login-required-card">
-        <div class="card-content">
-            <div class="icon-container">
-                <i class="fas fa-lock"></i>
-            </div>
-            
-            <h1 class="title">Login Required</h1>
-            <p class="subtitle">
-                To complete your purchase and access exclusive features, please login to your account or create a new one.
-            </p>
-            
-            <div class="benefits">
-                <h4><i class="fas fa-star me-2"></i>Benefits of Creating an Account</h4>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Save your cart for later</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Track your order history</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Faster checkout process</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Exclusive member discounts</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Personalized recommendations</span>
-                </div>
-            </div>
-            
-            <div class="action-buttons">
-                <a href="{{ route('login') }}" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Login
-                </a>
-                <a href="{{ route('register') }}" class="btn-register">
-                    <i class="fas fa-user-plus"></i>
-                    Create Account
-                </a>
-            </div>
-            
-            <div class="back-link">
-                <a href="{{ route('cart.view') }}">
-                    <i class="fas fa-arrow-left me-1"></i>
-                    Back to Cart
-                </a>
-            </div>
+      </style>
+    </head>
+    <body>
+      <div class="g-login-container">
+        <h1 class="g-login-title">Login Required</h1>
+        <div class="g-login-subtitle">
+          To complete your purchase and access exclusive features, please log
+          in.
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <!-- Concise Benefits Box -->
+        <div class="g-benefits">
+          <div class="g-benefit-item">
+            <div class="g-benefit-icon">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <span>Save cart and track order history</span>
+          </div>
+          <div class="g-benefit-item">
+            <div class="g-benefit-icon">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <span>Faster checkout process</span>
+          </div>
+          <div class="g-benefit-item">
+            <div class="g-benefit-icon">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <span>Exclusive member discounts &amp; perks</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <a
+          href="{{ route('login') }}"
+          class="g-btn-block"
+          data-media-type="banani-button"
+        >
+          Log in to continue
+        </a>
+
+        <div class="g-signup-text">
+          Don't have an account?
+          <a href="{{ route('register') }}" data-media-type="banani-button"
+            >Create new</a
+          >
+        </div>
+
+        <div class="g-divider"></div>
+
+        <a
+          href="{{ route('cart.view') }}"
+          class="g-link"
+          data-media-type="banani-button"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Cart
+        </a>
+      </div>
+    </body>
+  </html>
+  <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  <style>
+    :root {
+      --background: #222831;
+      --foreground: #eeeeee;
+      --border: #1f2933;
+      --input: #222831;
+      --primary: #ffd369;
+      --primary-foreground: #222831;
+      --secondary: #2d3340;
+      --secondary-foreground: #eeeeee;
+      --muted: #393e46;
+      --muted-foreground: rgba(238, 238, 238, 0.55);
+      --success: #4ade80;
+      --success-foreground: #022c22;
+      --accent: #ffd369;
+      --accent-foreground: #222831;
+      --destructive: #ff6b6b;
+      --destructive-foreground: #2b0b0b;
+      --warning: #ffb86b;
+      --warning-foreground: #2b1700;
+      --card: #2d3340;
+      --card-foreground: #eeeeee;
+      --sidebar: #1f2430;
+      --sidebar-foreground: #cfd8dc;
+      --sidebar-primary: #ffd369;
+      --sidebar-primary-foreground: #222831;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 10px;
+      --radius-xl: 12px;
+      --font-family-body: DM Sans;
+    }
+  </style>
+</div>
