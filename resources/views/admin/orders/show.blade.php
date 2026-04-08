@@ -136,120 +136,140 @@
         </div>
     </div>
 </div>
-
 <script>
-(function() {
-    function showCopiedMessage(btn) {
-        const tooltip = document.createElement('span');
-        tooltip.textContent = 'Copied!';
-        tooltip.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10';
-        btn.style.position = 'relative';
-        btn.appendChild(tooltip);
-        setTimeout(() => { tooltip.remove(); btn.style.position = ''; }, 1500);
-    }
-
-    // Helper: format key-value pairs with dynamic spacing (5 spaces gap after longest key)
-    function formatKeyValuePairs(elements) {
-        let pairs = [];
-        elements.forEach(el => {
-            const keyEl = el.querySelector('dt');
-            const valEl = el.querySelector('dd');
-            if (keyEl && valEl) {
-                let key = keyEl.innerText.trim();
-                let val = valEl.innerText.trim();
-                // Skip empty or divider-only lines (like border-t)
-                if (key && val && !el.classList.contains('border-t')) pairs.push({key, val});
-            }
-        });
-        // Also handle address separately (special structure)
-        const addressDiv = document.querySelector('#customer-details-data .pt-1');
-        if (addressDiv) {
-            const addrKey = addressDiv.querySelector('dt')?.innerText.trim() || 'Address';
-            const addrVal = addressDiv.querySelector('dd')?.innerText.trim() || 'N/A';
-            pairs.push({key: addrKey, val: addrVal});
+    (function() {
+        function showCopiedMessage(btn) {
+            const tooltip = document.createElement('span');
+            tooltip.textContent = 'Copied!';
+            tooltip.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10';
+            btn.style.position = 'relative';
+            btn.appendChild(tooltip);
+            setTimeout(() => { tooltip.remove(); btn.style.position = ''; }, 1500);
         }
-        const maxKeyLen = Math.max(...pairs.map(p => p.key.length), 0);
-        return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
-    }
-
-    // Format items ordered as aligned columns (dynamic width)
-    function formatItemsOrdered() {
-        const rows = document.querySelectorAll('#items-ordered-data .md\\:block tbody tr');
-        if (!rows.length) return 'No items found.';
-        let data = [];
-        // headers
-        let headers = ['Product', 'Qty', 'Unit Price', 'Line Total'];
-        data.push(headers);
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length >= 4) {
-                let product = cells[0].innerText.trim();
-                let qty = cells[1].innerText.trim();
-                let unitPrice = cells[2].innerText.trim();
-                let lineTotal = cells[3].innerText.trim();
-                data.push([product, qty, unitPrice, lineTotal]);
+    
+        // Format key-value pairs (Customer details, Order summary)
+        function formatKeyValuePairs(rows) {
+            let pairs = [];
+            rows.forEach(row => {
+                const keyEl = row.querySelector('dt');
+                const valEl = row.querySelector('dd');
+                if (keyEl && valEl && !row.classList.contains('border-t')) {
+                    let key = keyEl.innerText.trim();
+                    let val = valEl.innerText.trim();
+                    if (key && val) pairs.push({key, val});
+                }
+            });
+            // Handle address separately (different DOM structure)
+            const addressDiv = document.querySelector('#customer-details-data .pt-1');
+            if (addressDiv) {
+                const addrKey = addressDiv.querySelector('dt')?.innerText.trim() || 'Address';
+                const addrVal = addressDiv.querySelector('dd')?.innerText.trim() || 'N/A';
+                pairs.push({key: addrKey, val: addrVal});
             }
-        });
-        // compute max width for each column
-        let colWidths = headers.map((h, i) => {
-            let max = h.length;
-            for (let r = 1; r < data.length; r++) {
-                max = Math.max(max, data[r][i].length);
-            }
-            return max;
-        });
-        // build lines with 2 spaces gap between columns
-        let lines = [];
-        let headerLine = headers.map((h, i) => h.padEnd(colWidths[i])).join('  ');
-        lines.push(headerLine);
-        lines.push('-'.repeat(headerLine.length));
-        for (let i = 1; i < data.length; i++) {
-            let rowLine = data[i].map((cell, j) => cell.padEnd(colWidths[j])).join('  ');
-            lines.push(rowLine);
+            if (pairs.length === 0) return '';
+            const maxKeyLen = Math.max(...pairs.map(p => p.key.length));
+            return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
         }
-        return lines.join('\n');
-    }
-
-    function formatOrderSummary() {
-        const container = document.getElementById('order-summary-data');
-        const rows = container.querySelectorAll('.flex.justify-between');
-        let pairs = [];
-        rows.forEach(row => {
-            const dt = row.querySelector('dt')?.innerText.trim();
-            const dd = row.querySelector('dd')?.innerText.trim();
-            if (dt && dd) pairs.push({key: dt, val: dd});
-        });
-        const maxKeyLen = Math.max(...pairs.map(p => p.key.length), 0);
-        return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
-    }
-
-    async function copyText(text, btn) {
-        try {
-            await navigator.clipboard.writeText(text);
-            showCopiedMessage(btn);
-        } catch (err) {
-            alert('Failed to copy. Manual copy needed.');
+    
+        // Format items ordered with perfect column alignment (5 spaces gap, right-aligned numbers)
+        function formatItemsOrdered() {
+            const rows = document.querySelectorAll('#items-ordered-data .md\\:block tbody tr');
+            if (!rows.length) return 'No items found.';
+            
+            // Collect data
+            let items = [];
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                    items.push({
+                        product: cells[0].innerText.trim(),
+                        qty: cells[1].innerText.trim(),
+                        unitPrice: cells[2].innerText.trim(),
+                        lineTotal: cells[3].innerText.trim()
+                    });
+                }
+            });
+            if (items.length === 0) return 'No items found.';
+            
+            // Headers
+            const headers = ['Product', 'Qty', 'Unit Price', 'Line Total'];
+            
+            // Determine max width for each column (based on content + header)
+            let colWidths = [0, 0, 0, 0];
+            // Product (left-aligned)
+            colWidths[0] = Math.max(headers[0].length, ...items.map(i => i.product.length));
+            // Qty (right-aligned)
+            colWidths[1] = Math.max(headers[1].length, ...items.map(i => i.qty.length));
+            // Unit Price (right-aligned)
+            colWidths[2] = Math.max(headers[2].length, ...items.map(i => i.unitPrice.length));
+            // Line Total (right-aligned)
+            colWidths[3] = Math.max(headers[3].length, ...items.map(i => i.lineTotal.length));
+            
+            // Build header line
+            const headerLine = [
+                headers[0].padEnd(colWidths[0]),
+                headers[1].padStart(colWidths[1]),
+                headers[2].padStart(colWidths[2]),
+                headers[3].padStart(colWidths[3])
+            ].join(' '.repeat(5));
+            
+            // Separator line
+            const separator = '-'.repeat(headerLine.length);
+            
+            // Build each row
+            const rowLines = items.map(item => {
+                return [
+                    item.product.padEnd(colWidths[0]),
+                    item.qty.padStart(colWidths[1]),
+                    item.unitPrice.padStart(colWidths[2]),
+                    item.lineTotal.padStart(colWidths[3])
+                ].join(' '.repeat(5));
+            });
+            
+            return [headerLine, separator, ...rowLines].join('\n');
         }
-    }
-
-    const copyBtns = document.querySelectorAll('.copy-section-btn');
-    copyBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const section = btn.getAttribute('data-section');
-            let text = '';
-            if (section === 'customer') {
-                const container = document.getElementById('customer-details-data');
-                const rows = container.querySelectorAll('.flex.justify-between:not(.border-t)');
-                text = formatKeyValuePairs(rows);
-            } else if (section === 'items') {
-                text = formatItemsOrdered();
-            } else if (section === 'summary') {
-                text = formatOrderSummary();
+    
+        function formatOrderSummary() {
+            const container = document.getElementById('order-summary-data');
+            const rows = container.querySelectorAll('.flex.justify-between');
+            let pairs = [];
+            rows.forEach(row => {
+                const dt = row.querySelector('dt')?.innerText.trim();
+                const dd = row.querySelector('dd')?.innerText.trim();
+                if (dt && dd) pairs.push({key: dt, val: dd});
+            });
+            if (pairs.length === 0) return '';
+            const maxKeyLen = Math.max(...pairs.map(p => p.key.length));
+            return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
+        }
+    
+        async function copyText(text, btn) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showCopiedMessage(btn);
+            } catch (err) {
+                alert('Failed to copy. Manual copy needed.');
             }
-            if (text) copyText(text, btn);
+        }
+    
+        const copyBtns = document.querySelectorAll('.copy-section-btn');
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = btn.getAttribute('data-section');
+                let text = '';
+                if (section === 'customer') {
+                    const container = document.getElementById('customer-details-data');
+                    const rows = container.querySelectorAll('.flex.justify-between:not(.border-t)');
+                    text = formatKeyValuePairs(rows);
+                } else if (section === 'items') {
+                    text = formatItemsOrdered();
+                } else if (section === 'summary') {
+                    text = formatOrderSummary();
+                }
+                if (text) copyText(text, btn);
+            });
         });
-    });
-})();
-</script>
+    })();
+    </script>
 @endsection
