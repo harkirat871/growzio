@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -29,6 +30,8 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $hasStationColumn = Schema::hasColumn('users', 'station');
+
         $gstNormalized = $request->filled('gst_number')
             ? strtoupper(preg_replace('/\s+/', '', $request->gst_number))
             : '';
@@ -43,7 +46,7 @@ class RegisteredUserController extends Controller
             $phoneNormalized = substr($phoneNormalized, 2);
         }
 
-        $validated = $request->validate([
+        $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -72,20 +75,30 @@ class RegisteredUserController extends Controller
                     }
                 },
             ],
-            'station' => ['required', 'string', 'max:255'],
             'referred_by' => ['nullable', 'string', 'max:255'],
-        ]);
+        ];
 
-        $user = User::create([
+        if ($hasStationColumn) {
+            $validationRules['station'] = ['required', 'string', 'max:255'];
+        }
+
+        $validated = $request->validate($validationRules);
+
+        $payload = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'business_name' => $request->business_name,
             'gst_number' => $gstNormalized !== '' ? $gstNormalized : null,
             'contact_number' => $phoneNormalized ?: $request->contact_number,
-            'station' => $validated['station'],
             'referred_by' => $request->referred_by,
-        ]);
+        ];
+
+        if ($hasStationColumn) {
+            $payload['station'] = $validated['station'] ?? null;
+        }
+
+        $user = User::create($payload);
 
         // Loyalty signup bonus: 100 points
         $user->increment('loyalty_points', 100);

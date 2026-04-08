@@ -127,7 +127,20 @@
                                     $unitPrice = $lineTotal / $qty;
                                 @endphp
                                 <tr class="border-b border-gray-200">
-                                    <td class="p-2">{{ optional($item->product)->name ?? 'Product #' . $item->product_id }}</td>
+                                    <td class="p-2">
+                                        @if ($item->product)
+                                            <button
+                                                type="button"
+                                                class="product-view-trigger text-left text-blue-300 hover:underline focus:outline-none"
+                                                data-product-name="{{ $item->product->name }}"
+                                                data-product-url="{{ route('products.show', $item->product) }}"
+                                            >
+                                                {{ $item->product->name }}
+                                            </button>
+                                        @else
+                                            {{ 'Product #' . $item->product_id }}
+                                        @endif
+                                    </td>
                                     <td class="p-2 text-right">{{ $qty }}</td>
                                     <td class="p-2 text-right">₹{{ number_format($unitPrice, 2) }}</td>
                                     <td class="p-2 text-right font-medium">₹{{ number_format($lineTotal, 2) }}</td>
@@ -145,7 +158,20 @@
                             $unitPrice = $lineTotal / $qty;
                         @endphp
                         <div class="rounded-lg border border-gray-200 p-3">
-                            <p class="font-medium">{{ optional($item->product)->name ?? 'Product #' . $item->product_id }}</p>
+                            <p class="font-medium">
+                                @if ($item->product)
+                                    <button
+                                        type="button"
+                                        class="product-view-trigger text-left text-blue-300 hover:underline focus:outline-none"
+                                        data-product-name="{{ $item->product->name }}"
+                                        data-product-url="{{ route('products.show', $item->product) }}"
+                                    >
+                                        {{ $item->product->name }}
+                                    </button>
+                                @else
+                                    {{ 'Product #' . $item->product_id }}
+                                @endif
+                            </p>
                             <div class="mt-2 text-sm space-y-1">
                                 <div class="flex justify-between"><span class="text-gray-600">Qty</span><span>{{ $qty }}</span></div>
                                 <div class="flex justify-between"><span class="text-gray-600">Unit Price</span><span>₹{{ number_format($unitPrice, 2) }}</span></div>
@@ -175,6 +201,86 @@
         </div>
     </div>
 </div>
+
+<div id="product-view-modal" class="fixed inset-0 z-[70] hidden" aria-hidden="true">
+    <button type="button" id="product-view-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-label="Close"></button>
+    <div class="relative flex min-h-full items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-2xl border border-white/10 p-4 sm:p-5 shadow-2xl" style="background: #2D3340;">
+            <div class="flex items-start justify-between gap-3">
+                <h3 class="text-base sm:text-lg font-semibold text-white">View product</h3>
+                <button type="button" id="product-view-close" class="text-white/80 hover:text-white text-xl leading-none" aria-label="Close">
+                    ×
+                </button>
+            </div>
+            <p class="mt-3 text-sm sm:text-base text-white">
+                Do you want to view the product
+                <span id="product-view-name" class="font-semibold text-white"></span>?
+            </p>
+            <div class="mt-5 flex items-center justify-end gap-2 sm:gap-3">
+                <button type="button" id="product-view-no" class="px-4 py-2 rounded-lg text-sm font-medium border border-white/20 text-white bg-white/5 hover:bg-white/10">
+                    No
+                </button>
+                <button type="button" id="product-view-yes" class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const modal = document.getElementById('product-view-modal');
+    if (!modal) return;
+
+    const nameEl = document.getElementById('product-view-name');
+    const overlay = document.getElementById('product-view-overlay');
+    const closeBtn = document.getElementById('product-view-close');
+    const noBtn = document.getElementById('product-view-no');
+    const yesBtn = document.getElementById('product-view-yes');
+    const triggers = document.querySelectorAll('.product-view-trigger');
+    let targetUrl = '';
+
+    const closeModal = function () {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        targetUrl = '';
+    };
+
+    const openModal = function (name, url) {
+        targetUrl = url || '';
+        nameEl.textContent = name ? '"' + name + '"' : '';
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+    };
+
+    triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+            openModal(trigger.getAttribute('data-product-name'), trigger.getAttribute('data-product-url'));
+        });
+    });
+
+    [overlay, closeBtn, noBtn].forEach(function (el) {
+        el.addEventListener('click', closeModal);
+    });
+
+    yesBtn.addEventListener('click', function () {
+        if (!targetUrl) {
+            closeModal();
+            return;
+        }
+        window.location.href = targetUrl;
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+})();
+</script>
+@endpush
 
 

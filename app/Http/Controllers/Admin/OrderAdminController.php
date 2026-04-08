@@ -7,13 +7,19 @@ use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class OrderAdminController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Order::with(['user:id,name,email,contact_number,business_name,station'])->withCount('items')->latest();
+        $userColumns = ['id', 'name', 'email', 'contact_number', 'business_name'];
+        if (Schema::hasColumn('users', 'station')) {
+            $userColumns[] = 'station';
+        }
+
+        $query = Order::with(['user:' . implode(',', $userColumns)])->withCount('items')->latest();
 
         if ($request->filled('status') && $request->status === 'pending') {
             $query->whereIn('status', ['pending', 'paid']);
@@ -27,9 +33,28 @@ class OrderAdminController extends Controller
 
     public function show(Order $order): View
     {
+        $userColumns = [
+            'id',
+            'name',
+            'email',
+            'contact_number',
+            'business_name',
+            'gst_number',
+            'referred_by',
+            'address_line_1',
+            'address_line_2',
+            'city',
+            'state',
+            'postal_code',
+            'country',
+        ];
+        if (Schema::hasColumn('users', 'station')) {
+            $userColumns[] = 'station';
+        }
+
         $order->load([
             'items.product:id,name',
-            'user:id,name,email,contact_number,business_name,gst_number,referred_by,station,address_line_1,address_line_2,city,state,postal_code,country',
+            'user:' . implode(',', $userColumns),
         ]);
         return view('admin.orders.show', compact('order'));
     }
