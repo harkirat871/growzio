@@ -546,8 +546,9 @@
             <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
-            <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
+            
             <nav class="g-nav-desktop">
+                
                 <a href="{{ route('home') }}">Home</a>
                 <a href="{{ route('home') }}">Products</a>
             </nav>
@@ -589,7 +590,6 @@
     <!-- mobile menu -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
-        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
         <div class="g-filter-sect" style="padding:0.75rem 1.25rem; font-size:11px; color:var(--g-accent);">Menu</div>

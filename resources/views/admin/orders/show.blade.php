@@ -135,8 +135,7 @@
             </div>
         </div>
     </div>
-</div>
-<script>
+</div><script>
     (function() {
         function showCopiedMessage(btn) {
             const tooltip = document.createElement('span');
@@ -159,7 +158,6 @@
                     if (key && val) pairs.push({key, val});
                 }
             });
-            // Handle address separately (different DOM structure)
             const addressDiv = document.querySelector('#customer-details-data .pt-1');
             if (addressDiv) {
                 const addrKey = addressDiv.querySelector('dt')?.innerText.trim() || 'Address';
@@ -171,12 +169,12 @@
             return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
         }
     
-        // Format items ordered with perfect column alignment (5 spaces gap, right-aligned numbers)
+        // PERFECT COLUMN ALIGNMENT for items table
         function formatItemsOrdered() {
             const rows = document.querySelectorAll('#items-ordered-data .md\\:block tbody tr');
             if (!rows.length) return 'No items found.';
-            
-            // Collect data
+    
+            // Extract data
             let items = [];
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
@@ -190,33 +188,31 @@
                 }
             });
             if (items.length === 0) return 'No items found.';
-            
+    
             // Headers
             const headers = ['Product', 'Qty', 'Unit Price', 'Line Total'];
-            
-            // Determine max width for each column (based on content + header)
+    
+            // Compute max width for each column (header + data)
+            // For numeric columns we use the actual string length (including ₹ and commas)
             let colWidths = [0, 0, 0, 0];
-            // Product (left-aligned)
             colWidths[0] = Math.max(headers[0].length, ...items.map(i => i.product.length));
-            // Qty (right-aligned)
             colWidths[1] = Math.max(headers[1].length, ...items.map(i => i.qty.length));
-            // Unit Price (right-aligned)
             colWidths[2] = Math.max(headers[2].length, ...items.map(i => i.unitPrice.length));
-            // Line Total (right-aligned)
             colWidths[3] = Math.max(headers[3].length, ...items.map(i => i.lineTotal.length));
-            
-            // Build header line
+    
+            // Build header line with proper alignment:
+            // Product -> left (padEnd), others -> right (padStart)
             const headerLine = [
                 headers[0].padEnd(colWidths[0]),
                 headers[1].padStart(colWidths[1]),
                 headers[2].padStart(colWidths[2]),
                 headers[3].padStart(colWidths[3])
             ].join(' '.repeat(5));
-            
-            // Separator line
+    
+            // Separator line (exact same length)
             const separator = '-'.repeat(headerLine.length);
-            
-            // Build each row
+    
+            // Build each data row with same alignment
             const rowLines = items.map(item => {
                 return [
                     item.product.padEnd(colWidths[0]),
@@ -225,7 +221,7 @@
                     item.lineTotal.padStart(colWidths[3])
                 ].join(' '.repeat(5));
             });
-            
+    
             return [headerLine, separator, ...rowLines].join('\n');
         }
     
@@ -259,8 +255,7 @@
                 const section = btn.getAttribute('data-section');
                 let text = '';
                 if (section === 'customer') {
-                    const container = document.getElementById('customer-details-data');
-                    const rows = container.querySelectorAll('.flex.justify-between:not(.border-t)');
+                    const rows = document.querySelectorAll('#customer-details-data .flex.justify-between:not(.border-t)');
                     text = formatKeyValuePairs(rows);
                 } else if (section === 'items') {
                     text = formatItemsOrdered();
