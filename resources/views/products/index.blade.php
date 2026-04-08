@@ -760,28 +760,97 @@
         .g-category-dropdown[open] summary .g-chev { transform: rotate(180deg); }
         .g-category-dropdown-body { border-top: 1px solid var(--g-border); }
 
-        .g-category-list { list-style: none; }
-        .g-category-item { border-bottom: 1px solid var(--g-border); }
-        .g-category-item:last-child { border-bottom: none; }
+        /* ========== NEW TWO‑ZONE CATEGORY STYLES ========== */
+        .g-category-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .g-category-item {
+            border-bottom: 1px solid var(--g-border);
+        }
         .g-category-row {
-            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
             padding: 0.7rem 1.25rem;
             transition: background 0.2s;
         }
-        .g-category-row:hover { background: rgba(255,211,105,0.04); }
-        .g-category-name { font-size: 13.5px; color: var(--g-text-muted); }
-        .g-category-link {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--g-accent);
-            text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.2s;
+        .g-category-row:hover {
+            background: rgba(255,211,105,0.04);
         }
-        .g-category-link:hover { opacity: 1; }
-        .g-category-children { list-style: none; padding-left: 1.5rem; border-left: 2px solid rgba(255,211,105,0.2); margin-left: 1.25rem; }
-        .g-category-children.hidden { display: none; }
-        .g-category-children[hidden] { display: none !important; }
+        /* Left zone (click to expand/collapse) */
+        .g-cat-toggle {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 13.5px;
+            color: var(--g-text-muted);
+        }
+        .g-toggle-icon {
+            display: inline-block;
+            width: 20px;
+            font-size: 12px;
+            transition: transform 0.2s ease;
+            color: var(--g-accent);
+        }
+        .g-category-item.expanded .g-toggle-icon {
+            transform: rotate(90deg);
+        }
+        .g-cat-name {
+            font-weight: 500;
+        }
+        /* Right zone (view button) */
+        .g-cat-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,211,105,0.1);
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--g-accent);
+            transition: background 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+        .g-cat-view:hover {
+            background: rgba(255,211,105,0.2);
+            color: var(--g-light);
+        }
+        .g-cat-view:active {
+            transform: scale(0.96);
+        }
+        .g-view-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* Subcategories indentation */
+        .g-subcategories {
+            margin-left: 44px;
+            padding-left: 12px;
+            border-left: 2px solid rgba(255,211,105,0.3);
+        }
+        .g-toggle-placeholder {
+            width: 20px;
+            visibility: hidden;
+        }
+        /* Ensure consistent spacing on mobile */
+        @media (max-width: 768px) {
+            .g-category-row {
+                padding: 0.9rem 1rem;
+            }
+            .g-cat-view {
+                padding: 6px 12px;
+            }
+        }
+        /* ========== END NEW STYLES ========== */
 
         /* ── Section header ─────────────────────────── */
         .g-section-head {
@@ -1472,7 +1541,38 @@
                 <div class="g-category-dropdown-body">
                     @if($categories->isNotEmpty())
                         <ul class="g-category-list">
-                            @include('products.categories._tree_unity', ['categories' => $categories])
+                            {{-- Recursive category tree with two‑zone UX --}}
+                            @php
+                                function renderCategoryTree($cats, $level = 0) {
+                                    $html = '';
+                                    foreach ($cats as $cat) {
+                                        $hasChildren = $cat->children->isNotEmpty();
+                                        $html .= '<li class="g-category-item" data-category-id="' . $cat->id . '">';
+                                        $html .= '<div class="g-category-row">';
+                                        // LEFT ZONE: toggle expand/collapse
+                                        $html .= '<div class="g-cat-toggle" data-action="toggle" data-category-id="' . $cat->id . '">';
+                                        $html .= '<span class="g-toggle-icon">' . ($hasChildren ? '▶' : '<span class="g-toggle-placeholder"></span>') . '</span>';
+                                        $html .= '<span class="g-cat-name">' . e($cat->name) . '</span>';
+                                        $html .= '</div>';
+                                        // RIGHT ZONE: view category page
+                                        $viewUrl = route('products.byCategory', $cat->slug ?? $cat->id);
+                                        $html .= '<a href="' . e($viewUrl) . '" class="g-cat-view" data-action="view">';
+                                        $html .= '<span class="g-view-label">View</span>';
+                                        $html .= '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>';
+                                        $html .= '</a>';
+                                        $html .= '</div>';
+                                        // Subcategories (collapsed by default)
+                                        if ($hasChildren) {
+                                            $html .= '<div class="g-subcategories" style="display: none;">';
+                                            $html .= '<ul class="g-category-list">' . renderCategoryTree($cat->children, $level + 1) . '</ul>';
+                                            $html .= '</div>';
+                                        }
+                                        $html .= '</li>';
+                                    }
+                                    return $html;
+                                }
+                            @endphp
+                            {!! renderCategoryTree($categories) !!}
                         </ul>
                     @else
                         <p class="g-section-sub g-category-empty">No categories available yet.</p>
@@ -1688,6 +1788,40 @@
         }, { rootMargin: '0px 0px -50px 0px', threshold: 0.08 });
         reveals.forEach(function (el) { revObserver.observe(el); });
 
+        /* ─── Category toggle (two‑zone) ────────────────── */
+        function toggleCategory(categoryItem, toggleElement) {
+            var subcatContainer = categoryItem.querySelector('.g-subcategories');
+            var iconSpan = toggleElement ? toggleElement.querySelector('.g-toggle-icon') : categoryItem.querySelector('.g-toggle-icon');
+            if (!subcatContainer) return;
+            var isExpanded = subcatContainer.style.display !== 'none';
+            if (isExpanded) {
+                subcatContainer.style.display = 'none';
+                categoryItem.classList.remove('expanded');
+                if (iconSpan) iconSpan.textContent = '▶';
+            } else {
+                subcatContainer.style.display = 'block';
+                categoryItem.classList.add('expanded');
+                if (iconSpan) iconSpan.textContent = '▼';
+            }
+        }
+
+        // Event delegation for left zones (toggle)
+        document.addEventListener('DOMContentLoaded', function() {
+            var categoryContainer = document.querySelector('.g-categories-section .g-category-list');
+            if (!categoryContainer) return;
+            
+            categoryContainer.addEventListener('click', function(e) {
+                var toggleZone = e.target.closest('[data-action="toggle"]');
+                if (toggleZone) {
+                    e.preventDefault();
+                    var categoryItem = toggleZone.closest('.g-category-item');
+                    if (categoryItem) {
+                        toggleCategory(categoryItem, toggleZone);
+                    }
+                }
+                // Right zone (view link) works as normal <a> – no extra handling needed
+            });
+        });
     })();
     </script>
 
@@ -1898,47 +2032,6 @@
                 if (nextUrl) { loading = false; infObserver.unobserve(sentinel); infObserver.observe(sentinel); }
             });
         }
-
-        /* ─── Category toggle ───────────────────────────── */
-        function toggleUnityCategory(categoryId) {
-            var childrenList = document.getElementById('unity-children-' + categoryId);
-            var icon = document.getElementById('unity-icon-' + categoryId);
-            if (childrenList && icon) {
-                var isHidden = childrenList.classList.contains('hidden') || childrenList.hidden === true;
-                // Expand
-                if (isHidden) {
-                    childrenList.classList.remove('hidden');
-                    childrenList.hidden = false;
-                    icon.textContent = '▼';
-                } else {
-                    // Collapse
-                    childrenList.classList.add('hidden');
-                    childrenList.hidden = true;
-                    icon.textContent = '▶';
-                }
-            }
-        }
-        window.toggleUnityCategory = toggleUnityCategory;
-
-        /* CHANGE 4: Make category names clickable (not only the arrow) */
-        document.querySelectorAll('.g-category-row').forEach(function(row) {
-            // Find the toggle element inside this row (the span that calls toggleUnityCategory)
-            var toggleSpan = row.querySelector('[onclick*="toggleUnityCategory"]');
-            if (!toggleSpan) return;
-            // Extract categoryId from onclick attribute
-            var onclickAttr = toggleSpan.getAttribute('onclick');
-            var match = onclickAttr && onclickAttr.match(/toggleUnityCategory\(['"]?(\d+)['"]?\)/);
-            if (!match) return;
-            var catId = match[1];
-            var categoryNameSpan = row.querySelector('.g-category-name');
-            if (!categoryNameSpan) return;
-            // Make the name clickable
-            categoryNameSpan.style.cursor = 'pointer';
-            categoryNameSpan.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleUnityCategory(catId);
-            });
-        });
     });
     </script>
 
