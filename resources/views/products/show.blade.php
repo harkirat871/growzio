@@ -3,227 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $product->name }} -</title>
+    <title>{{ $product->name }} - Growzio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* =============================================
+           GROWZIO — DESIGN SYSTEM (same as index)
+           ============================================= */
         :root {
-            --unity-bg: #FFFFFF;
-            --unity-bg-secondary: #F7F7F7;
-            --unity-text: #121212;
-            --unity-text-secondary: #707070;
-            --unity-border: #E8E8E8;
-            --unity-ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --g-bg:         #222831;
+            --g-bg2:        #393E46;
+            --g-accent:     #FFD369;
+            --g-light:      #EEEEEE;
+            --g-text:       #EEEEEE;
+            --g-text-muted: rgba(238,238,238,0.55);
+            --g-border:     rgba(238,238,238,0.10);
+            --g-border-hover: rgba(255,211,105,0.35);
+            --g-card-bg:    #2d3340;
+            --g-overlay:    rgba(34,40,49,0.85);
+            --g-ease:       cubic-bezier(0.4, 0, 0.2, 1);
+            --g-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --g-radius:     4px;
+            --g-radius-lg:  10px;
+            --font-head:    'Syne', sans-serif;
+            --font-body:    'DM Sans', sans-serif;
+            --font-mono:    'JetBrains Mono', monospace;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--g-bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--g-accent); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e8bc52; }
+        * { scrollbar-width: thin; scrollbar-color: var(--g-accent) var(--g-bg2); }
+
         body {
-            background: var(--unity-bg);
-            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--g-bg);
+            font-family: var(--font-body);
             font-size: 16px;
             line-height: 1.6;
-            color: var(--unity-text);
+            color: var(--g-text);
+            overflow-x: hidden;
         }
 
-        /* ----- Animations: GPU-friendly, respect reduced motion ----- */
-        @media (prefers-reduced-motion: no-preference) {
-            .unity-ani-fade-in {
-                animation: unityFadeIn 0.5s var(--unity-ease) forwards;
-            }
-            .unity-ani-delay-1 { animation-delay: 0.06s; }
-            .unity-ani-delay-2 { animation-delay: 0.12s; }
-            .unity-ani-delay-3 { animation-delay: 0.18s; }
-            .unity-ani-delay-4 { animation-delay: 0.24s; }
-            .unity-ani-delay-5 { animation-delay: 0.3s; }
-            .unity-ani-delay-6 { animation-delay: 0.36s; }
-            .unity-ani-hover-lift:hover { transform: translateY(-2px); }
-            .unity-ani-hover-scale:hover { transform: scale(1.02); }
+        h1, h2, h3, h4, h5, h6 { font-family: var(--font-head); }
+        .mono { font-family: var(--font-mono); }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        @media (prefers-reduced-motion: reduce) {
-            .unity-ani-fade-in { animation: none; opacity: 1; }
-            .unity-ani-hover-lift:hover, .unity-ani-hover-scale:hover { transform: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
-        @keyframes unityFadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes shimmer {
+            0%   { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes toastSlide {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes logoFloat {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-3px); }
         }
 
-        /* ----- Header ----- */
-        .unity-header {
+        /* Reveal on scroll */
+        .g-reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.65s var(--g-ease), transform 0.65s var(--g-ease);
+        }
+        .g-reveal.g-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header (same as index) */
+        .g-header {
             position: sticky;
             top: 0;
             z-index: 1050;
-            background: var(--unity-bg);
-            border-bottom: 1px solid var(--unity-border);
-            padding: 0 1rem;
-            height: 56px;
+            background: rgba(34,40,49,0.92);
+            backdrop-filter: blur(18px) saturate(1.5);
+            -webkit-backdrop-filter: blur(18px) saturate(1.5);
+            border-bottom: 1px solid var(--g-border);
+            padding: 0 1.25rem;
+            height: 62px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: box-shadow 0.3s var(--unity-ease);
+            transition: box-shadow 0.3s var(--g-ease), border-color 0.3s;
         }
-        .unity-header.scrolled { box-shadow: 0 1px 0 var(--unity-border); }
-        .unity-logo { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text); text-decoration: none; }
-        .unity-nav-desktop { display: none; }
+        .g-header.scrolled {
+            border-bottom-color: rgba(255,211,105,0.18);
+            box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+        }
+        .g-header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .g-logo {
+            font-family: var(--font-head);
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--g-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+        .g-logo span { color: var(--g-accent); }
+        .g-logo:hover { animation: logoFloat 0.8s ease; color: var(--g-light); }
+        @media (max-width: 767.98px) { .g-logo { display: none; } }
+
+        .g-nav-desktop { display: none; }
         @media (min-width: 768px) {
-            .unity-nav-desktop { display: flex; align-items: center; gap: 0.25rem; }
-            .unity-nav-desktop a { padding: 0.5rem 0.75rem; font-size: 14px; color: var(--unity-text-secondary); text-decoration: none; transition: color 0.2s var(--unity-ease); }
-            .unity-nav-desktop a:hover { color: var(--unity-text); }
+            .g-nav-desktop { display: flex; align-items: center; gap: 0.1rem; }
+            .g-nav-desktop a {
+                padding: 0.45rem 0.85rem;
+                font-size: 13.5px;
+                font-weight: 500;
+                color: var(--g-text-muted);
+                text-decoration: none;
+                border-radius: var(--g-radius);
+                transition: color 0.2s, background 0.2s;
+            }
+            .g-nav-desktop a:hover,
+            .g-nav-desktop a.active {
+                color: var(--g-accent);
+                background: rgba(255,211,105,0.08);
+            }
         }
-        .unity-header-right { display: flex; align-items: center; gap: 0.5rem; }
-        .unity-icon-btn {
-            width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
-            color: var(--unity-text); border: none; background: transparent; cursor: pointer;
-            transition: background 0.2s var(--unity-ease), color 0.2s var(--unity-ease);
-        }
-        .unity-icon-btn:hover { background: var(--unity-bg-secondary); }
-        .unity-btn {
-            display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem;
-            font-size: 14px; font-family: inherit; font-weight: 500; border-radius: 0; cursor: pointer;
-            transition: transform 0.2s var(--unity-ease), background 0.2s var(--unity-ease), border-color 0.2s var(--unity-ease);
-            text-decoration: none; border: 1px solid var(--unity-border); background: var(--unity-bg); color: var(--unity-text);
-        }
-        .unity-btn-primary { background: var(--unity-text); color: var(--unity-bg); border-color: var(--unity-text); }
-        .unity-btn-primary:hover { opacity: 0.92; }
-        .dropdown-menu { background: var(--unity-bg); border: 1px solid var(--unity-border); border-radius: 0; padding: 0.5rem; }
-        .dropdown-item { color: var(--unity-text); padding: 0.5rem 1rem; font-size: 14px; }
-        .dropdown-item:hover { background: var(--unity-bg-secondary); }
 
-        /* ----- Main ----- */
-        .unity-main { padding: 1.5rem 1rem 3rem; max-width: 1280px; margin: 0 auto; }
-        @media (min-width: 992px) { .unity-main { padding: 2rem 2rem 4rem; } }
-
-        .unity-back {
-            font-size: 14px; color: var(--unity-text-secondary); text-decoration: none;
-            display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;
-            transition: color 0.2s var(--unity-ease);
+        .g-header-right { display: flex; align-items: center; gap: 0.4rem; }
+        .g-icon-btn {
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--g-text-muted);
+            border: 1px solid transparent;
+            background: transparent;
+            border-radius: var(--g-radius);
+            cursor: pointer;
+            transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s var(--g-ease-spring);
         }
-        .unity-back:hover { color: var(--unity-text); }
+        .g-icon-btn:hover {
+            color: var(--g-accent);
+            background: rgba(255,211,105,0.08);
+            border-color: var(--g-border-hover);
+            transform: scale(1.08);
+        }
+        .g-btn-ghost {
+            padding: 0.38rem 0.9rem;
+            font-size: 13px;
+            font-family: var(--font-body);
+            font-weight: 500;
+            color: var(--g-text-muted);
+            border: 1px solid var(--g-border);
+            background: transparent;
+            border-radius: var(--g-radius);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .g-btn-ghost:hover { color: var(--g-light); border-color: rgba(238,238,238,0.3); }
+        .g-btn-accent {
+            padding: 0.38rem 0.9rem;
+            font-size: 13px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--g-bg);
+            border: 1px solid var(--g-accent);
+            background: var(--g-accent);
+            border-radius: var(--g-radius);
+            text-decoration: none;
+            transition: all 0.2s var(--g-ease-spring);
+            cursor: pointer;
+        }
+        .g-btn-accent:hover {
+            background: #e8bc52;
+            border-color: #e8bc52;
+            color: var(--g-bg);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255,211,105,0.3);
+        }
 
-        /* Product layout */
-        .unity-pdp {
-            background: var(--unity-bg);
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
+        /* Mobile menu */
+        .g-mobile-overlay {
+            position: fixed; inset: 0;
+            background: rgba(34,40,49,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1055;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .g-mobile-overlay.open { opacity: 1; visibility: visible; }
+        .g-mobile-menu {
+            position: fixed;
+            top: 0; left: 0;
+            width: 285px; max-width: 88vw;
+            height: 100vh;
+            background: var(--g-bg2);
+            border-right: 1px solid var(--g-border);
+            z-index: 1060;
+            transform: translateX(-100%);
+            transition: transform 0.35s var(--g-ease);
+            overflow-y: auto;
+            padding: 1.25rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .g-mobile-menu.open { transform: translateX(0); }
+        .g-mobile-menu a,
+        .g-mobile-menu .g-filter-sect {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--g-text-muted);
+            text-decoration: none;
+            border-bottom: 1px solid var(--g-border);
+        }
+        .g-mobile-menu a:hover {
+            color: var(--g-accent);
+            background: rgba(255,211,105,0.05);
+            padding-left: 1.6rem;
+        }
+
+        /* Main container */
+        .g-main {
+            padding: 1.5rem 1rem 3rem;
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+        @media (min-width: 992px) {
+            .g-main { padding: 2rem 2rem 4rem; }
+        }
+
+        /* Back link */
+        .g-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: var(--g-text-muted);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+        .g-back-link:hover { color: var(--g-accent); }
+
+        /* Product detail card */
+        .g-product-detail {
+            background: var(--g-card-bg);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
             overflow: hidden;
             margin-bottom: 2rem;
         }
-        .unity-pdp-image-wrap {
-            background: var(--unity-bg-secondary);
-            min-height: 280px;
+        .g-product-image-wrap {
+            background: var(--g-bg2);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
+            min-height: 320px;
         }
-        @media (min-width: 992px) { .unity-pdp-image-wrap { min-height: 420px; border-right: 1px solid var(--unity-border); } }
-        .unity-pdp-image {
+        @media (min-width: 992px) {
+            .g-product-image-wrap { min-height: 480px; border-right: 1px solid var(--g-border); }
+        }
+        .g-product-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            opacity: 0;
-            transition: opacity 0.4s var(--unity-ease);
+            transition: opacity 0.3s;
         }
-        .unity-pdp-image.loaded { opacity: 1; }
-        .unity-pdp-no-image { color: var(--unity-text-secondary); text-align: center; padding: 2rem; }
-        .unity-pdp-info { padding: 1.5rem; }
-        @media (min-width: 992px) { .unity-pdp-info { padding: 2rem; } }
+        .g-product-info { padding: 1.5rem; }
+        @media (min-width: 992px) { .g-product-info { padding: 2rem; } }
 
-        .unity-pdp-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-        .unity-pdp-badge {
-            font-size: 12px; padding: 0.35rem 0.65rem;
-            background: var(--unity-bg-secondary); border: 1px solid var(--unity-border);
-            color: var(--unity-text-secondary);
+        .g-product-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
-        .unity-pdp-title {
-            font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text);
-            margin-bottom: 0.5rem; line-height: 1.3;
+        .g-product-badge {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255,211,105,0.1);
+            border: 1px solid var(--g-border);
+            color: var(--g-accent);
+            border-radius: var(--g-radius);
         }
-        @media (min-width: 768px) { .unity-pdp-title { font-size: 1.75rem; } }
-        .unity-pdp-subtitle { font-size: 14px; color: var(--unity-text-secondary); margin-bottom: 1.25rem; }
-
-        .unity-pdp-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-        .unity-pdp-detail {
-            background: var(--unity-bg-secondary);
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
-            padding: 1rem;
+        .g-product-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
         }
-        .unity-pdp-detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); margin-bottom: 0.35rem; }
-        .unity-pdp-detail-value { font-size: 14px; font-weight: 500; color: var(--unity-text); }
-
-        .unity-pdp-price {
-            background: var(--unity-bg-secondary);
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
-            padding: 0.5rem 0.75rem;
-            width: fit-content;
+        @media (min-width: 768px) { .g-product-title { font-size: 2rem; } }
+        .g-product-subtitle {
+            font-size: 14px;
+            color: var(--g-text-muted);
             margin-bottom: 1.5rem;
         }
-        .unity-pdp-price-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); }
-        .unity-pdp-price-value { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--unity-text); }
 
-        .unity-pdp-cart {
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
+        .g-product-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .g-product-detail-item {
+            background: rgba(34,40,49,0.6);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius);
+            padding: 0.75rem 1rem;
+        }
+        .g-product-detail-label {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--g-text-muted);
+            margin-bottom: 0.25rem;
+        }
+        .g-product-detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--g-light);
+        }
+
+        .g-product-price {
+            background: rgba(255,211,105,0.08);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius);
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        .g-product-price-label {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: var(--g-text-muted);
+        }
+        .g-product-price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--g-accent);
+        }
+
+        .g-cart-form {
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius);
             padding: 1.25rem;
             margin-bottom: 1rem;
         }
-        .unity-pdp-qty { margin-bottom: 1rem; }
-        .unity-pdp-qty label { font-size: 14px; color: var(--unity-text-secondary); margin-right: 0.5rem; }
-        .unity-pdp-qty input {
-            width: 72px; padding: 0.5rem; font-size: 14px; font-family: inherit;
-            border: 1px solid var(--unity-border); border-radius: 0; background: var(--unity-bg);
-        }
-        .unity-pdp-add {
-            width: 100%;
-            padding: 0.875rem 1.5rem;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 0;
-            border: none;
-            background: var(--unity-text);
-            color: var(--unity-bg);
-            cursor: pointer;
-            transition: transform 0.2s var(--unity-ease), opacity 0.2s var(--unity-ease);
-        }
-        @media (prefers-reduced-motion: no-preference) {
-            .unity-pdp-add:hover { transform: scale(1.02); opacity: 0.95; }
-        }
-        .unity-pdp-add:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .unity-pdp-desc {
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
-            padding: 1.25rem;
-            margin-top: 1rem;
-        }
-        .unity-pdp-desc-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--unity-text-secondary); margin-bottom: 0.75rem; }
-        .unity-pdp-desc-text { font-size: 14px; color: var(--unity-text); line-height: 1.6; white-space: pre-wrap; }
-        .unity-pdp-desc-toggle {
-            font-size: 13px; color: var(--unity-text-secondary); background: none; border: none; padding: 0.5rem 0; margin-top: 0.5rem; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 0.25rem;
-        }
-        .unity-pdp-desc-toggle:hover { color: var(--unity-text); }
-        @media (min-width: 768px) { .unity-pdp-desc-text.is-clamped { max-height: none; } }
-        @media (max-width: 767px) {
-            .unity-pdp-desc-text.is-clamped { max-height: 96px; overflow: hidden; }
-        }
-
-        /* You may also like */
-        .unity-related {
-            padding: 2rem 0;
-            border-top: 1px solid var(--unity-border);
-        }
-        .unity-related-title {
-            font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--unity-text-secondary);
-            text-align: center; margin-bottom: 1.5rem; font-weight: 600;
-        }
-        .unity-related-track {
+        .g-qty-row {
             display: flex;
+            align-items: center;
             gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .g-qty-row label {
+            font-size: 13px;
+            color: var(--g-text-muted);
+        }
+        .g-qty-input {
+            width: 80px;
+            padding: 0.5rem;
+            background: var(--g-bg);
+            border: 1px solid var(--g-border);
+            color: var(--g-text);
+            border-radius: var(--g-radius);
+            font-family: var(--font-mono);
+        }
+        .g-add-to-cart-btn {
+            width: 100%;
+            background: var(--g-accent);
+            color: var(--g-bg);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: var(--g-radius);
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+        .g-add-to-cart-btn:hover {
+            background: #e8bc52;
+            transform: translateY(-1px);
+        }
+        .g-add-to-cart-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .g-product-description {
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius);
+            padding: 1.25rem;
+        }
+        .g-product-description-title {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--g-accent);
+            margin-bottom: 0.75rem;
+        }
+        .g-product-description-text {
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 767px) {
+            .g-product-description-text.is-clamped {
+                max-height: 96px;
+                overflow: hidden;
+            }
+        }
+        .g-desc-toggle {
+            background: none;
+            border: none;
+            color: var(--g-accent);
+            font-size: 13px;
+            font-family: var(--font-mono);
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            cursor: pointer;
+        }
+
+        /* You May Also Like */
+        .g-related-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--g-border);
+        }
+        .g-section-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--g-accent);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .g-section-title {
+            font-family: var(--font-head);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-align: center;
+            color: var(--g-light);
+            margin-bottom: 2rem;
+        }
+        .g-related-carousel-wrap {
+            position: relative;
+            padding: 0 48px;
+        }
+        .g-related-track {
+            display: flex;
+            gap: 1.25rem;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
@@ -231,84 +488,139 @@
             scrollbar-width: none;
             padding: 0.5rem 0;
         }
-        .unity-related-track::-webkit-scrollbar { display: none; }
-        .unity-related-card {
-            flex: 0 0 260px;
+        .g-related-track::-webkit-scrollbar { display: none; }
+        .g-related-card {
+            flex: 0 0 240px;
             scroll-snap-align: start;
-            background: var(--unity-bg);
-            border: 1px solid var(--unity-border);
-            border-radius: 0;
+            background: var(--g-card-bg);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius-lg);
             overflow: hidden;
             text-decoration: none;
-            color: inherit;
-            transition: border-color 0.2s var(--unity-ease), transform 0.2s var(--unity-ease);
+            transition: border-color 0.2s, transform 0.2s var(--g-ease-spring);
         }
-        @media (prefers-reduced-motion: no-preference) {
-            .unity-related-card:hover { border-color: var(--unity-text-secondary); transform: translateY(-2px); }
+        .g-related-card:hover {
+            border-color: var(--g-border-hover);
+            transform: translateY(-4px);
         }
-        .unity-related-card-image {
-            aspect-ratio: 4/5;
-            background: var(--unity-bg-secondary);
+        .g-related-card-image {
+            aspect-ratio: 1 / 1;
+            background: var(--g-bg2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .g-related-card-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .g-related-card:hover .g-related-card-image img {
+            transform: scale(1.05);
+        }
+        .g-related-card-body {
+            padding: 1rem;
+        }
+        .g-related-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--g-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
+            margin-bottom: 0.25rem;
         }
-        .unity-related-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--unity-ease); }
-        .unity-related-card:hover .unity-related-card-image img { transform: scale(1.05); }
-        .unity-related-card-body { padding: 1rem; }
-        .unity-related-card-title { font-size: 14px; font-weight: 500; color: var(--unity-text); margin-bottom: 0.35rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .unity-related-card-price { font-size: 14px; color: var(--unity-text-secondary); }
-        .unity-related-wrap { position: relative; padding: 0 48px; }
-        .unity-related-btn {
+        .g-related-card-price {
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: var(--g-accent);
+        }
+        .g-carousel-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             width: 40px;
             height: 40px;
-            border: 1px solid var(--unity-border);
-            background: var(--unity-bg);
-            color: var(--unity-text);
+            background: var(--g-bg2);
+            border: 1px solid var(--g-border);
+            border-radius: var(--g-radius);
+            color: var(--g-text-muted);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1;
-            transition: background 0.2s var(--unity-ease), color 0.2s var(--unity-ease);
+            transition: all 0.2s;
+            z-index: 2;
         }
-        .unity-related-btn:hover { background: var(--unity-bg-secondary); }
-        .unity-related-btn.prev { left: 0; }
-        .unity-related-btn.next { right: 0; }
+        .g-carousel-btn:hover {
+            border-color: var(--g-border-hover);
+            color: var(--g-accent);
+            background: rgba(255,211,105,0.08);
+        }
+        .g-carousel-btn.prev { left: 0; }
+        .g-carousel-btn.next { right: 0; }
 
         /* Toast */
-        .cart-toast {
-            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
-            padding: 0.75rem 1.25rem; background: var(--unity-text); color: var(--unity-bg);
-            font-size: 14px; font-weight: 500; border-radius: 0;
-            display: flex; align-items: center; gap: 0.5rem;
-            animation: unityToastIn 0.3s var(--unity-ease);
+        .g-toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            padding: 0.75rem 1.25rem;
+            background: var(--g-bg2);
+            border: 1px solid var(--g-border-hover);
+            color: var(--g-light);
+            font-size: 13.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-radius: var(--g-radius-lg);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            animation: toastSlide 0.35s var(--g-ease-spring);
         }
-        @keyframes unityToastIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .g-toast-icon { color: var(--g-accent); }
+        .g-spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,211,105,0.2);
+            border-top-color: var(--g-accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
         }
-        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; border-radius: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .g-related-carousel-wrap { padding: 0 24px; }
+            .g-related-card { flex: 0 0 200px; }
+        }
     </style>
 </head>
 <body>
-    <header class="unity-header" id="unityHeader">
-        <div class="d-flex align-items-center gap-3">
-            <a href="{{ route('home') }}" class="unity-logo">Make Your Order</a>
-            <nav class="unity-nav-desktop">
+
+    <!-- ██ HEADER (same as index) ██ -->
+    <header class="g-header" id="gHeader">
+        <div class="g-header-left">
+            <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+            <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
+            <nav class="g-nav-desktop">
                 <a href="{{ route('home') }}">Home</a>
                 <a href="{{ route('home') }}">Products</a>
             </nav>
         </div>
-        <div class="unity-header-right">
-            <a href="{{ route('cart.view') }}" class="unity-icon-btn" aria-label="Cart">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <div class="g-header-right">
+            <a href="{{ route('cart.view') }}" class="g-icon-btn" aria-label="Cart">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             </a>
             @auth
                 <div class="dropdown">
-                    <button class="unity-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <button class="g-icon-btn" type="button" data-bs-toggle="dropdown" aria-label="Account">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
@@ -317,98 +629,110 @@
                             <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Panel</a></li>
                         @endif
                         <li><hr class="dropdown-divider"></li>
-                        <li><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="dropdown-item w-100 text-start">Log Out</button></form></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">@csrf
+                                <button type="submit" class="dropdown-item w-100 text-start">Log Out</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="unity-btn" style="padding: 0.4rem 0.75rem; font-size: 13px;">Login</a>
-                <a href="{{ route('register') }}" class="unity-btn unity-btn-primary" style="padding: 0.4rem 0.75rem; font-size: 13px;">Register</a>
+                <a href="{{ route('login') }}" class="g-btn-ghost">Login</a>
+                <a href="{{ route('register') }}" class="g-btn-accent">Register</a>
             @endauth
         </div>
     </header>
 
-    <main class="unity-main">
-        <a href="{{ route('home') }}" class="unity-back unity-ani-fade-in">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    <!-- Mobile menu overlay -->
+    <div class="g-mobile-overlay" id="gMobileOverlay"></div>
+    <div class="g-mobile-menu" id="gMobileMenu">
+        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('home') }}">Products</a>
+    </div>
+
+    <!-- ██ MAIN CONTENT ██ -->
+    <main class="g-main">
+        <a href="{{ route('home') }}" class="g-back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Back to Products
         </a>
 
         @include('partials.toast')
 
-        <div class="unity-pdp">
+        <div class="g-product-detail g-reveal">
             <div class="row g-0">
-                <div class="col-lg-5 unity-ani-fade-in unity-ani-delay-1">
-                    <div class="unity-pdp-image-wrap">
+                <div class="col-lg-5">
+                    <div class="g-product-image-wrap">
                         @if ($product->image_path)
-                            <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" class="unity-pdp-image" id="pdpImage" loading="lazy">
+                            <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}" class="g-product-image" id="productImage" loading="lazy">
                         @else
-                            <div class="unity-pdp-no-image">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                                <p class="mt-2 mb-0">No image</p>
+                            <div style="color: var(--g-text-muted); text-align: center;">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                <p class="mt-2">No image available</p>
                             </div>
                         @endif
                     </div>
                 </div>
                 <div class="col-lg-7">
-                    <div class="unity-pdp-info">
-                        <div class="unity-pdp-badges unity-ani-fade-in unity-ani-delay-2">
+                    <div class="g-product-info">
+                        <div class="g-product-badges">
                             @if($product->category)
-                                <span class="unity-pdp-badge">{{ $product->category->name }}</span>
+                                <span class="g-product-badge">{{ $product->category->name }}</span>
                             @endif
-                            <span class="unity-pdp-badge">{{ $product->brand_name ?? '—' }}</span>
+                            <span class="g-product-badge">{{ $product->brand_name ?? '—' }}</span>
                         </div>
-                        <h1 class="unity-pdp-title unity-ani-fade-in unity-ani-delay-2">{{ $product->name }}</h1>
+                        <h1 class="g-product-title">{{ $product->name }}</h1>
                         @if($product->product_name_hi)
-                            <p class="unity-pdp-subtitle unity-ani-fade-in unity-ani-delay-2">{{ $product->product_name_hi }}</p>
+                            <p class="g-product-subtitle">{{ $product->product_name_hi }}</p>
                         @endif
 
-                        <div class="unity-pdp-details">
-                            <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
-                                <div class="unity-pdp-detail-label">Company Part Number</div>
-                                <div class="unity-pdp-detail-value">{{ $product->company_part_number ?? '—' }}</div>
+                        <div class="g-product-details-grid">
+                            <div class="g-product-detail-item">
+                                <div class="g-product-detail-label">Company Part Number</div>
+                                <div class="g-product-detail-value">{{ $product->company_part_number ?? '—' }}</div>
                             </div>
                             @if($product->company_part_number_substitute)
-                                <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
-                                    <div class="unity-pdp-detail-label">Alternative Part No.</div>
-                                    <div class="unity-pdp-detail-value">{{ $product->company_part_number_substitute }}</div>
-                                </div>
+                            <div class="g-product-detail-item">
+                                <div class="g-product-detail-label">Alternative Part No.</div>
+                                <div class="g-product-detail-value">{{ $product->company_part_number_substitute }}</div>
+                            </div>
                             @endif
                             @if($product->local_part_number)
-                                <div class="unity-pdp-detail unity-ani-fade-in unity-ani-delay-3">
-                                    <div class="unity-pdp-detail-label">Local Part Number</div>
-                                    <div class="unity-pdp-detail-value">{{ $product->local_part_number }}</div>
-                                </div>
+                            <div class="g-product-detail-item">
+                                <div class="g-product-detail-label">Local Part Number</div>
+                                <div class="g-product-detail-value">{{ $product->local_part_number }}</div>
+                            </div>
                             @endif
                         </div>
 
-                        <div class="unity-pdp-cart unity-ani-fade-in unity-ani-delay-4">
-                            <form method="POST" action="{{ route('cart.add', $product) }}">
+                        <div class="g-product-price">
+                            <div class="g-product-price-label">MRP</div>
+                            <div class="g-product-price-value">₹{{ number_format((float) $product->price, 2) }}</div>
+                        </div>
+
+                        <div class="g-cart-form">
+                            <form method="POST" action="{{ route('cart.add', $product) }}" id="addToCartForm">
                                 @csrf
-                                <div class="unity-pdp-qty">
+                                <div class="g-qty-row">
                                     <label for="quantity">Quantity</label>
-                                    <input type="number" name="quantity" id="quantity" value="1" min="1">
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1" class="g-qty-input">
                                 </div>
-                                <button type="submit" class="unity-pdp-add">Add to Cart</button>
+                                <button type="submit" class="g-add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
                             </form>
                             @guest
-                                <p class="mt-2 mb-0 small text-muted">Guests can add items to cart.</p>
+                                <p class="mt-2 mb-0 small" style="color: var(--g-text-muted);">Guests can add items to cart.</p>
                             @endguest
                         </div>
 
-                        <div class="unity-pdp-price unity-ani-fade-in unity-ani-delay-4">
-                            <div class="unity-pdp-price-label">MRP</div>
-                            <div class="unity-pdp-price-value">₹{{ number_format((float) $product->price, 2) }}</div>
-                        </div>
-
                         @if($product->description)
-                            <div class="unity-pdp-desc unity-ani-fade-in unity-ani-delay-5" id="descSection">
-                                <div class="unity-pdp-desc-title">Description</div>
-                                <div class="unity-pdp-desc-text is-clamped" id="descText">{{ $product->description }}</div>
-                                <button type="button" class="unity-pdp-desc-toggle d-md-none" id="descToggle" aria-expanded="false">
-                                    <span id="descToggleLabel">Read more</span>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-                                </button>
-                            </div>
+                        <div class="g-product-description" id="descSection">
+                            <div class="g-product-description-title">Description</div>
+                            <div class="g-product-description-text is-clamped" id="descText">{{ $product->description }}</div>
+                            <button type="button" class="g-desc-toggle d-md-none" id="descToggle">
+                                <span id="descToggleLabel">Read more</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                            </button>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -416,131 +740,157 @@
         </div>
 
         @if($youMayAlsoLike->isNotEmpty())
-            <section class="unity-related unity-ani-fade-in unity-ani-delay-6" aria-label="You may also like">
-                <h2 class="unity-related-title">You May Also Like</h2>
-                <div class="unity-related-wrap">
-                    <button type="button" class="unity-related-btn prev" aria-label="Previous" id="relatedPrev">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                    </button>
-                    <button type="button" class="unity-related-btn next" aria-label="Next" id="relatedNext">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div class="unity-related-track" id="relatedTrack">
+        <section class="g-related-section g-reveal">
+            <div class="g-section-eyebrow">// You may also like</div>
+            <h2 class="g-section-title">Similar products</h2>
+            <div class="g-related-carousel-wrap">
+                <button class="g-carousel-btn prev" id="relatedPrev" aria-label="Previous">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="g-carousel-btn next" id="relatedNext" aria-label="Next">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <div class="g-related-track" id="relatedTrack">
                     @foreach($youMayAlsoLike as $related)
-                        <a href="{{ route('products.show', $related) }}" class="unity-related-card">
-                            <div class="unity-related-card-image">
-                                @if ($related->image_path)
-                                    <img src="{{ asset($related->image_path) }}" alt="{{ $related->name }}" loading="lazy">
-                                @else
-                                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--unity-text-secondary);">
-                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="unity-related-card-body">
-                                <div class="unity-related-card-title">{{ $related->name }}</div>
-                                <div class="unity-related-card-price">₹{{ number_format((float) $related->price, 2) }}</div>
-                            </div>
-                        </a>
+                    <a href="{{ route('products.show', $related) }}" class="g-related-card">
+                        <div class="g-related-card-image">
+                            @if ($related->image_path)
+                                <img src="{{ asset($related->image_path) }}" alt="{{ $related->name }}" loading="lazy">
+                            @else
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                            @endif
+                        </div>
+                        <div class="g-related-card-body">
+                            <div class="g-related-card-title">{{ $related->name }}</div>
+                            <div class="g-related-card-price">₹{{ number_format((float) $related->price, 2) }}</div>
+                        </div>
+                    </a>
                     @endforeach
-                    </div>
                 </div>
-            </section>
+            </div>
+        </section>
         @endif
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Header scroll
-            var header = document.getElementById('unityHeader');
-            if (header) window.addEventListener('scroll', function() { header.classList.toggle('scrolled', window.scrollY > 10); });
-
-            // Image fade-in when loaded — class only (no inline opacity so .loaded can show image)
-            var img = document.getElementById('pdpImage');
-            if (img) {
-                if (img.complete) img.classList.add('loaded');
-                else img.addEventListener('load', function() { img.classList.add('loaded'); });
+        (function() {
+            // Sticky header
+            const header = document.getElementById('gHeader');
+            if (header) {
+                window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
             }
 
-            // Cart form AJAX + toast
-            var cartForm = document.querySelector('form[action*="/cart/"]');
-            if (cartForm) {
+            // Mobile menu
+            const hamburger = document.getElementById('gHamburger');
+            const mobileMenu = document.getElementById('gMobileMenu');
+            const mobileOverlay = document.getElementById('gMobileOverlay');
+            function openMobile() { mobileMenu.classList.add('open'); mobileOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+            function closeMobile() { mobileMenu.classList.remove('open'); mobileOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+            if (hamburger) hamburger.addEventListener('click', openMobile);
+            if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobile);
+
+            // Product image fade-in
+            const prodImg = document.getElementById('productImage');
+            if (prodImg) {
+                if (prodImg.complete) prodImg.style.opacity = '1';
+                else prodImg.addEventListener('load', () => prodImg.style.opacity = '1');
+            }
+
+            // Description toggle (mobile)
+            const descSection = document.getElementById('descSection');
+            const descToggle = document.getElementById('descToggle');
+            const descLabel = document.getElementById('descToggleLabel');
+            const descText = document.getElementById('descText');
+            if (descSection && descToggle && descText) {
+                descToggle.addEventListener('click', () => {
+                    const isExpanded = descSection.classList.toggle('is-expanded');
+                    descText.classList.toggle('is-clamped', !isExpanded);
+                    descLabel.textContent = isExpanded ? 'Read less' : 'Read more';
+                });
+            }
+
+            // Add to cart AJAX
+            const cartForm = document.getElementById('addToCartForm');
+            const cartBtn = document.getElementById('addToCartBtn');
+            if (cartForm && cartBtn) {
                 cartForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    var btn = this.querySelector('button[type="submit"]');
-                    var orig = btn ? btn.innerHTML : '';
-                    if (btn) { btn.innerHTML = 'Adding…'; btn.disabled = true; }
-                    fetch(this.action, {
+                    const originalHtml = cartBtn.innerHTML;
+                    cartBtn.innerHTML = '<span class="g-spinner"></span>';
+                    cartBtn.disabled = true;
+                    fetch(cartForm.action, {
                         method: 'POST',
-                        body: new FormData(this),
+                        body: new FormData(cartForm),
                         credentials: 'same-origin',
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     })
-                        .then(function(r) {
-                            var ct = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
-                            if (!r.ok) {
-                                if (ct.indexOf('application/json') !== -1) {
-                                    return r.json().then(function (j) { throw new Error((j && j.message) ? j.message : ('Request failed (' + r.status + ')')); });
-                                }
-                                throw new Error('Request failed (' + r.status + ')');
-                            }
-                            if (ct.indexOf('application/json') === -1) throw new Error('Unexpected response');
-                            return r.json();
-                        })
-                        .then(function(json) {
-                            if (!json || json.success !== true) throw new Error((json && json.message) ? json.message : 'Could not add to cart');
-                            var t = document.createElement('div');
-                            t.id = 'cart-toast';
-                            t.className = 'cart-toast';
-                            t.textContent = json.message || 'Added to cart';
-                            document.body.appendChild(t);
-                            setTimeout(function() { if (t.parentNode) t.remove(); }, 2500);
-                            if (btn) { btn.innerHTML = orig; btn.disabled = false; }
-                        })
-                        .catch(function(err) {
-                            var t = document.createElement('div');
-                            t.id = 'cart-toast';
-                            t.className = 'cart-toast';
-                            t.style.background = '#991b1b';
-                            t.textContent = (err && err.message) ? err.message : 'Could not add to cart';
-                            document.body.appendChild(t);
-                            setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
-                            if (btn) { btn.innerHTML = orig; btn.disabled = false; }
-                        });
+                    .then(res => {
+                        if (!res.ok) return res.json().then(err => { throw new Error(err.message || 'Request failed'); });
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Could not add to cart');
+                        showToast(data.message || 'Added to cart', false);
+                        cartBtn.innerHTML = originalHtml;
+                        cartBtn.disabled = false;
+                    })
+                    .catch(err => {
+                        showToast(err.message || 'Could not add to cart', true);
+                        cartBtn.innerHTML = originalHtml;
+                        cartBtn.disabled = false;
+                    });
                 });
             }
 
-            // Quantity
-            var qty = document.getElementById('quantity');
-            if (qty) qty.addEventListener('change', function() { var v = parseInt(this.value, 10); if (isNaN(v) || v < 1) this.value = 1; });
-
-            // Description read more (mobile)
-            var descSection = document.getElementById('descSection');
-            var descToggle = document.getElementById('descToggle');
-            var descLabel = document.getElementById('descToggleLabel');
-            var descText = document.getElementById('descText');
-            if (descSection && descToggle && descLabel && descText) {
-                descToggle.addEventListener('click', function() {
-                    var open = descSection.classList.toggle('is-expanded');
-                    descText.classList.toggle('is-clamped', !open);
-                    descLabel.textContent = open ? 'Read less' : 'Read more';
+            // Toast helper
+            function showToast(message, isError) {
+                const existing = document.getElementById('g-toast');
+                if (existing) existing.remove();
+                const toast = document.createElement('div');
+                toast.id = 'g-toast';
+                toast.className = 'g-toast';
+                const icon = isError ? '⚠️' : '✓';
+                toast.innerHTML = `<span class="g-toast-icon">${icon}</span> ${escapeHtml(message)}`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2800);
+            }
+            function escapeHtml(str) {
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
                 });
             }
 
-            // Related carousel
-            var track = document.getElementById('relatedTrack');
-            if (track) {
-                var step = Math.min(280, track.offsetWidth * 0.85);
-                document.getElementById('relatedPrev').addEventListener('click', function() { track.scrollBy({ left: -step, behavior: 'smooth' }); });
-                document.getElementById('relatedNext').addEventListener('click', function() { track.scrollBy({ left: step, behavior: 'smooth' }); });
+            // Related products carousel
+            const track = document.getElementById('relatedTrack');
+            const prevBtn = document.getElementById('relatedPrev');
+            const nextBtn = document.getElementById('relatedNext');
+            if (track && prevBtn && nextBtn) {
+                const scrollAmount = () => {
+                    const card = track.querySelector('.g-related-card');
+                    const cardWidth = card ? card.offsetWidth : 220;
+                    const gap = 20;
+                    return cardWidth + gap;
+                };
+                prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
+                nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
             }
 
-            // Alert auto-dismiss
-            document.querySelectorAll('.alert').forEach(function(a) {
-                setTimeout(function() { a.classList.remove('show'); setTimeout(function() { a.remove(); }, 150); }, 5000);
-            });
-        });
+            // Reveal on scroll
+            const reveals = document.querySelectorAll('.g-reveal');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('g-revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '0px 0px -50px 0px', threshold: 0.1 });
+            reveals.forEach(el => observer.observe(el));
+        })();
     </script>
 </body>
 </html>
