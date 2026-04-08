@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* =============================================
-           GROWZIO — DESIGN SYSTEM (same as index)
+           GROWZIO — DESIGN SYSTEM (identical to index)
            ============================================= */
         :root {
             --g-bg:         #222831;
@@ -93,7 +93,7 @@
             transform: translateY(0);
         }
 
-        /* Header (same as index) */
+        /* Header (exact copy from index) */
         .g-header {
             position: sticky;
             top: 0;
@@ -312,11 +312,15 @@
             color: var(--g-accent);
             border-radius: var(--g-radius);
         }
+
+        /* Product title: use DM Sans for clean numbers */
         .g-product-title {
+            font-family: var(--font-body);
             font-size: 1.75rem;
             font-weight: 700;
             letter-spacing: -0.02em;
             margin-bottom: 0.5rem;
+            color: var(--g-light);
         }
         @media (min-width: 768px) { .g-product-title { font-size: 2rem; } }
         .g-product-subtitle {
@@ -450,7 +454,7 @@
             cursor: pointer;
         }
 
-        /* You May Also Like */
+        /* You May Also Like — improved for mobile (smaller cards, better alignment) */
         .g-related-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -476,11 +480,11 @@
         }
         .g-related-carousel-wrap {
             position: relative;
-            padding: 0 48px;
+            padding: 0 40px;
         }
         .g-related-track {
             display: flex;
-            gap: 1.25rem;
+            gap: 1rem;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
@@ -490,7 +494,7 @@
         }
         .g-related-track::-webkit-scrollbar { display: none; }
         .g-related-card {
-            flex: 0 0 240px;
+            flex: 0 0 200px;
             scroll-snap-align: start;
             background: var(--g-card-bg);
             border: 1px solid var(--g-border);
@@ -521,10 +525,10 @@
             transform: scale(1.05);
         }
         .g-related-card-body {
-            padding: 1rem;
+            padding: 0.75rem;
         }
         .g-related-card-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--g-light);
             display: -webkit-box;
@@ -532,9 +536,10 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 0.25rem;
+            line-height: 1.4;
         }
         .g-related-card-price {
-            font-size: 13px;
+            font-size: 12px;
             font-family: var(--font-mono);
             color: var(--g-accent);
         }
@@ -542,8 +547,8 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--g-bg2);
             border: 1px solid var(--g-border);
             border-radius: var(--g-radius);
@@ -562,6 +567,16 @@
         }
         .g-carousel-btn.prev { left: 0; }
         .g-carousel-btn.next { right: 0; }
+
+        /* Mobile adjustments for related section */
+        @media (max-width: 768px) {
+            .g-related-carousel-wrap { padding: 0 20px; }
+            .g-related-card { flex: 0 0 160px; }
+            .g-related-card-body { padding: 0.6rem; }
+            .g-related-card-title { font-size: 11px; }
+            .g-related-card-price { font-size: 11px; }
+            .g-carousel-btn { width: 30px; height: 30px; }
+        }
 
         /* Toast */
         .g-toast {
@@ -591,17 +606,11 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .g-related-carousel-wrap { padding: 0 24px; }
-            .g-related-card { flex: 0 0 200px; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- ██ HEADER (same as index) ██ -->
+    <!-- ██ HEADER (exact copy from index) ██ -->
     <header class="g-header" id="gHeader">
         <div class="g-header-left">
             <button type="button" class="g-hamburger" id="gHamburger" aria-label="Menu">
@@ -609,12 +618,12 @@
             </button>
             <a href="{{ route('home') }}" class="g-logo">Grow<span>zio</span></a>
             <nav class="g-nav-desktop">
-                <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('home') }}">Products</a>
+                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                <a href="{{ route('home') }}" class="active">Products</a>
             </nav>
         </div>
         <div class="g-header-right">
-            <a href="{{ route('cart.view') }}" class="g-icon-btn" aria-label="Cart">
+            <a href="{{ route('cart.view') }}" class="g-icon-btn g-cart-link" aria-label="Cart">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             </a>
             @auth
@@ -648,6 +657,8 @@
     <div class="g-mobile-menu" id="gMobileMenu">
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('home') }}">Products</a>
+        <div class="g-filter-sect">Categories</div>
+        <!-- dynamic categories would go here if needed, but keeping as index -->
     </div>
 
     <!-- ██ MAIN CONTENT ██ -->
@@ -871,8 +882,8 @@
             if (track && prevBtn && nextBtn) {
                 const scrollAmount = () => {
                     const card = track.querySelector('.g-related-card');
-                    const cardWidth = card ? card.offsetWidth : 220;
-                    const gap = 20;
+                    const cardWidth = card ? card.offsetWidth : 160;
+                    const gap = 16;
                     return cardWidth + gap;
                 };
                 prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
