@@ -135,7 +135,9 @@
             </div>
         </div>
     </div>
-</div><script>
+</div>
+
+<script>
     (function() {
         function showCopiedMessage(btn) {
             const tooltip = document.createElement('span');
@@ -146,97 +148,59 @@
             setTimeout(() => { tooltip.remove(); btn.style.position = ''; }, 1500);
         }
     
-        // Format key-value pairs (Customer details, Order summary)
+        // Simple key: value format (no extra spaces, works on narrow screens)
         function formatKeyValuePairs(rows) {
-            let pairs = [];
+            let lines = [];
             rows.forEach(row => {
                 const keyEl = row.querySelector('dt');
                 const valEl = row.querySelector('dd');
                 if (keyEl && valEl && !row.classList.contains('border-t')) {
                     let key = keyEl.innerText.trim();
                     let val = valEl.innerText.trim();
-                    if (key && val) pairs.push({key, val});
+                    if (key && val) lines.push(`${key}: ${val}`);
                 }
             });
+            // Handle address separately
             const addressDiv = document.querySelector('#customer-details-data .pt-1');
             if (addressDiv) {
                 const addrKey = addressDiv.querySelector('dt')?.innerText.trim() || 'Address';
                 const addrVal = addressDiv.querySelector('dd')?.innerText.trim() || 'N/A';
-                pairs.push({key: addrKey, val: addrVal});
+                lines.push(`${addrKey}: ${addrVal}`);
             }
-            if (pairs.length === 0) return '';
-            const maxKeyLen = Math.max(...pairs.map(p => p.key.length));
-            return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
+            return lines.join('\n');
         }
     
-        // PERFECT COLUMN ALIGNMENT for items table
+        // Items ordered: each item as a small block, easy to read on narrow screens
         function formatItemsOrdered() {
             const rows = document.querySelectorAll('#items-ordered-data .md\\:block tbody tr');
             if (!rows.length) return 'No items found.';
     
-            // Extract data
-            let items = [];
+            let blocks = [];
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
                 if (cells.length >= 4) {
-                    items.push({
-                        product: cells[0].innerText.trim(),
-                        qty: cells[1].innerText.trim(),
-                        unitPrice: cells[2].innerText.trim(),
-                        lineTotal: cells[3].innerText.trim()
-                    });
+                    const product = cells[0].innerText.trim();
+                    const qty = cells[1].innerText.trim();
+                    const unitPrice = cells[2].innerText.trim();
+                    const lineTotal = cells[3].innerText.trim();
+                    blocks.push(
+                        `${product}\n  Qty: ${qty} | Unit Price: ${unitPrice} | Line Total: ${lineTotal}`
+                    );
                 }
             });
-            if (items.length === 0) return 'No items found.';
-    
-            // Headers
-            const headers = ['Product', 'Qty', 'Unit Price', 'Line Total'];
-    
-            // Compute max width for each column (header + data)
-            // For numeric columns we use the actual string length (including ₹ and commas)
-            let colWidths = [0, 0, 0, 0];
-            colWidths[0] = Math.max(headers[0].length, ...items.map(i => i.product.length));
-            colWidths[1] = Math.max(headers[1].length, ...items.map(i => i.qty.length));
-            colWidths[2] = Math.max(headers[2].length, ...items.map(i => i.unitPrice.length));
-            colWidths[3] = Math.max(headers[3].length, ...items.map(i => i.lineTotal.length));
-    
-            // Build header line with proper alignment:
-            // Product -> left (padEnd), others -> right (padStart)
-            const headerLine = [
-                headers[0].padEnd(colWidths[0]),
-                headers[1].padStart(colWidths[1]),
-                headers[2].padStart(colWidths[2]),
-                headers[3].padStart(colWidths[3])
-            ].join(' '.repeat(5));
-    
-            // Separator line (exact same length)
-            const separator = '-'.repeat(headerLine.length);
-    
-            // Build each data row with same alignment
-            const rowLines = items.map(item => {
-                return [
-                    item.product.padEnd(colWidths[0]),
-                    item.qty.padStart(colWidths[1]),
-                    item.unitPrice.padStart(colWidths[2]),
-                    item.lineTotal.padStart(colWidths[3])
-                ].join(' '.repeat(5));
-            });
-    
-            return [headerLine, separator, ...rowLines].join('\n');
+            return blocks.join('\n\n');
         }
     
         function formatOrderSummary() {
             const container = document.getElementById('order-summary-data');
             const rows = container.querySelectorAll('.flex.justify-between');
-            let pairs = [];
+            let lines = [];
             rows.forEach(row => {
                 const dt = row.querySelector('dt')?.innerText.trim();
                 const dd = row.querySelector('dd')?.innerText.trim();
-                if (dt && dd) pairs.push({key: dt, val: dd});
+                if (dt && dd) lines.push(`${dt}: ${dd}`);
             });
-            if (pairs.length === 0) return '';
-            const maxKeyLen = Math.max(...pairs.map(p => p.key.length));
-            return pairs.map(p => p.key + ' '.repeat(maxKeyLen - p.key.length + 5) + p.val).join('\n');
+            return lines.join('\n');
         }
     
         async function copyText(text, btn) {
