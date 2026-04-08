@@ -35,6 +35,7 @@
 
             </main>
         </div>
+        <?php echo $__env->make('partials.toast', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </body>
 </html>
 <?php /**PATH C:\Users\Admin\clean\growzio\resources\views/layouts/app.blade.php ENDPATH**/ ?>

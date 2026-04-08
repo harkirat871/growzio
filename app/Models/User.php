@@ -26,6 +26,7 @@ class User extends Authenticatable
         'business_name',
         'gst_number',
         'contact_number',
+        'station',
         'referred_by',
         'loyalty_points',
         'last_login',

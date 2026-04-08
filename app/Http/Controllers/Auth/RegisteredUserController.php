@@ -72,6 +72,7 @@ class RegisteredUserController extends Controller
                     }
                 },
             ],
+            'station' => ['required', 'string', 'max:255'],
             'referred_by' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -82,6 +83,7 @@ class RegisteredUserController extends Controller
             'business_name' => $request->business_name,
             'gst_number' => $gstNormalized !== '' ? $gstNormalized : null,
             'contact_number' => $phoneNormalized ?: $request->contact_number,
+            'station' => $validated['station'],
             'referred_by' => $request->referred_by,
         ]);
 

@@ -83,6 +83,21 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <div>
+            <label for="station" class="block text-sm font-medium text-gray-700 mb-1">Station / Area</label>
+            <input id="station" type="text" name="station" value="<?php echo e(old('station')); ?>" required autocomplete="address-level2"
+                placeholder="e.g. Andheri, Mumbai"
+                class="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition">
+            <?php $__errorArgs = ['station'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><p class="mt-1 text-sm text-red-600"><?php echo e($message); ?></p><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input id="email" type="email" name="email" value="<?php echo e(old('email')); ?>" required autocomplete="username"
                 placeholder="e.g. you@example.com"

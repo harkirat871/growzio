@@ -13,7 +13,7 @@ class OrderAdminController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Order::withCount('items')->latest();
+        $query = Order::with(['user:id,name,email,contact_number,business_name,station'])->withCount('items')->latest();
 
         if ($request->filled('status') && $request->status === 'pending') {
             $query->whereIn('status', ['pending', 'paid']);
@@ -27,7 +27,10 @@ class OrderAdminController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load('items.product', 'user');
+        $order->load([
+            'items.product:id,name',
+            'user:id,name,email,contact_number,business_name,gst_number,referred_by,station,address_line_1,address_line_2,city,state,postal_code,country',
+        ]);
         return view('admin.orders.show', compact('order'));
     }
 

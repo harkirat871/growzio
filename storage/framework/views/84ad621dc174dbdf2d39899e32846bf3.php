@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,6 +157,13 @@
         }
         .g-logo span { color: var(--g-accent); }
         .g-logo:hover { animation: logoFloat 0.8s ease; color: var(--g-light); }
+
+        /* CHANGE 2: Hide logo on mobile (phone) */
+        @media (max-width: 767.98px) {
+            .g-logo {
+                display: none;
+            }
+        }
 
         .g-nav-desktop { display: none; }
         @media (min-width: 768px) {
@@ -556,12 +562,11 @@
 
         /* ── Hero band ──────────────────────────────── */
         .g-hero-band {
-            background: var(--g-bg2);
-            border-bottom: 1px solid var(--g-border);
-            padding: 2.5rem 1.25rem 2rem;
-            overflow: hidden;
-            position: relative;
-        }
+    background: var(--g-bg2);
+    border-bottom: 1px solid var(--g-border);
+    padding: 2.5rem 1.25rem 2rem;
+    position: relative;
+}
         .g-hero-band::before {
             content: '';
             position: absolute;
@@ -755,28 +760,145 @@
         .g-category-dropdown[open] summary .g-chev { transform: rotate(180deg); }
         .g-category-dropdown-body { border-top: 1px solid var(--g-border); }
 
-        .g-category-list { list-style: none; }
-        .g-category-item { border-bottom: 1px solid var(--g-border); }
-        .g-category-item:last-child { border-bottom: none; }
+        /* ========== IMPROVED TWO‑ZONE CATEGORY STYLES ========== */
+        .g-category-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .g-category-item {
+            border-bottom: 1px solid var(--g-border);
+        }
         .g-category-row {
-            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
             padding: 0.7rem 1.25rem;
             transition: background 0.2s;
         }
-        .g-category-row:hover { background: rgba(255,211,105,0.04); }
-        .g-category-name { font-size: 13.5px; color: var(--g-text-muted); }
-        .g-category-link {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--g-accent);
-            text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.2s;
+        .g-category-row:hover {
+            background: rgba(255,211,105,0.04);
         }
-        .g-category-link:hover { opacity: 1; }
-        .g-category-children { list-style: none; padding-left: 1.5rem; border-left: 2px solid rgba(255,211,105,0.2); margin-left: 1.25rem; }
-        .g-category-children.hidden { display: none; }
-        .g-category-children[hidden] { display: none !important; }
+        /* Left zone (click to expand/collapse) */
+        .g-cat-toggle {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 13.5px;
+            color: var(--g-text-muted);
+        }
+        /* SVG toggle icon — consistent across all platforms (no emoji) */
+        .g-toggle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+            color: var(--g-accent);
+            flex-shrink: 0;
+        }
+        .g-toggle-icon svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.2s ease;
+        }
+        .g-category-item.expanded .g-toggle-icon svg {
+            transform: rotate(90deg);
+        }
+        .g-cat-name {
+            font-weight: 500;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        /* Right zone (view button) */
+        .g-cat-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,211,105,0.1);
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--g-accent);
+            transition: background 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+        .g-cat-view:hover {
+            background: rgba(255,211,105,0.2);
+            color: var(--g-light);
+        }
+        .g-cat-view:active {
+            transform: scale(0.96);
+        }
+        .g-view-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* Subcategories indentation — fixed for deep nesting on mobile */
+        .g-subcategories {
+            margin-left: 32px;
+            padding-left: 12px;
+            border-left: 2px solid rgba(255,211,105,0.3);
+            overflow-x: visible;
+        }
+        /* Deeper levels get progressive but safe indentation */
+        .g-subcategories .g-subcategories {
+            margin-left: 24px;
+            padding-left: 10px;
+        }
+        .g-subcategories .g-subcategories .g-subcategories {
+            margin-left: 16px;
+            padding-left: 8px;
+        }
+        .g-toggle-placeholder {
+            width: 20px;
+            flex-shrink: 0;
+            visibility: hidden;
+        }
+        /* Ensure category rows never overflow horizontally */
+        .g-category-row {
+            overflow-x: visible;
+        }
+        /* Mobile-specific improvements: prevent cutting off deep nested items */
+        @media (max-width: 768px) {
+            .g-category-row {
+                padding: 0.9rem 1rem;
+                gap: 8px;
+            }
+            .g-cat-view {
+                padding: 6px 12px;
+                white-space: nowrap;
+            }
+            .g-subcategories {
+                margin-left: 20px;
+                padding-left: 8px;
+            }
+            .g-subcategories .g-subcategories {
+                margin-left: 16px;
+                padding-left: 6px;
+            }
+            .g-subcategories .g-subcategories .g-subcategories {
+                margin-left: 12px;
+                padding-left: 4px;
+            }
+            .g-cat-name {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            /* Make sure parent container allows horizontal scrolling if needed (fallback) */
+            .g-category-dropdown-body {
+                overflow-x: auto;
+            }
+        }
+        /* ========== END IMPROVED STYLES ========== */
 
         /* ── Section header ─────────────────────────── */
         .g-section-head {
@@ -1069,13 +1191,25 @@
                 border-top: 1px solid var(--g-border);
                 backdrop-filter: blur(10px);
                 gap: 0.75rem;
+                /* CHANGE 3: fix width & prevent horizontal scroll */
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+                box-sizing: border-box;
             }
             .g-sticky-bottom a {
-                flex: 1; text-align: center;
-                padding: 0.75rem; font-size: 14px; font-weight: 600;
-                text-decoration: none; border-radius: var(--g-radius);
+                flex: 1;
+                min-width: 0;           /* allow shrinking */
+                text-align: center;
+                padding: 0.75rem;
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: var(--g-radius);
                 transition: all 0.2s;
                 font-family: var(--font-body);
+                white-space: normal;
+                word-break: keep-all;
             }
             .g-sticky-cart { border: 1px solid var(--g-border); color: var(--g-text); }
             .g-sticky-cart:hover { border-color: var(--g-border-hover); color: var(--g-accent); }
@@ -1139,6 +1273,99 @@
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
+        /* Force suggestions above everything else */
+        .g-hero-suggestions {
+            z-index: 1060 !important;          /* Higher than header (1050) */
+            background: var(--g-bg2) !important; /* Solid background */
+            border: 1px solid var(--g-accent) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+        }
+
+        /* Ensure hero band creates a stacking context */
+        .g-hero-band {
+            isolation: isolate;
+            z-index: 10;
+        }
+
+        /* CHANGE 5: fix search SVG icon alignment */
+        .g-search-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .g-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--g-text-muted);
+            width: 18px;
+            height: 18px;
+            z-index: 2;
+        }
+        .g-search-input {
+            padding-left: 38px !important;
+        }
+        /* adjust clear button if present */
+        .g-search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--g-text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .g-search-clear:hover {
+            background: rgba(255,211,105,0.15);
+            color: var(--g-accent);
+        }
+        /* ── Back to Top button (overlays products, no horizontal scroll) ── */
+#g-back-top {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 1rem;               /* safe distance from right edge */
+    z-index: 1049;
+    width: 44px;
+    height: 44px;
+    background: var(--g-accent);
+    color: var(--g-bg);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255,211,105,0.4);
+    transition: transform 0.25s var(--g-ease-spring), box-shadow 0.25s, background 0.2s;
+}
+#g-back-top.visible {
+    display: flex;
+    animation: backTopAppear 0.35s var(--g-ease-spring) both;
+}
+#g-back-top:hover {
+    background: #e8bc52;
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 8px 28px rgba(255,211,105,0.5);
+}
+#g-back-top:active { transform: scale(0.92); }
+
+/* Mobile: just above the sticky bottom bar */
+@media (max-width: 768px) {
+    #g-back-top {
+        bottom: 5.5rem;        /* sits above the sticky cart/checkout bar */
+        right: 1rem;           /* same as desktop – no horizontal scroll */
+        width: 40px;
+        height: 40px;
+    }
+}
     </style>
 </head>
 <body class="g-has-sticky">
@@ -1191,7 +1418,7 @@
     <!-- ██ MOBILE MENU ████████████████████████████████████ -->
     <div class="g-mobile-overlay" id="gMobileOverlay"></div>
     <div class="g-mobile-menu" id="gMobileMenu">
-        <div class="g-mobile-menu-logo">Grow<span>zio</span></div>
+        
         <a href="<?php echo e(route('home')); ?>">Home</a>
         <a href="<?php echo e(route('home')); ?>">Products</a>
         <div class="g-filter-sect">Categories</div>
@@ -1232,15 +1459,7 @@
 
     <!-- ██ MAIN ███████████████████████████████████████████ -->
     <main class="g-main">
-
-        <?php if(session('status')): ?>
-            <div class="g-container g-section" style="padding-bottom:0;">
-                <div class="g-alert-success">
-                    <?php echo e(session('status')); ?>
-
-                </div>
-            </div>
-        <?php endif; ?>
+        <?php echo $__env->make('partials.toast', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
       
     <section class="g-hero-band">
@@ -1365,7 +1584,43 @@
                 <div class="g-category-dropdown-body">
                     <?php if($categories->isNotEmpty()): ?>
                         <ul class="g-category-list">
-                            <?php echo $__env->make('products.categories._tree_unity', ['categories' => $categories], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                            
+                            <?php
+                                function renderCategoryTree($cats, $level = 0) {
+                                    $html = '';
+                                    foreach ($cats as $cat) {
+                                        $hasChildren = $cat->children->isNotEmpty();
+                                        $html .= '<li class="g-category-item" data-category-id="' . $cat->id . '">';
+                                        $html .= '<div class="g-category-row">';
+                                        // LEFT ZONE: toggle expand/collapse with SVG (no emoji)
+                                        $html .= '<div class="g-cat-toggle" data-action="toggle" data-category-id="' . $cat->id . '">';
+                                        if ($hasChildren) {
+                                            $html .= '<span class="g-toggle-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>';
+                                        } else {
+                                            $html .= '<span class="g-toggle-placeholder"></span>';
+                                        }
+                                        $html .= '<span class="g-cat-name">' . e($cat->name) . '</span>';
+                                        $html .= '</div>';
+                                        // RIGHT ZONE: view category page
+                                        $viewUrl = route('products.byCategory', $cat->slug ?? $cat->id);
+                                        $html .= '<a href="' . e($viewUrl) . '" class="g-cat-view" data-action="view">';
+                                        $html .= '<span class="g-view-label">View</span>';
+                                        $html .= '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>';
+                                        $html .= '</a>';
+                                        $html .= '</div>';
+                                        // Subcategories (collapsed by default)
+                                        if ($hasChildren) {
+                                            $html .= '<div class="g-subcategories" style="display: none;">';
+                                            $html .= '<ul class="g-category-list">' . renderCategoryTree($cat->children, $level + 1) . '</ul>';
+                                            $html .= '</div>';
+                                        }
+                                        $html .= '</li>';
+                                    }
+                                    return $html;
+                                }
+                            ?>
+                            <?php echo renderCategoryTree($categories); ?>
+
                         </ul>
                     <?php else: ?>
                         <p class="g-section-sub g-category-empty">No categories available yet.</p>
@@ -1580,6 +1835,44 @@
         }, { rootMargin: '0px 0px -50px 0px', threshold: 0.08 });
         reveals.forEach(function (el) { revObserver.observe(el); });
 
+        /* ─── Category toggle (two‑zone) with SVG ────────────────── */
+        function toggleCategory(categoryItem, toggleElement) {
+            var subcatContainer = categoryItem.querySelector('.g-subcategories');
+            var iconSpan = toggleElement ? toggleElement.querySelector('.g-toggle-icon') : categoryItem.querySelector('.g-toggle-icon');
+            if (!subcatContainer) return;
+            var isExpanded = subcatContainer.style.display !== 'none';
+            if (isExpanded) {
+                subcatContainer.style.display = 'none';
+                categoryItem.classList.remove('expanded');
+                if (iconSpan) {
+                    iconSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                }
+            } else {
+                subcatContainer.style.display = 'block';
+                categoryItem.classList.add('expanded');
+                if (iconSpan) {
+                    iconSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                }
+            }
+        }
+
+        // Event delegation for left zones (toggle)
+        document.addEventListener('DOMContentLoaded', function() {
+            var categoryContainer = document.querySelector('.g-categories-section .g-category-list');
+            if (!categoryContainer) return;
+            
+            categoryContainer.addEventListener('click', function(e) {
+                var toggleZone = e.target.closest('[data-action="toggle"]');
+                if (toggleZone) {
+                    e.preventDefault();
+                    var categoryItem = toggleZone.closest('.g-category-item');
+                    if (categoryItem) {
+                        toggleCategory(categoryItem, toggleZone);
+                    }
+                }
+                // Right zone (view link) works as normal <a> – no extra handling needed
+            });
+        });
     })();
     </script>
 
@@ -1621,13 +1914,18 @@
     })();
 
     /* ─── Toast ─────────────────────────────────────────── */
-    function showCartToast() {
+    function showCartToast(message, isError) {
         var existing = document.getElementById('g-toast');
         if (existing) existing.remove();
         var toast = document.createElement('div');
         toast.id = 'g-toast';
         toast.className = 'g-toast';
-        toast.innerHTML = '<span class="g-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span> Added to cart';
+        var icon = isError
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        var safeMsg = (message || (isError ? 'Could not add to cart' : 'Added to cart'))
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        toast.innerHTML = '<span class="g-toast-icon" style="' + (isError ? 'color:#f87171;' : '') + '">' + icon + '</span> ' + safeMsg;
         document.body.appendChild(toast);
         setTimeout(function () { if (toast.parentNode) toast.remove(); }, 2800);
     }
@@ -1642,11 +1940,33 @@
         fetch(form.action, {
             method: 'POST',
             body: new FormData(form),
+            credentials: 'same-origin',
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(function (r) { return r.json(); })
-        .then(function () { showCartToast(); if (button) { button.innerHTML = origHtml; button.disabled = false; } })
-        .catch(function () { if (button) { button.innerHTML = origHtml; button.disabled = false; } showCartToast(); });
+        .then(function (r) {
+            var ct = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
+            if (!r.ok) {
+                if (ct.indexOf('application/json') !== -1) {
+                    return r.json().then(function (j) { throw new Error((j && j.message) ? j.message : ('Request failed (' + r.status + ')')); });
+                }
+                throw new Error('Request failed (' + r.status + ')');
+            }
+            if (ct.indexOf('application/json') === -1) {
+                throw new Error('Unexpected response');
+            }
+            return r.json();
+        })
+        .then(function (json) {
+            if (!json || json.success !== true) {
+                throw new Error((json && json.message) ? json.message : 'Could not add to cart');
+            }
+            showCartToast(json.message || 'Added to cart', false);
+            if (button) { button.innerHTML = origHtml; button.disabled = false; }
+        })
+        .catch(function (err) {
+            if (button) { button.innerHTML = origHtml; button.disabled = false; }
+            showCartToast((err && err.message) ? err.message : 'Could not add to cart', true);
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1763,30 +2083,8 @@
                 if (nextUrl) { loading = false; infObserver.unobserve(sentinel); infObserver.observe(sentinel); }
             });
         }
-
-        /* ─── Category toggle ───────────────────────────── */
-        function toggleUnityCategory(categoryId) {
-            var childrenList = document.getElementById('unity-children-' + categoryId);
-            var icon = document.getElementById('unity-icon-' + categoryId);
-            if (childrenList && icon) {
-                var isHidden = childrenList.classList.contains('hidden') || childrenList.hidden === true;
-                // Expand
-                if (isHidden) {
-                    childrenList.classList.remove('hidden');
-                    childrenList.hidden = false;
-                    icon.textContent = '▼';
-                } else {
-                    // Collapse
-                    childrenList.classList.add('hidden');
-                    childrenList.hidden = true;
-                    icon.textContent = '▶';
-                }
-            }
-        }
-        window.toggleUnityCategory = toggleUnityCategory;
     });
     </script>
 
 </body>
-</html>
-<?php /**PATH C:\Users\Admin\clean\growzio\resources\views/products/index.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\Users\Admin\clean\growzio\resources\views/products/index.blade.php ENDPATH**/ ?>
