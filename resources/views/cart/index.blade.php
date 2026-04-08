@@ -497,60 +497,8 @@
             margin-bottom: 1.5rem;
         }
 
-        /* sticky bottom (growzio style) */
-        .g-sticky-bottom-cart {
-            display: none;
-        }
-        @media (max-width: 768px) {
-            body.cart-has-sticky { padding-bottom: 5rem; }
-            .g-sticky-bottom-cart {
-                display: flex;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 1040;
-                padding: 0.75rem 1rem;
-                padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-                background: var(--g-bg2);
-                border-top: 1px solid var(--g-border);
-                backdrop-filter: blur(10px);
-                gap: 0.75rem;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .g-sticky-bottom-cart .sticky-total {
-                font-weight: 700;
-                font-size: 1.1rem;
-                color: var(--g-accent);
-            }
-            .g-sticky-bottom-cart .sticky-view-cart,
-            .g-sticky-bottom-cart .sticky-checkout {
-                padding: 0.6rem 1rem;
-                border-radius: var(--g-radius);
-                font-size: 0.8rem;
-                font-weight: 600;
-                text-decoration: none;
-                text-align: center;
-                transition: all 0.2s;
-            }
-            .g-sticky-bottom-cart .sticky-view-cart {
-                background: transparent;
-                border: 1px solid var(--g-border);
-                color: var(--g-text);
-            }
-            .g-sticky-bottom-cart .sticky-view-cart:hover {
-                border-color: var(--g-border-hover);
-                color: var(--g-accent);
-            }
-            .g-sticky-bottom-cart .sticky-checkout {
-                background: var(--g-accent);
-                color: var(--g-bg);
-            }
-            .g-sticky-bottom-cart .sticky-checkout:hover {
-                background: #e8bc52;
-            }
-        }
+        /* --- REMOVED STICKY BOTTOM (mobile) --- */
+        /* (No .g-sticky-bottom-cart styles anymore) */
 
         #g-back-top {
             position: fixed;
@@ -570,7 +518,8 @@
         }
         #g-back-top.visible { display: flex; animation: backTopAppear 0.35s var(--g-ease-spring) both; }
         #g-back-top:hover { background: #e8bc52; transform: translateY(-4px) scale(1.08); }
-        @media (max-width: 768px) { #g-back-top { bottom: 5.5rem; right: 1rem; } }
+        /* Since sticky removed, adjust back-top spacing */
+        @media (max-width: 768px) { #g-back-top { bottom: 1.75rem; right: 1rem; } }
 
         .dropdown-menu {
             background: var(--g-bg2);
@@ -589,7 +538,7 @@
         }
     </style>
 </head>
-<body class="@if(count($items)) cart-has-sticky @endif">
+<body>   <!-- No cart-has-sticky class anymore -->
     @include('partials.toast')
     <!-- ██ HEADER (exactly as index) ██ -->
     <header class="g-header" id="gHeader">
@@ -785,23 +734,7 @@
         </div>
     </main>
 
-    @if (count($items))
-    <!-- sticky bottom (mobile only) -->
-    <div class="g-sticky-bottom-cart">
-        <button type="button" class="sticky-view-cart" onclick="document.getElementById('cart-content').scrollIntoView({ behavior: 'smooth', block: 'start' })">
-            <i class="fas fa-shopping-cart me-1"></i> View cart
-        </button>
-        <span class="sticky-total">₹{{ number_format($total, 2) }}</span>
-        @auth
-            <form method="POST" action="{{ route('checkout.store') }}" style="margin:0;">
-                @csrf
-                <button type="submit" class="sticky-checkout" style="border:none;">Checkout</button>
-            </form>
-        @else
-            <a href="{{ route('checkout.login-required') }}" class="sticky-checkout">Proceed</a>
-        @endauth
-    </div>
-    @endif
+    <!-- STICKY BOTTOM BAR COMPLETELY REMOVED -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
