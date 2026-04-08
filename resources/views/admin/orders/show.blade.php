@@ -34,154 +34,152 @@
                 <span class="px-3 py-1 text-xs rounded-full w-fit {{ $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-800' }}">{{ ucfirst($order->status) }}</span>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="rounded-xl border border-gray-200 p-4">
-                    <h2 class="font-semibold mb-3">Customer details</h2>
-                    <dl class="space-y-2 text-sm">
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Party / Name</dt>
-                            <dd class="text-right font-medium">{{ $customerName }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Email</dt>
-                            <dd class="text-right">{{ $customerEmail }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Phone</dt>
-                            <dd class="text-right">{{ $customerPhone }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Station / Area</dt>
-                            <dd class="text-right">{{ $customerStation }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Business Name</dt>
-                            <dd class="text-right">{{ $businessName }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">GST</dt>
-                            <dd class="text-right">{{ $gstNumber }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Referred By</dt>
-                            <dd class="text-right">{{ $referredBy }}</dd>
-                        </div>
-                        <div class="pt-1 border-t border-gray-200">
-                            <dt class="text-gray-600 mb-1">Address</dt>
-                            <dd class="text-sm">{{ $address }}</dd>
-                        </div>
-                    </dl>
+            {{-- 1. CUSTOMER DETAILS (with copy button) --}}
+            <div class="rounded-xl border border-gray-200 p-4 relative">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-semibold">Customer details</h2>
+                    <button type="button" class="copy-section-btn text-gray-500 hover:text-gray-700 transition" data-section="customer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.75 9.75 0 0 1 3-6.75 2.25 2.25 0 0 1 2.25 2.25v3.375c0 .621.504 1.125 1.125 1.125h6.75c.621 0 1.125.504 1.125 1.125v9.75z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.5h2.625a1.125 1.125 0 0 0 1.125-1.125V2.75" />
+                        </svg>
+                    </button>
                 </div>
-
-                <div class="rounded-xl border border-gray-200 p-4">
-                    <h2 class="font-semibold mb-3">Order summary</h2>
-                    <dl class="space-y-2 text-sm">
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Order ID</dt>
-                            <dd class="font-medium">#{{ $order->id }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Items count</dt>
-                            <dd>{{ $order->items->count() }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Items subtotal</dt>
-                            <dd>₹{{ number_format($itemsSubtotal, 2) }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Loyalty points used</dt>
-                            <dd>{{ number_format((int) ($order->loyalty_points_used ?? 0)) }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3">
-                            <dt class="text-gray-600">Loyalty discount</dt>
-                            <dd>- ₹{{ number_format($discountAmount, 2) }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-3 pt-2 border-t border-gray-200 font-semibold">
-                            <dt>Total paid</dt>
-                            <dd>₹{{ number_format((float) $order->total, 2) }}</dd>
-                        </div>
-                    </dl>
-                </div>
+                <dl class="space-y-2 text-sm" id="customer-details-data">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Party / Name</dt>
+                        <dd class="text-right font-medium">{{ $customerName }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Email</dt>
+                        <dd class="text-right">{{ $customerEmail }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Phone</dt>
+                        <dd class="text-right">{{ $customerPhone }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Station / Area</dt>
+                        <dd class="text-right">{{ $customerStation }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Business Name</dt>
+                        <dd class="text-right">{{ $businessName }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">GST</dt>
+                        <dd class="text-right">{{ $gstNumber }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Referred By</dt>
+                        <dd class="text-right">{{ $referredBy }}</dd>
+                    </div>
+                    <div class="pt-1 border-t border-gray-200">
+                        <dt class="text-gray-600 mb-1">Address</dt>
+                        <dd class="text-sm">{{ $address }}</dd>
+                    </div>
+                </dl>
             </div>
 
-            <div class="rounded-xl border border-gray-200 p-4">
+            {{-- 2. ITEMS ORDERED (with copy button) --}}
+            <div class="rounded-xl border border-gray-200 p-4 relative">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-semibold">Items ordered</h2>
-                    <p class="text-xs text-gray-600">Detailed breakup for admin review</p>
+                    <button type="button" class="copy-section-btn text-gray-500 hover:text-gray-700 transition" data-section="items">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.75 9.75 0 0 1 3-6.75 2.25 2.25 0 0 1 2.25 2.25v3.375c0 .621.504 1.125 1.125 1.125h6.75c.621 0 1.125.504 1.125 1.125v9.75z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.5h2.625a1.125 1.125 0 0 0 1.125-1.125V2.75" />
+                        </svg>
+                    </button>
                 </div>
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="min-w-full text-left">
-                        <thead>
-                            <tr class="border-b border-gray-200">
-                                <th class="p-2 text-xs font-medium text-gray-600 uppercase">Product</th>
-                                <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Qty</th>
-                                <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Unit Price</th>
-                                <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Line Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($order->items as $item)
-                                @php
-                                    $qty = max(1, (int) $item->quantity);
-                                    $lineTotal = (float) $item->subtotal;
-                                    $unitPrice = $lineTotal / $qty;
-                                @endphp
+                <div id="items-ordered-data">
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="min-w-full text-left">
+                            <thead>
                                 <tr class="border-b border-gray-200">
-                                    <td class="p-2">
-                                        @if ($item->product)
-                                            <button
-                                                type="button"
-                                                class="product-view-trigger text-left text-indigo-600 hover:text-indigo-800 hover:underline focus:outline-none font-medium"
-                                                data-product-name="{{ $item->product->name }}"
-                                                data-product-url="{{ route('products.show', $item->product) }}"
-                                            >
-                                                {{ $item->product->name }}
-                                            </button>
-                                        @else
-                                            {{ 'Product #' . $item->product_id }}
-                                        @endif
-                                    </td>
-                                    <td class="p-2 text-right">{{ $qty }}</td>
-                                    <td class="p-2 text-right">₹{{ number_format($unitPrice, 2) }}</td>
-                                    <td class="p-2 text-right font-medium">₹{{ number_format($lineTotal, 2) }}</td>
+                                    <th class="p-2 text-xs font-medium text-gray-600 uppercase">Product</th>
+                                    <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Qty</th>
+                                    <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Unit Price</th>
+                                    <th class="p-2 text-xs font-medium text-gray-600 uppercase text-right">Line Total</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="md:hidden space-y-3">
-                    @foreach ($order->items as $item)
-                        @php
-                            $qty = max(1, (int) $item->quantity);
-                            $lineTotal = (float) $item->subtotal;
-                            $unitPrice = $lineTotal / $qty;
-                        @endphp
-                        <div class="rounded-lg border border-gray-200 p-3">
-                            <p class="font-medium">
-                                @if ($item->product)
-                                    <button
-                                        type="button"
-                                        class="product-view-trigger text-left text-indigo-600 hover:text-indigo-800 hover:underline focus:outline-none"
-                                        data-product-name="{{ $item->product->name }}"
-                                        data-product-url="{{ route('products.show', $item->product) }}"
-                                    >
-                                        {{ $item->product->name }}
-                                    </button>
-                                @else
-                                    {{ 'Product #' . $item->product_id }}
-                                @endif
-                            </p>
-                            <div class="mt-2 text-sm space-y-1">
-                                <div class="flex justify-between"><span class="text-gray-600">Qty</span><span>{{ $qty }}</span></div>
-                                <div class="flex justify-between"><span class="text-gray-600">Unit Price</span><span>₹{{ number_format($unitPrice, 2) }}</span></div>
-                                <div class="flex justify-between font-medium"><span>Line Total</span><span>₹{{ number_format($lineTotal, 2) }}</span></div>
+                            </thead>
+                            <tbody>
+                                @foreach ($order->items as $item)
+                                    @php
+                                        $qty = max(1, (int) $item->quantity);
+                                        $lineTotal = (float) $item->subtotal;
+                                        $unitPrice = $lineTotal / $qty;
+                                    @endphp
+                                    <tr class="border-b border-gray-200">
+                                        <td class="p-2">{{ $item->product->name ?? 'Product #'.$item->product_id }}</td>
+                                        <td class="p-2 text-right">{{ $qty }}</td>
+                                        <td class="p-2 text-right">₹{{ number_format($unitPrice, 2) }}</td>
+                                        <td class="p-2 text-right font-medium">₹{{ number_format($lineTotal, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="md:hidden space-y-3">
+                        @foreach ($order->items as $item)
+                            @php
+                                $qty = max(1, (int) $item->quantity);
+                                $lineTotal = (float) $item->subtotal;
+                                $unitPrice = $lineTotal / $qty;
+                            @endphp
+                            <div class="rounded-lg border border-gray-200 p-3">
+                                <p class="font-medium">{{ $item->product->name ?? 'Product #'.$item->product_id }}</p>
+                                <div class="mt-2 text-sm space-y-1">
+                                    <div class="flex justify-between"><span class="text-gray-600">Qty</span><span>{{ $qty }}</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-600">Unit Price</span><span>₹{{ number_format($unitPrice, 2) }}</span></div>
+                                    <div class="flex justify-between font-medium"><span>Line Total</span><span>₹{{ number_format($lineTotal, 2) }}</span></div>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
+            {{-- 3. ORDER SUMMARY (at the end, with copy button) --}}
+            <div class="rounded-xl border border-gray-200 p-4 relative">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-semibold">Order summary</h2>
+                    <button type="button" class="copy-section-btn text-gray-500 hover:text-gray-700 transition" data-section="summary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.75 9.75 0 0 1 3-6.75 2.25 2.25 0 0 1 2.25 2.25v3.375c0 .621.504 1.125 1.125 1.125h6.75c.621 0 1.125.504 1.125 1.125v9.75z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.5h2.625a1.125 1.125 0 0 0 1.125-1.125V2.75" />
+                        </svg>
+                    </button>
+                </div>
+                <dl class="space-y-2 text-sm" id="order-summary-data">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Order ID</dt>
+                        <dd class="font-medium">#{{ $order->id }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Items count</dt>
+                        <dd>{{ $order->items->count() }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Items subtotal</dt>
+                        <dd>₹{{ number_format($itemsSubtotal, 2) }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Loyalty points used</dt>
+                        <dd>{{ number_format((int) ($order->loyalty_points_used ?? 0)) }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-gray-600">Loyalty discount</dt>
+                        <dd>- ₹{{ number_format($discountAmount, 2) }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3 pt-2 border-t border-gray-200 font-semibold">
+                        <dt>Total paid</dt>
+                        <dd>₹{{ number_format((float) $order->total, 2) }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            {{-- Update status form --}}
             <div class="border-t border-gray-200 pt-4">
                 <div class="text-sm font-semibold text-gray-700 mb-3">Update status</div>
                 <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -202,108 +200,101 @@
     </div>
 </div>
 
-{{-- IOS‑STYLE MODAL – perfectly centered, smooth blur, dark grey card, rounded corners --}}
-<div id="product-view-modal" class="fixed inset-0 z-[100] hidden items-center justify-center" aria-hidden="true">
-    {{-- Blurred backdrop --}}
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-lg transition-all duration-200" id="product-view-overlay"></div>
-    
-    {{-- Modal card – centered with flex --}}
-    <div class="relative w-full max-w-sm mx-4 transform transition-all duration-200 scale-95 opacity-0" id="modal-card">
-        <div class="bg-[#2D3340] rounded-2xl shadow-2xl overflow-hidden border border-white/10">
-            {{-- Header with close button --}}
-            <div class="flex items-center justify-between px-5 pt-5">
-                <h3 class="text-lg font-semibold text-white tracking-tight">View product</h3>
-                <button type="button" id="product-view-close" class="text-white/60 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 focus:outline-none" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            
-            {{-- Body --}}
-            <div class="px-5 pb-5 pt-2">
-                <p class="text-white/90 text-base leading-relaxed">
-                    Do you want to view the product
-                    <span id="product-view-name" class="font-semibold text-white"></span>?
-                </p>
-                
-                {{-- Buttons: No (left) / Yes (right) --}}
-                <div class="mt-6 flex flex-row gap-3">
-                    <button type="button" id="product-view-no" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all duration-150 border border-white/20">
-                        No
-                    </button>
-                    <button type="button" id="product-view-yes" class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-150 shadow-sm">
-                        Yes
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-@push('scripts')
 <script>
-(function () {
-    const modal = document.getElementById('product-view-modal');
-    if (!modal) return;
-
-    const nameEl = document.getElementById('product-view-name');
-    const overlay = document.getElementById('product-view-overlay');
-    const closeBtn = document.getElementById('product-view-close');
-    const noBtn = document.getElementById('product-view-no');
-    const yesBtn = document.getElementById('product-view-yes');
-    const modalCard = document.getElementById('modal-card');
-    const triggers = document.querySelectorAll('.product-view-trigger');
-    let targetUrl = '';
-
-    // Helper to close modal with animation
-    const closeModal = () => {
-        if (modalCard) {
-            modalCard.classList.remove('scale-100', 'opacity-100');
-            modalCard.classList.add('scale-95', 'opacity-0');
+    (function() {
+        // Helper: temporary "Copied!" tooltip next to button
+        function showCopiedMessage(btn) {
+            const originalHtml = btn.innerHTML;
+            const tooltip = document.createElement('span');
+            tooltip.textContent = 'Copied!';
+            tooltip.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap';
+            btn.style.position = 'relative';
+            btn.appendChild(tooltip);
+            setTimeout(() => {
+                tooltip.remove();
+                btn.style.position = '';
+            }, 1500);
         }
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.setAttribute('aria-hidden', 'true');
-            targetUrl = '';
-        }, 150);
-    };
 
-    // Helper to open modal
-    const openModal = (name, url) => {
-        targetUrl = url || '';
-        nameEl.textContent = name ? `“${name}”` : '';
-        modal.classList.remove('hidden');
-        modal.setAttribute('aria-hidden', 'false');
-        // Force reflow then animate in
-        modalCard.classList.remove('scale-95', 'opacity-0');
-        modalCard.classList.add('scale-100', 'opacity-100');
-    };
+        // Format customer details into readable text
+        function getCustomerDetailsText() {
+            const container = document.getElementById('customer-details-data');
+            const rows = container.querySelectorAll('.flex.justify-between');
+            let lines = [];
+            rows.forEach(row => {
+                const dt = row.querySelector('dt')?.innerText.trim();
+                const dd = row.querySelector('dd')?.innerText.trim();
+                if (dt && dd) lines.push(`${dt}: ${dd}`);
+            });
+            // handle address separately (special structure)
+            const addressDiv = container.querySelector('.pt-1');
+            if (addressDiv) {
+                const addressLabel = addressDiv.querySelector('dt')?.innerText.trim() || 'Address';
+                const addressValue = addressDiv.querySelector('dd')?.innerText.trim() || 'N/A';
+                lines.push(`${addressLabel}: ${addressValue}`);
+            }
+            return lines.join('\n');
+        }
 
-    // Attach click handlers to product name buttons
-    triggers.forEach(trigger => {
-        trigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal(trigger.getAttribute('data-product-name'), trigger.getAttribute('data-product-url'));
+        // Format items ordered into table-like text
+        function getItemsOrderedText() {
+            const tableRows = document.querySelectorAll('#items-ordered-data .md\\:block tbody tr');
+            if (tableRows.length === 0) return 'No items found.';
+            let lines = ['Product | Qty | Unit Price | Line Total'];
+            lines.push('------- | --- | ---------- | ----------');
+            tableRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                    const product = cells[0].innerText.trim();
+                    const qty = cells[1].innerText.trim();
+                    const unitPrice = cells[2].innerText.trim();
+                    const lineTotal = cells[3].innerText.trim();
+                    lines.push(`${product} | ${qty} | ${unitPrice} | ${lineTotal}`);
+                }
+            });
+            return lines.join('\n');
+        }
+
+        // Format order summary into key-value pairs
+        function getOrderSummaryText() {
+            const container = document.getElementById('order-summary-data');
+            const rows = container.querySelectorAll('.flex.justify-between');
+            let lines = [];
+            rows.forEach(row => {
+                const dt = row.querySelector('dt')?.innerText.trim();
+                const dd = row.querySelector('dd')?.innerText.trim();
+                if (dt && dd) lines.push(`${dt}: ${dd}`);
+            });
+            return lines.join('\n');
+        }
+
+        // Copy to clipboard
+        async function copyText(text, btn) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showCopiedMessage(btn);
+            } catch (err) {
+                alert('Failed to copy. Manual copy needed.');
+            }
+        }
+
+        // Attach copy handlers
+        const copyBtns = document.querySelectorAll('.copy-section-btn');
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = btn.getAttribute('data-section');
+                let textToCopy = '';
+                if (section === 'customer') {
+                    textToCopy = getCustomerDetailsText();
+                } else if (section === 'items') {
+                    textToCopy = getItemsOrderedText();
+                } else if (section === 'summary') {
+                    textToCopy = getOrderSummaryText();
+                }
+                if (textToCopy) copyText(textToCopy, btn);
+            });
         });
-    });
-
-    // Close on overlay, close button, or No button
-    [overlay, closeBtn, noBtn].forEach(el => {
-        if (el) el.addEventListener('click', closeModal);
-    });
-
-    // Yes button: navigate to product page
-    yesBtn.addEventListener('click', () => {
-        if (targetUrl) window.location.href = targetUrl;
-        else closeModal();
-    });
-
-    // Escape key closes
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
-    });
-})();
+    })();
 </script>
-@endpush
+@endsection
