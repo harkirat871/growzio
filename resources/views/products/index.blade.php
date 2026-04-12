@@ -40,18 +40,6 @@
         html {
             scroll-behavior: smooth;
         }
-        /* Force no horizontal scroll on any screen */
-html, body {
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Lock the Back to Top button to the viewport’s right edge */
-#g-back-top {
-    right: 16px !important;
-    left: auto !important;
-}
 
         /* Native scrollbar — styled to match theme */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -1239,7 +1227,7 @@ html, body {
         /* ── Back to Top button ─────────────────────── */
         #g-back-top {
             position: fixed;
-            bottom: 1.75rem; right: 1.75rem;
+            bottom: 1.75rem; right: 1rem;
             z-index: 1049;
             width: 44px; height: 44px;
             background: var(--g-accent);
@@ -1339,45 +1327,55 @@ html, body {
             background: rgba(255,211,105,0.15);
             color: var(--g-accent);
         }
-        /* ── Back to Top button (overlays products, no horizontal scroll) ── */
-#g-back-top {
-    position: fixed;
-    bottom: 1.75rem;
-    right: 1rem;               /* safe distance from right edge */
-    z-index: 1049;
-    width: 44px;
-    height: 44px;
-    background: var(--g-accent);
-    color: var(--g-bg);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 20px rgba(255,211,105,0.4);
-    transition: transform 0.25s var(--g-ease-spring), box-shadow 0.25s, background 0.2s;
-}
-#g-back-top.visible {
-    display: flex;
-    animation: backTopAppear 0.35s var(--g-ease-spring) both;
-}
-#g-back-top:hover {
-    background: #e8bc52;
-    transform: translateY(-4px) scale(1.08);
-    box-shadow: 0 8px 28px rgba(255,211,105,0.5);
-}
-#g-back-top:active { transform: scale(0.92); }
 
-/* Mobile: just above the sticky bottom bar */
-@media (max-width: 768px) {
-    #g-back-top {
-        bottom: 5.5rem;        /* sits above the sticky cart/checkout bar */
-        right: 1rem;           /* same as desktop – no horizontal scroll */
-        width: 40px;
-        height: 40px;
-    }
-}
+        /* ── FIXES: no horizontal scroll & sticky bottom bar alignment ── */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        #g-back-top {
+            right: 16px !important;
+            left: auto !important;
+        }
+        /* Fix sticky bottom bar on mobile — prevent overflow & keep buttons side by side */
+        @media (max-width: 768px) {
+            .g-sticky-bottom {
+                width: 100%;
+                max-width: 100vw;
+                box-sizing: border-box;
+                left: 0;
+                right: 0;
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+                gap: 0.75rem;
+                flex-wrap: nowrap;
+                overflow-x: hidden;
+            }
+            .g-sticky-bottom a,
+            .g-sticky-bottom button {
+                flex: 1;
+                min-width: 0;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                text-align: center;
+            }
+            .g-sticky-checkout {
+                border: none;
+                background: var(--g-accent);
+                color: var(--g-bg);
+                cursor: pointer;
+            }
+            .g-sticky-bottom form {
+                flex: 1;
+                margin: 0;
+                min-width: 0;
+            }
+            .g-sticky-bottom form button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="g-has-sticky">
@@ -1619,7 +1617,7 @@ html, body {
                                         $html .= '<span class="g-cat-name">' . e($cat->name) . '</span>';
                                         $html .= '</div>';
                                         // RIGHT ZONE: view category page
-                                        $viewUrl = route('products.byCategory', $cat->slug ?? $cat->id);
+                                        $viewUrl = route('products.byCategory', $cat);
                                         $html .= '<a href="' . e($viewUrl) . '" class="g-cat-view" data-action="view">';
                                         $html .= '<span class="g-view-label">View</span>';
                                         $html .= '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>';
