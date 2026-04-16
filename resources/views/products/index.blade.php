@@ -1484,7 +1484,7 @@
                 @elseif(isset($category))
                     {{ $category->name }}
                 @else
-                    Onkar <span class="color-yellow">Enterprises</span>
+                    Onkar <span class="text-yellow">Enterprises</span>
                 @endif
             </h1>
 
