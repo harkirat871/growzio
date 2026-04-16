@@ -1477,7 +1477,9 @@
     <section class="g-hero-band">
         <div class="g-container">
 
-            <div class="g-hero-eyebrow">// Growzio</div>
+            <div class="g-hero-eyebrow">
+                Explore our <span>Collection</span>
+            </div>
 
             <h1 class="g-hero-title">
                 @if(isset($searchQuery))
@@ -1485,7 +1487,7 @@
                 @elseif(isset($category))
                     {{ $category->name }}
                 @else
-                    Explore our <span>Collection</span>
+                    // <span>Growzio</span>
                 @endif
             </h1>
 
