@@ -1477,10 +1477,7 @@
     <section class="g-hero-band">
         <div class="g-container">
 
-            <div class="g-hero-eyebrow">
-                Explore our <span>Collection</span>
-            </div>
-
+            {{-- REORDERED: Title (company name) first, then eyebrow --}}
             <h1 class="g-hero-title">
                 @if(isset($searchQuery))
                     Results for <span>"{{ $searchQuery }}"</span>
@@ -1490,6 +1487,10 @@
                     // <span>Growzio</span>
                 @endif
             </h1>
+
+            <div class="g-hero-eyebrow">
+                Explore our <span>Collection</span>
+            </div>
 
             @if(isset($searchQuery))
                 <p class="g-hero-meta">{{ $products->total() }} product(s) found</p>
