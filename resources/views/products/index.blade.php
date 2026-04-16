@@ -1484,8 +1484,7 @@
                 @elseif(isset($category))
                     {{ $category->name }}
                 @else
-                    Onkar <span class="text-yellow">Enterprises</span>
-                @endif
+                Onkar <span style="color: #E0B23A !important; all: unset; color: #E0B23A !important;">Enterprises</span>                @endif
             </h1>
 
             <div class="g-hero-eyebrow">
