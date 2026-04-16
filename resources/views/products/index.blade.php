@@ -581,7 +581,7 @@
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            color: var(--g-accent);
+            color: white;
             margin-bottom: 0.6rem;
             animation: slideRight 0.5s var(--g-ease) both;
         }
@@ -595,7 +595,7 @@
             margin-bottom: 0.6rem;
             animation: fadeUp 0.55s var(--g-ease) 0.05s both;
         }
-        .g-hero-title span { color: var(--g-accent); }
+        .g-hero-title span { color: var(--white); }
         .g-hero-sub {
             font-size: 14.5px;
             color: var(--g-text-muted);
@@ -1484,12 +1484,12 @@
                 @elseif(isset($category))
                     {{ $category->name }}
                 @else
-                    // <span>Growzio</span>
+                    // Onkar<span>enterprises</span>
                 @endif
             </h1>
 
             <div class="g-hero-eyebrow">
-                Explore our <span>Collection</span>
+            Distributor for automobile spare parts
             </div>
 
             @if(isset($searchQuery))
